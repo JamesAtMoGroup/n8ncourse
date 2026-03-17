@@ -546,7 +546,32 @@
       color: var(--text-2);
       line-height: 1.8;
       white-space: pre-wrap;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
+
+    .kn-body.expanded {
+      display: block;
+      overflow: visible;
+    }
+
+    .kn-read-more {
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--accent);
+      cursor: pointer;
+      padding: 6px 0 0;
+      display: block;
+    }
+
+    .kn-read-more:hover { opacity: 0.75; }
+
+    .kn-section { margin-top: 16px; }
+    .kn-section:first-child { margin-top: 0; }
 
     .kn-embed {
       position: relative;
@@ -765,14 +790,18 @@
 
   /* ═══════════════════════════════════════════════
      KNOWLEDGE FEED — loaded from knowledge.json
-     To add content, edit knowledge.json only.
-     Fields:
-       date  : "YYYY-MM-DD"
-       type  : "article" | "video" | "audio"
-       title : string
-       body  : string  (article only — supports line breaks)
-       url   : string  (video: YouTube embed URL, audio: direct file URL)
+     Each entry can have ANY combination of:
+       date     : "YYYY-MM-DD"
+       title    : string
+       body     : string  (article text, optional)
+       videoUrl : string  (YouTube watch or embed URL, optional)
+       audioUrl : string  (direct audio file URL, optional)
   ═══════════════════════════════════════════════ */
+  function toEmbed(url) {
+    if (!url) return url;
+    return url.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/');
+  }
+
   function renderKnowledge(items) {
     const feed = document.getElementById('knowledgeFeed');
     if (!items || items.length === 0) {
@@ -782,29 +811,58 @@
 
     items.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    const typeLabel = { article: '📄 文章', video: '🎬 影片', audio: '🎵 音訊' };
+    feed.innerHTML = items.map((item, idx) => {
+      // Compute type badges from whichever fields are present
+      const badges = [];
+      if (item.body)     badges.push('📄 文章');
+      if (item.videoUrl) badges.push('🎬 影片');
+      if (item.audioUrl) badges.push('🎵 音訊');
+      if (badges.length === 0) badges.push('📄 文章'); // fallback
 
-    feed.innerHTML = items.map(item => {
-      let content = '';
-      if (item.type === 'article') {
-        content = `<div class="kn-body">${item.body.replace(/\n/g, '<br>')}</div>`;
-      } else if (item.type === 'video') {
-        content = `<div class="kn-embed"><iframe src="${item.url}" allowfullscreen></iframe></div>`;
-      } else if (item.type === 'audio') {
-        content = `<audio class="kn-audio" controls><source src="${item.url}"></audio>`;
+      const badgeHTML = badges.map(b => `<span class="kn-type">${b}</span>`).join('');
+
+      let sections = '';
+
+      if (item.body) {
+        sections += `
+          <div class="kn-section">
+            <div class="kn-body" id="kn-body-${idx}">${item.body.replace(/\n/g, '<br>')}</div>
+            <button class="kn-read-more" id="kn-btn-${idx}" onclick="toggleBody(${idx})">展開全文 ↓</button>
+          </div>`;
+      }
+
+      if (item.videoUrl) {
+        sections += `<div class="kn-section kn-embed"><iframe src="${toEmbed(item.videoUrl)}" allowfullscreen></iframe></div>`;
+      }
+
+      if (item.audioUrl) {
+        sections += `<div class="kn-section"><audio class="kn-audio" controls><source src="${item.audioUrl}"></audio></div>`;
       }
 
       return `
         <div class="kn-card">
-          <div class="kn-meta">
-            <span class="kn-type">${typeLabel[item.type] || item.type}</span>
-            <span class="kn-date">${item.date}</span>
-          </div>
+          <div class="kn-meta">${badgeHTML}<span class="kn-date">${item.date}</span></div>
           <h3 class="kn-title">${item.title}</h3>
-          ${content}
-        </div>
-      `;
+          ${sections}
+        </div>`;
     }).join('');
+
+    // Hide "read more" button on short articles that don't overflow
+    requestAnimationFrame(() => {
+      items.forEach((item, idx) => {
+        if (!item.body) return;
+        const el = document.getElementById('kn-body-' + idx);
+        const btn = document.getElementById('kn-btn-' + idx);
+        if (el && btn && el.scrollHeight <= el.clientHeight + 4) btn.style.display = 'none';
+      });
+    });
+  }
+
+  function toggleBody(idx) {
+    const el  = document.getElementById('kn-body-' + idx);
+    const btn = document.getElementById('kn-btn-' + idx);
+    const open = el.classList.toggle('expanded');
+    btn.textContent = open ? '收起 ↑' : '展開全文 ↓';
   }
 
   fetch('knowledge.json')
@@ -817,6 +875,7 @@
 </script>
 </body>
 </html>
+
 
 
 
