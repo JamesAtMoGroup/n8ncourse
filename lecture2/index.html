@@ -722,8 +722,8 @@ main {
   <!-- COURSE HEADER -->
   <div>
     <span class="course-badge course-badge-green">LECTURE 2 — 課程總覽</span>
-    <h1 class="course-title">這堂課是什麼、為什麼值得你花三週</h1>
-    <p class="course-subtitle">在正式進入下一個專案之前，先花幾分鐘搞清楚：你正在學什麼、這對你有什麼用、三週後你能帶走什麼。</p>
+    <h1 class="course-title">這堂課是什麼、為什麼值得你投入時間</h1>
+    <p class="course-subtitle">在正式進入下一個專案之前，先花幾分鐘搞清楚：你正在學什麼、這對你有什麼用、完課後你能帶走什麼。</p>
   </div>
 
   <hr class="divider">
@@ -732,9 +732,7 @@ main {
   <div class="tab-nav">
     <button class="tab-btn" onclick="showTab(0)">昨天的成果</button>
     <button class="tab-btn" onclick="showTab(1)">這是誰的課</button>
-    <button class="tab-btn" onclick="showTab(2)">三週後你能做什麼</button>
-    <button class="tab-btn" onclick="showTab(3)">課程地圖</button>
-    <button class="tab-btn" onclick="showTab(4)">關於講師</button>
+    <button class="tab-btn" onclick="showTab(2)">課程地圖</button>
   </div>
 
   <!-- TAB 0: 昨天的成果 -->
@@ -762,7 +760,7 @@ main {
       </div>
       <p class="seed-small-label">你現在的工作流程（Lecture 1）</p>
 
-      <span class="seed-section-label">三週後可以長成的樣子</span>
+      <span class="seed-section-label">課程後段可以長成的樣子</span>
 
       <div class="seed-row" style="margin-bottom:8px;">
         <span class="node-box-solid">💬 聊天觸發器</span>
@@ -822,41 +820,8 @@ main {
     </div>
   </div>
 
-  <!-- TAB 2: 三週後你能做什麼 -->
+  <!-- TAB 2: 課程地圖 -->
   <div class="tab-panel" id="tab2">
-    <span class="sec-label">三週後，你會帶走這三件事</span>
-
-    <ul class="outcome-list">
-      <li class="outcome-item">
-        <div class="outcome-num">1</div>
-        <div>
-          <div class="outcome-title">解決真實商業問題的 AI Agent</div>
-          <p class="outcome-desc">不只是「做了一個 AI」——而是一個針對你的業務、你的客戶、可衡量結果的自動化系統。課程強調解決真實問題，而不是追著工具跑。</p>
-        </div>
-      </li>
-      <li class="outcome-item">
-        <div class="outcome-num">2</div>
-        <div>
-          <div class="outcome-title">能夠提案或應徵 AI 相關工作</div>
-          <p class="outcome-desc">你會擁有真實的作品集——可以向客戶提案、向雇主展示，甚至直接交付給企業使用。不是課程練習題，是真正能用的東西。</p>
-        </div>
-      </li>
-      <li class="outcome-item">
-        <div class="outcome-num">3</div>
-        <div>
-          <div class="outcome-title">用 Agent 自動化你自己的工作</div>
-          <p class="outcome-desc">語音 Agent、資料處理、Email 自動化、客服流程——這些都會在三週內動手建出來，可直接用在自己的業務或幫客戶建。</p>
-        </div>
-      </li>
-    </ul>
-
-    <div class="promise-box">
-      <p style="margin:0;">「核心信念：」<span style="font-weight:500;color:var(--text-1);">技術工具是手段，不是目的。我們建每一個東西，都是從「這能解決什麼問題、帶來什麼可衡量的影響」出發——而不只是「因為 AI 很酷」。</span></p>
-    </div>
-  </div>
-
-  <!-- TAB 3: 課程地圖 -->
-  <div class="tab-panel" id="tab3">
     <span class="sec-label">這門課在整個學習路徑的位置</span>
 
     <div class="track-grid">
@@ -883,25 +848,25 @@ main {
 
     <p class="track-note">三個軌道可以任意順序搭配，不需要按順序。彼此有重疊，但重複學習是好事。</p>
 
-    <span class="sec-label">接下來三週的節奏</span>
+    <span class="sec-label">課程節奏</span>
 
     <div class="week-timeline">
       <div class="week-row">
-        <div class="week-label">第 1 週</div>
+        <div class="week-label">前期</div>
         <div class="week-content">
           <strong>n8n 核心 + 第一個 AI Agent</strong>
           基礎工作流程、觸發器、AI 節點、Open Router 連接、第一次即時對話
         </div>
       </div>
       <div class="week-row">
-        <div class="week-label">第 2 週</div>
+        <div class="week-label">中期</div>
         <div class="week-content">
           <strong>整合更多服務 + 語音 Agent</strong>
           Email、資料庫、外部 API、語音輸入輸出、更複雜的條件邏輯
         </div>
       </div>
       <div class="week-row">
-        <div class="week-label">第 3 週</div>
+        <div class="week-label">後期</div>
         <div class="week-content">
           <strong>完整業務級 Agent + 交付</strong>
           多 Agent 協作、記憶系統、實際商業場景，可直接交付或上線的成品
@@ -910,51 +875,6 @@ main {
     </div>
   </div>
 
-  <!-- TAB 4: 關於講師 -->
-  <div class="tab-panel" id="tab4">
-    <span class="sec-label">為什麼要聽這個人說話</span>
-
-    <div class="instructor-card">
-      <div class="instructor-avatar">ED</div>
-      <div style="flex:1;">
-        <div class="instructor-name">Ed Donner</div>
-        <div class="instructor-title">AI 新創 Nebula 共同創辦人兼 CTO，現居紐約</div>
-        <ul class="cred-list">
-          <li class="cred-item">
-            <span class="cred-dot"></span>
-            <span>曾任 JP Morgan 軟體工程師，晉升至董事總經理，管理約 300 人的工程與資料科學團隊</span>
-          </li>
-          <li class="cred-item">
-            <span class="cred-dot"></span>
-            <span>前 AI 新創 Untapped 共同創辦人兼 CEO，公司後來成功被收購（收購消息甚至上了時代廣場廣告牌）</span>
-          </li>
-          <li class="cred-item">
-            <span class="cred-dot"></span>
-            <span>實踐者身份：課程中所有專案他都真正做過、用過，不是理論示範</span>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="stat-row">
-      <div class="stat-card">
-        <span class="stat-num">30萬</span>
-        <span class="stat-label">學員人數</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-num">190+</span>
-        <span class="stat-label">學員來自國家</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-num">3週</span>
-        <span class="stat-label">本課程長度</span>
-      </div>
-    </div>
-
-    <div class="honest-note">
-      「講師的一句老實話：」<span style="font-weight:500;color:var(--text-1);">他說他在 AI 上的技術再高超，完全被「手眼協調能力極差」這件事抵消掉了——所以你看到他示範開飛機，那只是照慣例放的有趣照片，不代表他真的適合坐在駕駛艙。但如果你想學怎麼用 AI 做出業務影響力，他保證你來對地方了。</span>
-    </div>
-  </div>
 
 </main>
 
@@ -967,7 +887,6 @@ function showTab(i) {
     b.classList.toggle('active', j === i);
   });
 }
-// Initialize
 showTab(0);
 </script>
 
