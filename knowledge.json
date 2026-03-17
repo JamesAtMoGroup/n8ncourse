@@ -1,20 +1,18 @@
 [
   {
     "date": "2026-03-17",
-    "type": "article",
     "title": "為什麼 n8n 是學 AI 自動化的最佳起點？",
     "body": "很多人學 AI 自動化，第一個卡關的不是技術，而是「從哪裡開始」。\n\nn8n 的優勢在於：它用視覺化的方式讓你看見整個自動化流程，不需要先懂程式，就能理解「資料怎麼流動」的概念。\n\n這個直覺，是你之後學任何進階技術的基礎。"
   },
   {
     "date": "2026-03-16",
-    "type": "video",
     "title": "Day 1 示範影片：建立你的第一個 AI Agent",
-    "url": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
   },
   {
     "date": "2026-03-15",
-    "type": "audio",
-    "title": "Podcast：和 AI 一起工作的第一週心得",
-    "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+    "title": "文章 + 音訊組合示範",
+    "body": "這是一篇附有音訊的文章範例。你可以在同一篇內容中同時放文字說明和音訊檔案。",
+    "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
   }
 ]
