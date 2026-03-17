@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 1 — 從零到第一個 AI Agent | X Learn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ── Tokens ──────────────────────────────────────────────── */
+    :root {
+      --bg:            #0e0918;
+      --bg-2:          #1a1624;
+      --glass:         rgba(255,255,255,0.04);
+      --glass-hover:   rgba(255,255,255,0.07);
+      --glass-active:  rgba(238,79,39,0.12);
+      --border:        rgba(255,255,255,0.08);
+      --border-hover:  rgba(255,255,255,0.16);
+
+      --accent:        #ee4f27;
+      --accent-dim:    rgba(238,79,39,0.15);
+      --accent-glow:   rgba(238,79,39,0.3);
+      --accent-2:      #fd8925;
+
+      --text-1:        #ffffff;
+      --text-2:        #c8c4b0;
+      --text-3:        #8a859e;
+
+      --success:       #34d399;
+      --success-bg:    rgba(52,211,153,0.1);
+      --success-bdr:   rgba(52,211,153,0.2);
+
+      --warn:          #fbbf24;
+      --warn-bg:       rgba(251,191,36,0.1);
+      --warn-bdr:      rgba(251,191,36,0.2);
+
+      --danger:        #f87171;
+      --danger-bg:     rgba(248,113,113,0.1);
+      --danger-bdr:    rgba(248,113,113,0.2);
+
+      --sidebar-w:     272px;
+      --header-h:      56px;
+      --r:             12px;
+      --r-sm:          8px;
+    }
+
+    /* ── Reset ───────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text-1);
+      overflow: hidden;
+    }
+
+    /* ── Animated background orbs ────────────────────────────── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+      animation: orb-drift 20s ease-in-out infinite alternate;
+    }
+
+    .orb-1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(238,79,39,0.12), transparent 70%);
+      top: -200px; left: -100px;
+    }
+
+    .orb-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(234,75,113,0.09), transparent 70%);
+      bottom: -150px; right: -100px;
+      animation-delay: -10s;
+    }
+
+    .orb-3 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(253,137,37,0.06), transparent 70%);
+      top: 50%; left: 50%;
+      animation-duration: 30s;
+    }
+
+    @keyframes orb-drift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(40px, 30px) scale(1.05); }
+    }
+
+    /* ── App shell ───────────────────────────────────────────── */
+    .app {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      height: 100vh;
+      height: 100dvh;
+    }
+
+    /* ── Sidebar ─────────────────────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: rgba(14,9,24,0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .sidebar-brand {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid rgba(238,79,39,0.25);
+      border-radius: 999px;
+      padding: 3px 10px;
+      margin-bottom: 10px;
+    }
+
+    .brand-tag::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .sidebar-brand h2 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-1);
+      line-height: 1.4;
+      margin-bottom: 4px;
+    }
+
+    .sidebar-brand p {
+      font-size: 12px;
+      color: var(--text-3);
+    }
+
+    /* Chapter list */
+    .ch-list {
+      padding: 12px 12px 0;
+      flex: 1;
+    }
+
+    .ch-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      padding: 8px 8px 4px;
+    }
+
+    .ch-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      width: 100%;
+      padding: 10px 10px;
+      border: none;
+      background: transparent;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+      margin-bottom: 2px;
+      position: relative;
+    }
+
+    .ch-btn:hover { background: var(--glass-hover); }
+
+    .ch-btn.active {
+      background: var(--glass-active);
+      border: 1px solid rgba(238,79,39,0.2);
+    }
+
+    .ch-icon {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-hover);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-3);
+      transition: all 0.2s;
+      margin-top: 1px;
+    }
+
+    .ch-btn.active .ch-icon {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .ch-btn.done .ch-icon {
+      border-color: var(--success);
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .ch-text { flex: 1; min-width: 0; }
+
+    .ch-num {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--text-3);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .ch-btn.active .ch-num { color: var(--accent); }
+    .ch-btn.done .ch-num { color: var(--success); }
+
+    .ch-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-2);
+      line-height: 1.4;
+      display: block;
+    }
+
+    .ch-btn.active .ch-name { color: var(--text-1); }
+
+    /* Sidebar footer / progress */
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+    }
+
+    .overall-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-3);
+      margin-bottom: 8px;
+    }
+
+    .overall-label span:last-child { color: var(--accent); font-weight: 600; }
+
+    .overall-track {
+      height: 3px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .overall-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border-radius: 999px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    /* ── Main area ───────────────────────────────────────────── */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 0;
+    }
+
+    /* Top header */
+    .top-bar {
+      height: var(--header-h);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      background: rgba(14,9,24,0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .top-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 20px; height: 1.5px;
+      background: var(--text-2);
+      border-radius: 1px;
+      transition: all 0.2s;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-3);
+    }
+
+    .breadcrumb-sep { color: var(--text-3); }
+    .breadcrumb-current { color: var(--text-2); font-weight: 500; }
+
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ch-progress-pill {
+      font-size: 12px;
+      color: var(--text-2);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 12px;
+    }
+
+    .ch-progress-pill strong { color: var(--accent); }
+
+    /* Content scroll area */
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .content-area::-webkit-scrollbar { width: 4px; }
+    .content-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* Chapter panel */
+    .ch-panel { display: none; }
+    .ch-panel.active { display: block; }
+
+    /* Chapter hero */
+    .ch-hero {
+      padding: 40px 40px 28px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ch-hero::before {
+      content: attr(data-num);
+      position: absolute;
+      right: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 120px;
+      font-weight: 700;
+      color: rgba(238,79,39,0.06);
+      line-height: 1;
+      pointer-events: none;
+      letter-spacing: -4px;
+      user-select: none;
+    }
+
+    .ch-hero-tag {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .ch-hero h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .ch-hero p {
+      font-size: 14px;
+      color: var(--text-2);
+      max-width: 560px;
+      line-height: 1.65;
+    }
+
+    /* Chapter body */
+    .ch-body { padding: 32px 40px 40px; max-width: 760px; }
+
+    /* ── Concept box ─────────────────────────────────────────── */
+    .concept-box {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 18px 20px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .concept-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(238,79,39,0.4), transparent);
+    }
+
+    .concept-box h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .concept-box p {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.7;
+    }
+
+    /* ── Analogy grid ────────────────────────────────────────── */
+    .analogy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .analogy-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 18px 16px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .analogy-card:hover {
+      border-color: var(--border-hover);
+      background: var(--glass-hover);
+    }
+
+    .analogy-icon {
+      font-size: 22px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .analogy-card h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 6px;
+    }
+
+    .analogy-card p {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+
+    /* ── Keyword grid ────────────────────────────────────────── */
+    .kw-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+      margin-bottom: 12px;
+    }
+
+    .keyword-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .keyword-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 12px 14px;
+    }
+
+    .kw-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .kw-def {
+      font-size: 12px;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+
+    /* ── Steps list ──────────────────────────────────────────── */
+    .steps-list { margin-bottom: 28px; }
+
+    .step-item {
+      display: flex;
+      gap: 14px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .step-item:last-child { border-bottom: none; }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      border: 1px solid rgba(238,79,39,0.3);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+    }
+
+    .step-body { flex: 1; }
+
+    .step-body h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .step-body p {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.65;
+      margin-bottom: 8px;
+    }
+
+    .step-body p:last-child { margin-bottom: 0; }
+
+    /* ── Alert chips ─────────────────────────────────────────── */
+    .tip, .warn, .ok {
+      font-size: 13px;
+      padding: 9px 13px;
+      border-radius: var(--r-sm);
+      border: 1px solid;
+      line-height: 1.55;
+      margin-top: 8px;
+      display: block;
+    }
+
+    .tip  { background: var(--warn-bg);    border-color: var(--warn-bdr);    color: var(--warn); }
+    .warn { background: var(--danger-bg);  border-color: var(--danger-bdr);  color: var(--danger); }
+    .ok   { background: var(--success-bg); border-color: var(--success-bdr); color: var(--success); }
+
+    /* ── Checkpoint ──────────────────────────────────────────── */
+    .checkpoint {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 18px 20px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .checkpoint::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(52,211,153,0.4), transparent);
+    }
+
+    .checkpoint h4 {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--success);
+      margin-bottom: 12px;
+    }
+
+    .checkpoint label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text-2);
+      cursor: pointer;
+      margin-bottom: 10px;
+      line-height: 1.5;
+      transition: color 0.15s;
+    }
+
+    .checkpoint label:last-of-type { margin-bottom: 0; }
+
+    .checkpoint label input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px; height: 16px;
+      border: 1.5px solid var(--border-hover);
+      border-radius: 4px;
+      background: transparent;
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: all 0.15s;
+      position: relative;
+    }
+
+    .checkpoint label input[type="checkbox"]:checked {
+      background: var(--success);
+      border-color: var(--success);
+    }
+
+    .checkpoint label input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 10px;
+      color: #0e0918;
+      font-weight: 700;
+    }
+
+    .checkpoint label.checked { color: var(--text-1); }
+
+    /* ── Buttons ─────────────────────────────────────────────── */
+    .next-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      color: var(--text-1);
+      background: var(--glass);
+      border: 1px solid var(--border-hover);
+      border-radius: var(--r-sm);
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .next-btn:hover {
+      background: var(--glass-hover);
+      border-color: rgba(255,255,255,0.2);
+      box-shadow: 0 0 16px rgba(238,79,39,0.12);
+    }
+
+    .next-btn-arrow { color: var(--accent); font-size: 16px; }
+
+    /* ── Final screen ────────────────────────────────────────── */
+    #finalMsg {
+      display: none;
+      text-align: center;
+      margin-top: 32px;
+      padding: 32px 24px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #finalMsg::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(238,79,39,0.5), rgba(253,137,37,0.4), transparent);
+    }
+
+    .final-emoji { font-size: 48px; margin-bottom: 12px; display: block; }
+
+    #finalMsg h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 10px;
+    }
+
+    .final-desc {
+      font-size: 14px;
+      color: var(--text-2);
+      max-width: 480px;
+      margin: 0 auto 24px;
+      line-height: 1.7;
+    }
+
+    .built-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .built-card {
+      background: rgba(238,79,39,0.08);
+      border: 1px solid rgba(238,79,39,0.15);
+      border-radius: var(--r-sm);
+      padding: 12px 14px;
+    }
+
+    .built-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--accent);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .built-val {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-1);
+    }
+
+    .final-note {
+      font-size: 13px;
+      color: var(--text-3);
+      line-height: 1.65;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* ── Mobile overlay ──────────────────────────────────────── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 40;
+    }
+
+    /* ── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        top: 0; left: 0;
+        height: 100vh;
+        height: 100dvh;
+        z-index: 50;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        width: 280px;
+        /* Solid background on mobile — backdrop-filter causes blank/invisible content on some iOS */
+        background: #0e0918;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+
+      .sidebar.open { transform: translateX(0); }
+
+      .sidebar-overlay.open { display: block; }
+
+      .hamburger { display: flex; }
+
+      .ch-hero { padding: 24px 20px 20px; }
+      .ch-hero h1 { font-size: 20px; }
+      .ch-hero::before { display: none; }
+      .ch-body { padding: 20px 20px 32px; }
+
+      .analogy-grid { grid-template-columns: 1fr; }
+      .keyword-grid { grid-template-columns: 1fr; }
+      .built-grid   { grid-template-columns: 1fr; }
+
+      .top-bar { padding: 0 16px; }
+      .breadcrumb { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Background orbs -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- Sidebar overlay (mobile) -->
+<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<div class="app">
+
+  <!-- ── Sidebar ────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-tag">X Learn · Day 1</span>
+      <h2>從零到第一個 AI Agent</h2>
+      <p>n8n + OpenRouter 實戰課程</p>
+      <p style="font-size:11px;font-weight:700;letter-spacing:0.06em;color:var(--accent);margin-top:6px;">21 天，0 程式碼</p>
+    </div>
+
+    <nav class="ch-list">
+      <p class="ch-section-label">課程章節</p>
+
+      <button class="ch-btn active" data-ch="0" onclick="showChapter(0)">
+        <div class="ch-icon" id="icon-0">01</div>
+        <div class="ch-text">
+          <span class="ch-num">Chapter 01</span>
+          <span class="ch-name">先搞懂在做什麼</span>
+        </div>
+      </button>
+
+      <button class="ch-btn" data-ch="1" onclick="showChapter(1)">
+        <div class="ch-icon" id="icon-1">02</div>
+        <div class="ch-text">
+          <span class="ch-num">Chapter 02</span>
+          <span class="ch-name">取得 AI 鑰匙</span>
+        </div>
+      </button>
+
+      <button class="ch-btn" data-ch="2" onclick="showChapter(2)">
+        <div class="ch-icon" id="icon-2">03</div>
+        <div class="ch-text">
+          <span class="ch-num">Chapter 03</span>
+          <span class="ch-name">建立 n8n 帳號</span>
+        </div>
+      </button>
+
+      <button class="ch-btn" data-ch="3" onclick="showChapter(3)">
+        <div class="ch-icon" id="icon-3">04</div>
+        <div class="ch-text">
+          <span class="ch-num">Chapter 04</span>
+          <span class="ch-name">建立第一個 AI Agent</span>
+        </div>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="overall-label">
+        <span>整體進度</span>
+        <span id="overallPct">0%</span>
+      </div>
+      <div class="overall-track">
+        <div class="overall-fill" id="overallFill"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main ───────────────────────────────────────────────── -->
+  <div class="main">
+
+    <!-- Top bar -->
+    <header class="top-bar">
+      <div class="top-bar-left">
+        <button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="breadcrumb">
+          <span>Day 1</span>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-current" id="breadcrumbCurrent">先搞懂在做什麼</span>
+        </div>
+      </div>
+      <div class="top-bar-right">
+        <div class="ch-progress-pill">
+          章節 <strong id="chNum">1</strong> / 4
+        </div>
+      </div>
+    </header>
+
+    <!-- Scrollable content -->
+    <div class="content-area">
+
+      <!-- ════ Chapter 0: 先搞懂在做什麼 ════ -->
+      <div class="ch-panel active" id="ch-0">
+        <div class="ch-hero" data-num="01">
+          <span class="ch-hero-tag">Chapter 01 · 概念導入</span>
+          <h1>先搞懂在做什麼</h1>
+          <p>在動手之前，先弄清楚這堂課的全貌——你要建什麼、用什麼工具、為什麼這樣做。</p>
+        </div>
+        <div class="ch-body">
+
+          <div class="concept-box">
+            <h3>這堂課在做什麼？</h3>
+            <p>你將會動手建立一個「工作流程」——一張讓電腦幫你自動做事的流程圖。這個工作流程會連接到 AI，讓你可以直接跟 AI 對話，而且完全免費、不用自己寫程式。</p>
+          </div>
+
+          <div class="analogy-grid">
+            <div class="analogy-card">
+              <span class="analogy-icon">🔀</span>
+              <h4>n8n</h4>
+              <p>就像一塊「樂高積木底板」。你把各種積木（功能）拼在上面，設計出你想要的自動化流程，不需要自己刻積木。</p>
+            </div>
+            <div class="analogy-card">
+              <span class="analogy-icon">🗺️</span>
+              <h4>Open Router</h4>
+              <p>就像「電信公司」。它幫你接通到各種 AI 模型（GPT、Gemini、DeepSeek 等），而且有免費方案可以用。</p>
+            </div>
+            <div class="analogy-card">
+              <span class="analogy-icon">🔑</span>
+              <h4>API 金鑰</h4>
+              <p>就像「門禁卡」。你拿著這張卡片，n8n 才有辦法幫你去叫 AI 做事。等一下你會拿到自己的一張。</p>
+            </div>
+          </div>
+
+          <p class="kw-section-title">關鍵詞彙</p>
+          <div class="keyword-grid">
+            <div class="keyword-card">
+              <span class="kw-name">工作流程 (Workflow)</span>
+              <span class="kw-def">一張自動化流程圖，定義「發生什麼事 → 做什麼動作」</span>
+            </div>
+            <div class="keyword-card">
+              <span class="kw-name">觸發器 (Trigger)</span>
+              <span class="kw-def">工作流程的「起點」。例如：有人傳訊息進來</span>
+            </div>
+            <div class="keyword-card">
+              <span class="kw-name">節點 (Node)</span>
+              <span class="kw-def">流程圖上的每一個積木，代表一個動作或判斷</span>
+            </div>
+            <div class="keyword-card">
+              <span class="kw-name">AI Agent</span>
+              <span class="kw-def">能夠接收問題、思考並回答的 AI 節點</span>
+            </div>
+          </div>
+
+          <button class="next-btn" onclick="showChapter(1)">
+            我懂了，開始動手 <span class="next-btn-arrow">→</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ════ Chapter 1: 取得 AI 鑰匙 ════ -->
+      <div class="ch-panel" id="ch-1">
+        <div class="ch-hero" data-num="02">
+          <span class="ch-hero-tag">Chapter 02 · 帳號設定</span>
+          <h1>取得 AI 鑰匙</h1>
+          <p>去 Open Router 申請帳號，取得一把「API 金鑰」——讓 n8n 能代表你呼叫 AI 的通行證。</p>
+        </div>
+        <div class="ch-body">
+
+          <div class="concept-box">
+            <h3>這一段要做什麼？</h3>
+            <p>去 Open Router 申請帳號，取得一把「API 金鑰」。這把鑰匙等一下要填進 n8n，讓 n8n 能夠代表你去呼叫 AI。</p>
+          </div>
+
+          <div class="steps-list">
+            <div class="step-item">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <h4>打開 openrouter.ai</h4>
+                <p>在瀏覽器新分頁輸入 openrouter.ai，按下右上角的 Sign Up（如果你已經有帳號，就直接登入）。</p>
+                <span class="tip">💡 建議使用 Google 帳號登入，速度最快。</span>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <h4>同意條款並完成註冊</h4>
+                <p>依地區不同，可能會出現法律同意畫面，直接接受即可。進入後會問你幾個問題，隨意填寫就好。</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <h4>建立你的 API 金鑰</h4>
+                <p>有兩種情況：<br>① 系統可能會直接問你要不要建立金鑰，選「是」，給它一個名字（例如 n8n-course），其他設定留空即可。<br>② 如果沒有出現，就點右上角的頭像 → 選「Keys」→ 點藍色的「Create API Key」按鈕。</p>
+                <span class="tip">💡 金鑰格式長這樣：sk-or-xxxxxxxxxxxxxxxx（以 sk-or- 開頭）</span>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">4</div>
+              <div class="step-body">
+                <h4>複製並安全保存金鑰</h4>
+                <p>點「複製到剪貼簿」，然後立刻貼到一個安全的地方（記事本、備忘錄）。</p>
+                <span class="warn">⚠️ 這個金鑰只顯示一次！離開頁面後就看不到完整內容了。如果搞丟了，回來重新建立一把新的就好——可以建無限把。</span>
+                <span class="warn">⚠️ 貼到記事本時，確認沒有多餘的空格或換行。某些編輯器會自動把連字符「-」換成破折號「—」，這樣金鑰就會失效。</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="checkpoint">
+            <h4>完成確認</h4>
+            <label><input type="checkbox" onchange="updateCheck(this, 1)"> 我已經有 Open Router 帳號</label>
+            <label><input type="checkbox" onchange="updateCheck(this, 1)"> 我已經建立了 API 金鑰</label>
+            <label><input type="checkbox" onchange="updateCheck(this, 1)"> 金鑰已複製貼到安全的地方</label>
+          </div>
+
+          <button class="next-btn" onclick="showChapter(2)">
+            金鑰拿到了，繼續 <span class="next-btn-arrow">→</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ════ Chapter 2: 建立 n8n 帳號 ════ -->
+      <div class="ch-panel" id="ch-2">
+        <div class="ch-hero" data-num="03">
+          <span class="ch-hero-tag">Chapter 03 · 工具設定</span>
+          <h1>建立 n8n 帳號</h1>
+          <p>在 n8n 雲端版申請 14 天免費試用，準備好你的自動化工作台。</p>
+        </div>
+        <div class="ch-body">
+
+          <div class="concept-box">
+            <h3>這一段要做什麼？</h3>
+            <p>在 n8n 雲端版申請 14 天免費試用。n8n 是我們用來畫自動化流程的工具，整個課程都在這裡操作。</p>
+          </div>
+
+          <div class="steps-list">
+            <div class="step-item">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <h4>前往 n8n.io</h4>
+                <p>在瀏覽器新分頁輸入 n8n.io，找到「Get Started」或「Start Free Trial」按鈕並點擊。</p>
+                <span class="tip">💡 如果你之前用同一個 email 試用過 n8n，免費試用可能已用完。這種情況下需要付費（約 $24/月），或者用不同 email 重新試用。</span>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <h4>填寫帳號資料</h4>
+                <p>輸入你的姓名、Email、密碼，並設定一個工作區名稱（隨便取，例如你的名字）。電子報可以選擇訂閱或不訂閱。</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <h4>點「Start 14-day free trial」</h4>
+                <p>接著 n8n 會問幾個關於你公司或用途的問題。公司規模選「只有我」，團隊選「工程」或任何一個，公司描述選「自動化代理機構」，或直接跳過留空都可以。</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">4</div>
+              <div class="step-body">
+                <h4>跳過邀請成員</h4>
+                <p>它會問要不要邀請團隊成員進工作區。因為你是單獨學習，直接按「跳過」即可。</p>
+                <span class="ok">✓ 看到「正在啟動」或「Start Automating」畫面，就表示工作區已經建立完成！</span>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">5</div>
+              <div class="step-body">
+                <h4>認識主畫面</h4>
+                <p>你現在看到的就是 n8n 的主畫面（首頁）。這裡會列出所有你建立過的工作流程。目前是空的，很正常——接下來你要建第一個。</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="checkpoint">
+            <h4>完成確認</h4>
+            <label><input type="checkbox" onchange="updateCheck(this, 2)"> 我已經有 n8n 帳號，並看到主畫面</label>
+          </div>
+
+          <button class="next-btn" onclick="showChapter(3)">
+            帳號好了，來建 Agent！<span class="next-btn-arrow">→</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ════ Chapter 3: 建立第一個 AI Agent ════ -->
+      <div class="ch-panel" id="ch-3">
+        <div class="ch-hero" data-num="04">
+          <span class="ch-hero-tag">Chapter 04 · 實戰操作</span>
+          <h1>建立第一個 AI Agent</h1>
+          <p>建立你生平第一個 n8n 工作流程，連接到 AI，然後跟它說話。整個過程不需要打半行程式碼。</p>
+        </div>
+        <div class="ch-body">
+
+          <div class="concept-box">
+            <h3>這一段要做什麼？</h3>
+            <p>建立你生平第一個 n8n 工作流程，連接到 AI，然後跟它說話。整個過程不需要打半行程式碼。</p>
+          </div>
+
+          <div class="steps-list">
+            <div class="step-item">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <h4>建立新工作流程</h4>
+                <p>在 n8n 主畫面，點「從頭開始」或「新工作流程」（New Workflow）按鈕。你會進入一個空白的畫布。</p>
+                <span class="tip">💡 畫布上的空白區域就是你的「積木底板」，等一下所有節點都會出現在這裡。</span>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <h4>加入第一個節點：觸發器</h4>
+                <p>點畫布上的大「+」按鈕 → 右側會出現一個節點選單 → 找到「當聊天訊息收到時」（On chat message）→ 點它。<br>看完畫面後，按鍵盤左上角的 Esc 鍵，或點「返回畫布」回到畫布。</p>
+                <span class="tip">💡 這個節點的意思是：「當有人傳訊息進來，工作流程就開始跑。」它是整個工作流程的起點。</span>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <h4>加入 AI Agent 節點</h4>
+                <p>點觸發器節點右側的「+」號 → 點「AI」→ 點「AI Agent」（第一個選項）。<br>一個很大的節點會出現在畫布上。你可以用滑鼠拖動它，把它放在觸發器的右邊。</p>
+                <span class="tip">💡 AI Agent 節點是整個工作流程的大腦，它負責理解訊息並產生回覆。</span>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">4</div>
+              <div class="step-body">
+                <h4>設定 AI 模型：連接 Open Router</h4>
+                <p>在 AI Agent 節點裡，找到「聊天模型 (Chat Model)」旁邊的「+」號，點它。<br>搜尋 Open Router，選「OpenRouter Chat Model」，點進去。<br>在「憑證 (Credential)」欄位，點「在此建立新憑證」→ 把你剛才存好的 API 金鑰貼進去 → 點「儲存」。</p>
+                <span class="ok">✓ 儲存後，如果出現「測試成功」，表示金鑰正確！</span>
+                <span class="warn">⚠️ 如果出現紅色錯誤，回到 Open Router 重新建立一把金鑰再試。確認你貼的金鑰前後沒有多餘空格，格式是 sk-or-... 開頭。</span>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">5</div>
+              <div class="step-body">
+                <h4>選擇免費的 AI 模型</h4>
+                <p>在同一個畫面，找到「模型 (Model)」下拉選單。在搜尋框輸入「free」（英文），就會看到所有免費模型。<br>選一個你喜歡的，例如：openai/gpt-4o-mini:free（很多人用這個）。也可以選 DeepSeek 或 Gemini，都是免費的。<br>選完後按 Esc 回到畫布。</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">6</div>
+              <div class="step-body">
+                <h4>開啟聊天視窗，跟 AI 說話！</h4>
+                <p>點畫布右下角的「開啟聊天 (Open Chat)」按鈕 → 在輸入框打「嗨」，按送出。<br>看到右邊那個圖示在旋轉嗎？那代表工作流程正在執行，AI 正在思考。幾秒後，你應該會收到 AI 的回覆。</p>
+                <span class="ok">✓ 收到回覆了？恭喜！你的第一個 AI Agent 已經在運作了。</span>
+                <span class="tip">💡 試試看多問幾個問題，例如：「請說一個關於 AI 自動化的笑話」</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="checkpoint">
+            <h4>完成確認</h4>
+            <label><input type="checkbox" data-final onchange="updateCheck(this, 3)"> 工作流程建立完成（有觸發器 + AI Agent 兩個節點）</label>
+            <label><input type="checkbox" data-final onchange="updateCheck(this, 3)"> Open Router 連接成功（顯示測試成功）</label>
+            <label><input type="checkbox" data-final onchange="updateCheck(this, 3)"> 我傳了訊息，並且收到 AI 的回覆</label>
+          </div>
+
+          <!-- Final screen -->
+          <div id="finalMsg">
+            <span class="final-emoji">🎉</span>
+            <h2>你做到了！</h2>
+            <p class="final-desc">你剛建立了一個在雲端運作的 AI Agent，它透過 Open Router 免費呼叫 AI，由你在畫布上設計的工作流程驅動，而且全程不需要寫一行程式碼。</p>
+            <div class="built-grid">
+              <div class="built-card">
+                <span class="built-label">帳號建立</span>
+                <span class="built-val">Open Router + n8n</span>
+              </div>
+              <div class="built-card">
+                <span class="built-label">學會了</span>
+                <span class="built-val">Trigger + AI Agent 節點</span>
+              </div>
+              <div class="built-card">
+                <span class="built-label">成果</span>
+                <span class="built-val">第一個 AI 工作流程</span>
+              </div>
+            </div>
+            <p class="final-note">接下來的課程，我們會學習更多節點、讓 AI 能執行真實任務、記住對話歷史……三週後你可以建出能帶來商業價值的 AI 自動化系統。</p>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /content-area -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+  const CH_NAMES = ['先搞懂在做什麼', '取得 AI 鑰匙', '建立 n8n 帳號', '建立第一個 AI Agent'];
+  const TOTAL_CHS = 4;
+
+  // Load persisted state
+  const state = JSON.parse(localStorage.getItem('day1-state') || '{"checks":{},"done":{}}');
+
+  function saveState() {
+    localStorage.setItem('day1-state', JSON.stringify(state));
+  }
+
+  // Restore checkboxes
+  function restoreCheckboxes() {
+    document.querySelectorAll('.checkpoint input[type="checkbox"]').forEach(cb => {
+      const key = getCbKey(cb);
+      if (state.checks[key]) {
+        cb.checked = true;
+        cb.closest('label').classList.add('checked');
+      }
+    });
+    updateOverallProgress();
+    document.querySelectorAll('.ch-btn').forEach((btn, i) => {
+      if (state.done[i]) btn.classList.add('done');
+    });
+    if (state.done[3]) {
+      const finals = document.querySelectorAll('[data-final]');
+      if (Array.from(finals).every(f => f.checked)) {
+        document.getElementById('finalMsg').style.display = 'block';
+      }
+    }
+  }
+
+  function getCbKey(cb) {
+    const panel = cb.closest('.ch-panel');
+    const labels = Array.from(panel.querySelectorAll('.checkpoint label'));
+    const label = cb.closest('label');
+    return panel.id + '-' + labels.indexOf(label);
+  }
+
+  function showChapter(i) {
+    document.querySelectorAll('.ch-panel').forEach((p, idx) => {
+      p.classList.toggle('active', idx === i);
+    });
+    document.querySelectorAll('.ch-btn').forEach((b, idx) => {
+      b.classList.toggle('active', idx === i);
+    });
+    document.getElementById('breadcrumbCurrent').textContent = CH_NAMES[i];
+    document.getElementById('chNum').textContent = i + 1;
+    document.querySelector('.content-area').scrollTop = 0;
+    closeSidebar();
+  }
+
+  function updateCheck(el, chIdx) {
+    const label = el.closest('label');
+    label.classList.toggle('checked', el.checked);
+    state.checks[getCbKey(el)] = el.checked;
+
+    // Check chapter completion (all checkboxes in this chapter)
+    const panel = document.getElementById('ch-' + chIdx);
+    const allCbs = panel.querySelectorAll('.checkpoint input[type="checkbox"]');
+    const allDone = Array.from(allCbs).every(cb => cb.checked);
+
+    if (allDone) {
+      state.done[chIdx] = true;
+      document.querySelector('[data-ch="' + chIdx + '"]').classList.add('done');
+    } else {
+      delete state.done[chIdx];
+      document.querySelector('[data-ch="' + chIdx + '"]').classList.remove('done');
+    }
+
+    // Final message
+    if (chIdx === 3) {
+      const finals = document.querySelectorAll('[data-final]');
+      const allFinal = Array.from(finals).every(f => f.checked);
+      document.getElementById('finalMsg').style.display = allFinal ? 'block' : 'none';
+    }
+
+    updateOverallProgress();
+    saveState();
+  }
+
+  function updateOverallProgress() {
+    const doneCount = Object.keys(state.done).length;
+    const pct = Math.round((doneCount / TOTAL_CHS) * 100);
+    document.getElementById('overallPct').textContent = pct + '%';
+    document.getElementById('overallFill').style.width = pct + '%';
+
+    // Update sidebar icons for done chapters
+    for (let i = 0; i < TOTAL_CHS; i++) {
+      const icon = document.getElementById('icon-' + i);
+      if (state.done[i]) {
+        icon.textContent = '✓';
+      } else {
+        icon.textContent = String(i + 1).padStart(2, '0');
+      }
+    }
+  }
+
+  // Mobile sidebar
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  }
+
+  // Init
+  restoreCheckboxes();
+</script>
+</body>
+</html>
+
+
+
+
