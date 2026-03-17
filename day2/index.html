@@ -1,543 +1,873 @@
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 2 — 課程總覽 | X Learn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ── Tokens ──────────────────────────────────────────── */
+    :root {
+      --bg:            #0e0918;
+      --bg-2:          #1a1624;
+      --glass:         rgba(255,255,255,0.04);
+      --glass-hover:   rgba(255,255,255,0.07);
+      --border:        rgba(255,255,255,0.08);
+      --border-hover:  rgba(255,255,255,0.16);
 
-  .d2-wrapper {
-    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Inter', sans-serif);
-    color: var(--color-text-primary);
-    background: var(--color-background-primary);
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 0 0 2rem;
-  }
+      --accent:        #ee4f27;
+      --accent-dim:    rgba(238,79,39,0.15);
+      --accent-glow:   rgba(238,79,39,0.3);
+      --accent-2:      #fd8925;
 
-  /* ── Header ── */
-  .d2-header { padding: 1.5rem 1.5rem 0; }
+      --text-1:        #ffffff;
+      --text-2:        #c8c4b0;
+      --text-3:        #8a859e;
 
-  .d2-badge {
-    display: inline-block;
-    background: var(--color-background-success);
-    color: var(--color-text-success);
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    border-radius: 99px;
-    padding: 3px 10px;
-    margin-bottom: 0.75rem;
-  }
+      --success:       #34d399;
+      --success-bg:    rgba(52,211,153,0.1);
+      --success-bdr:   rgba(52,211,153,0.2);
 
-  .d2-header h1 {
-    font-size: 22px;
-    font-weight: 500;
-    line-height: 1.35;
-    margin-bottom: 0.6rem;
-  }
+      --info:          #60a5fa;
+      --info-bg:       rgba(96,165,250,0.1);
+      --info-bdr:      rgba(96,165,250,0.25);
 
-  .d2-header .d2-sub {
-    font-size: 15px;
-    color: var(--color-text-secondary);
-    line-height: 1.65;
-  }
+      --r:             12px;
+      --r-sm:          8px;
+    }
 
-  .d2-divider {
-    border: none;
-    border-top: 0.5px solid var(--color-border-tertiary);
-    margin: 1.75rem 0 0;
-  }
+    /* ── Reset ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* ── Tab Nav ── */
-  .tab-nav-wrap {
-    position: relative;
-    border-bottom: 0.5px solid var(--color-border-tertiary);
-    margin-bottom: 1.5rem;
-  }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text-1);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-  .tab-nav {
-    display: flex;
-    overflow-x: auto;
-    scrollbar-width: none;
-    padding: 0 1.5rem;
-    gap: 0;
-  }
-  .tab-nav::-webkit-scrollbar { display: none; }
+    /* ── Orbs ────────────────────────────────────────────── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+      animation: orb-drift 20s ease-in-out infinite alternate;
+    }
+    .orb-1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(238,79,39,0.12), transparent 70%);
+      top: -200px; left: -100px;
+    }
+    .orb-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(234,75,113,0.09), transparent 70%);
+      bottom: -150px; right: -100px;
+      animation-delay: -10s;
+    }
+    .orb-3 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(253,137,37,0.06), transparent 70%);
+      top: 50%; left: 50%;
+      animation-duration: 30s;
+    }
+    @keyframes orb-drift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(40px, 30px) scale(1.05); }
+    }
 
-  .tab-btn {
-    flex-shrink: 0;
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: var(--color-text-secondary);
-    font-size: 13px;
-    font-weight: 500;
-    padding: 10px 18px;
-    cursor: pointer;
-    white-space: nowrap;
-    margin-bottom: -0.5px;
-    transition: color .15s, border-color .15s;
-  }
-  .tab-btn.active {
-    color: var(--color-text-info, #378ADD);
-    border-bottom-color: #378ADD;
-  }
+    /* ── Top bar ─────────────────────────────────────────── */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      background: rgba(14,9,24,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
 
-  /* ── Tab Panels ── */
-  .tab-panel { display: none; padding: 0 1.5rem; }
-  .tab-panel.active { display: block; }
+    .top-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
 
-  /* ── Section Label ── */
-  .section-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--color-text-secondary);
-    margin-bottom: 1rem;
-  }
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-3);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .back-btn:hover { color: var(--text-2); }
 
-  /* ── Recap Card ── */
-  .recap-card {
-    border: 0.5px solid var(--color-border-secondary);
-    border-radius: 12px;
-    padding: 1.25rem;
-    display: flex;
-    gap: 0.75rem;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-  }
-  .recap-icon {
-    flex-shrink: 0;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--color-background-info);
-    color: var(--color-text-info);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    font-weight: 600;
-  }
-  .recap-body .recap-title {
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 4px;
-  }
-  .recap-body .recap-desc {
-    font-size: 13px;
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-  }
+    .top-divider {
+      width: 1px;
+      height: 16px;
+      background: var(--border-hover);
+    }
 
-  /* ── Highlight Box ── */
-  .highlight-box {
-    background: var(--color-background-secondary);
-    border-radius: 12px;
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-  }
-  .highlight-box .hb-title {
-    font-size: 15px;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-  }
-  .highlight-box .hb-desc {
-    font-size: 14px;
-    color: var(--color-text-secondary);
-    line-height: 1.7;
-  }
-  .hb-em {
-    font-weight: 500;
-    color: var(--color-text-primary);
-  }
+    .top-brand-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid rgba(238,79,39,0.25);
+      border-radius: 999px;
+      padding: 3px 10px;
+    }
 
-  /* ── Seed Visual ── */
-  .seed-visual {
-    border: 0.5px solid var(--color-border-secondary);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin: 1.25rem 0;
-    text-align: center;
-  }
-  .seed-row { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 0.75rem; }
-  .seed-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 0.25rem; }
-  .seed-expand-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--color-text-secondary);
-    margin: 0.75rem 0 8px;
-  }
-  .seed-note { font-size: 12px; color: var(--color-text-secondary); margin-top: 0.75rem; }
+    .top-brand-tag::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
 
-  .node {
-    border-radius: 8px;
-    padding: 6px 12px;
-    font-size: 12px;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .node-solid {
-    background: var(--color-background-info);
-    color: var(--color-text-info);
-    border: 0.5px solid var(--color-border-info);
-  }
-  .node-base {
-    background: var(--color-background-secondary);
-    color: var(--color-text-secondary);
-    border: 0.5px solid var(--color-border-secondary);
-  }
-  .node-dashed {
-    background: var(--color-background-secondary);
-    color: var(--color-text-secondary);
-    border: 1.5px dashed var(--color-border-secondary);
-  }
-  .arrow { font-size: 16px; color: var(--color-text-secondary); }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.8); }
+    }
 
-  /* ── Audience Grid ── */
-  .audience-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 1.25rem;
-  }
-  .audience-card {
-    border: 2px solid var(--color-border-info);
-    border-radius: 12px;
-    padding: 1rem;
-  }
-  .role-badge {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 500;
-    padding: 2px 8px;
-    border-radius: 99px;
-    background: var(--color-background-info);
-    color: var(--color-text-info);
-    margin-bottom: 0.5rem;
-  }
-  .audience-card .ac-title {
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 6px;
-  }
-  .audience-card .ac-desc {
-    font-size: 13px;
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-  }
+    .top-bar-right {
+      font-size: 12px;
+      color: var(--text-3);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 12px;
+    }
 
-  /* ── Spectrum Bar ── */
-  .spectrum-bar {
-    background: var(--color-background-secondary);
-    border-radius: 12px;
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-  }
-  .spectrum-bar .sb-title {
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 1rem;
-  }
-  .spectrum-track {
-    position: relative;
-    height: 6px;
-    border-radius: 99px;
-    background: linear-gradient(to right, #E1F5EE, #EBF3FB, #FAEEDA);
-    margin-bottom: 1rem;
-  }
-  .spectrum-dot {
-    position: absolute;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #378ADD;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
-  .spectrum-ticks {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--color-text-secondary);
-  }
+    /* ── Page hero ───────────────────────────────────────── */
+    .page-hero {
+      position: relative;
+      z-index: 1;
+      padding: 44px 40px 36px;
+      max-width: 860px;
+      margin: 0 auto;
+      border-bottom: 1px solid var(--border);
+    }
 
-  /* ── Outcome List ── */
-  .outcome-list {
-    list-style: none;
-    margin-bottom: 0;
-  }
-  .outcome-item {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    padding: 1rem 0;
-    border-bottom: 0.5px solid var(--color-border-tertiary);
-  }
-  .outcome-item:last-child { border-bottom: none; }
-  .outcome-num {
-    flex-shrink: 0;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--color-background-success);
-    color: var(--color-text-success);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 600;
-  }
-  .outcome-title {
-    font-size: 15px;
-    font-weight: 500;
-    margin-bottom: 4px;
-  }
-  .outcome-desc {
-    font-size: 13px;
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-  }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--success);
+      background: var(--success-bg);
+      border: 1px solid var(--success-bdr);
+      border-radius: 999px;
+      padding: 3px 10px;
+      margin-bottom: 14px;
+    }
 
-  /* ── Promise Box ── */
-  .promise-box {
-    border: 0.5px solid var(--color-border-secondary);
-    border-radius: 12px;
-    padding: 1.25rem;
-    margin-top: 1.25rem;
-    font-size: 14px;
-    color: var(--color-text-secondary);
-    line-height: 1.7;
-  }
-  .promise-em { font-weight: 500; color: var(--color-text-primary); }
+    .page-hero h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-1);
+      line-height: 1.3;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
 
-  /* ── Track Grid ── */
-  .track-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 1.25rem;
-  }
-  .track-card {
-    border: 0.5px solid var(--color-border-secondary);
-    border-radius: 12px;
-    padding: 1rem;
-  }
-  .track-card.current { border: 2px solid var(--color-border-info); }
-  .track-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--color-text-secondary);
-    margin-bottom: 6px;
-  }
-  .track-card h4 {
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 6px;
-  }
-  .track-card p {
-    font-size: 12px;
-    color: var(--color-text-secondary);
-    line-height: 1.5;
-  }
-  .track-chip {
-    display: inline-block;
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 99px;
-    margin-top: 8px;
-  }
-  .chip-eng  { background: #E6F1FB; color: #185FA5; }
-  .chip-lead { background: #EEEDFE; color: #3C3489; }
-  .chip-bld  { background: #E1F5EE; color: #0F6E56; }
-  .chip-here {
-    display: inline-block;
-    background: var(--color-background-info);
-    color: var(--color-text-info);
-    font-size: 11px;
-    font-weight: 500;
-    padding: 2px 8px;
-    border-radius: 99px;
-    margin-top: 6px;
-  }
+    .page-hero .hero-sub {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.65;
+      max-width: 580px;
+    }
 
-  .track-note {
-    font-size: 13px;
-    color: var(--color-text-secondary);
-    margin-bottom: 1.25rem;
-    line-height: 1.6;
-  }
+    /* ── Tab nav ─────────────────────────────────────────── */
+    .tab-nav-wrap {
+      position: relative;
+      z-index: 1;
+      border-bottom: 1px solid var(--border);
+      background: rgba(14,9,24,0.6);
+      backdrop-filter: blur(12px);
+    }
 
-  /* ── Week Timeline ── */
-  .week-timeline {
-    border: 0.5px solid var(--color-border-secondary);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  .week-row {
-    display: flex;
-    border-bottom: 0.5px solid var(--color-border-secondary);
-  }
-  .week-row:last-child { border-bottom: none; }
-  .week-label-cell {
-    width: 80px;
-    flex-shrink: 0;
-    background: var(--color-background-secondary);
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--color-text-secondary);
-    border-right: 0.5px solid var(--color-border-secondary);
-    display: flex;
-    align-items: center;
-    padding: 12px;
-  }
-  .week-content-cell {
-    flex: 1;
-    padding: 12px 16px;
-    font-size: 13px;
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-  }
-  .week-content-cell strong {
-    font-weight: 500;
-    color: var(--color-text-primary);
-    display: block;
-    margin-bottom: 2px;
-  }
+    .tab-nav {
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 0 40px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .tab-nav::-webkit-scrollbar { display: none; }
 
-  /* ── Instructor Card ── */
-  .instructor-card {
-    border: 0.5px solid var(--color-border-secondary);
-    border-radius: 12px;
-    padding: 1.25rem;
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
-    margin-bottom: 1.25rem;
-  }
-  .instructor-avatar {
-    flex-shrink: 0;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: var(--color-background-info);
-    color: var(--color-text-info);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: 500;
-  }
-  .instructor-name {
-    font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 4px;
-  }
-  .instructor-role {
-    font-size: 13px;
-    color: var(--color-text-secondary);
-    margin-bottom: 8px;
-  }
-  .cred-list { list-style: none; }
-  .cred-item {
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-    font-size: 13px;
-    color: var(--color-text-secondary);
-    padding: 5px 0;
-    border-bottom: 0.5px solid var(--color-border-tertiary);
-    line-height: 1.5;
-  }
-  .cred-item:last-child { border-bottom: none; }
-  .cred-dot {
-    flex-shrink: 0;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: #378ADD;
-    margin-top: 5px;
-  }
+    .tab-btn {
+      flex-shrink: 0;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-3);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 14px 18px;
+      cursor: pointer;
+      white-space: nowrap;
+      margin-bottom: -1px;
+      transition: color .15s, border-color .15s;
+    }
+    .tab-btn:hover { color: var(--text-2); }
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
 
-  /* ── Stat Row ── */
-  .stat-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin: 1.25rem 0;
-  }
-  .stat-card {
-    background: var(--color-background-secondary);
-    border-radius: 8px;
-    padding: 1rem;
-    text-align: center;
-  }
-  .stat-num {
-    font-size: 22px;
-    font-weight: 500;
-    margin-bottom: 4px;
-  }
-  .stat-label {
-    font-size: 12px;
-    color: var(--color-text-secondary);
-  }
+    /* ── Content area ────────────────────────────────────── */
+    .content-area {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 36px 40px 60px;
+    }
 
-  /* ── Honest Note ── */
-  .honest-note {
-    background: var(--color-background-secondary);
-    border-radius: 8px;
-    padding: 1rem 1.25rem;
-    font-size: 13px;
-    color: var(--color-text-secondary);
-    line-height: 1.65;
-  }
-  .honest-em { font-weight: 500; color: var(--color-text-primary); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
 
-  /* ── RWD ── */
-  @media (max-width: 500px) {
-    .audience-grid { grid-template-columns: 1fr; }
-    .track-grid    { grid-template-columns: 1fr; }
-    .stat-row      { grid-template-columns: repeat(3, 1fr); }
-  }
-</style>
+    /* ── Section label ───────────────────────────────────── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+      margin-bottom: 16px;
+    }
 
-<div class="d2-wrapper">
+    /* ── Glass card ──────────────────────────────────────── */
+    .glass-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
 
-  <!-- Header -->
-  <div class="d2-header">
-    <span class="d2-badge">Day 2 — 課程總覽</span>
-    <h1>這堂課是什麼、為什麼值得你花三週</h1>
-    <p class="d2-sub">在正式進入下一個專案之前，先花幾分鐘搞清楚：你正在學什麼、這對你有什麼用、三週後你能帶走什麼。</p>
-    <hr class="d2-divider">
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(238,79,39,0.4), transparent);
+    }
+
+    /* ── Recap card ──────────────────────────────────────── */
+    .recap-card {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .recap-icon {
+      flex-shrink: 0;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--success-bg);
+      border: 1px solid var(--success-bdr);
+      color: var(--success);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .recap-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 4px;
+    }
+
+    .recap-desc {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+
+    /* ── Concept box (accent top line = green) ───────────── */
+    .concept-box {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .concept-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(52,211,153,0.5), transparent);
+    }
+
+    .concept-box h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .concept-box p {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.7;
+    }
+
+    .concept-box p .em {
+      font-weight: 600;
+      color: var(--text-1);
+    }
+
+    /* ── Seed visual ─────────────────────────────────────── */
+    .seed-visual {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 24px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .seed-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .seed-caption {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-bottom: 16px;
+    }
+
+    .seed-expand-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-3);
+      margin: 16px 0 10px;
+    }
+
+    .seed-note {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 12px;
+    }
+
+    .node {
+      border-radius: var(--r-sm);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .node-base {
+      background: var(--glass);
+      color: var(--text-2);
+      border: 1px solid var(--border-hover);
+    }
+
+    .node-solid {
+      background: var(--info-bg);
+      color: var(--info);
+      border: 1px solid var(--info-bdr);
+    }
+
+    .node-dashed {
+      background: var(--glass);
+      color: var(--text-3);
+      border: 1.5px dashed var(--border-hover);
+    }
+
+    .arrow {
+      font-size: 16px;
+      color: var(--text-3);
+    }
+
+    /* ── Audience grid ───────────────────────────────────── */
+    .audience-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .audience-card {
+      background: var(--glass);
+      border: 1px solid var(--info-bdr);
+      border-radius: var(--r);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .audience-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(96,165,250,0.4), transparent);
+    }
+
+    .role-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: var(--info-bg);
+      color: var(--info);
+      border: 1px solid var(--info-bdr);
+      margin-bottom: 10px;
+    }
+
+    .audience-card .ac-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 6px;
+    }
+
+    .audience-card .ac-desc {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+
+    /* ── Spectrum bar ────────────────────────────────────── */
+    .spectrum-wrap {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 20px 22px;
+      margin-bottom: 16px;
+    }
+
+    .spectrum-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-2);
+      margin-bottom: 16px;
+    }
+
+    .spectrum-track {
+      position: relative;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(to right, #E1F5EE, #EBF3FB, #FAEEDA);
+      margin-bottom: 14px;
+    }
+
+    .spectrum-dot {
+      position: absolute;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--info);
+      top: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 8px rgba(96,165,250,0.5);
+    }
+
+    .spectrum-ticks {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-3);
+    }
+
+    /* ── Outcome list ────────────────────────────────────── */
+    .outcome-list {
+      list-style: none;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .outcome-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .outcome-item:last-child { border-bottom: none; }
+
+    .outcome-num {
+      flex-shrink: 0;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--success-bg);
+      border: 1px solid var(--success-bdr);
+      color: var(--success);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+
+    .outcome-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 5px;
+    }
+
+    .outcome-desc {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+
+    /* ── Track grid ──────────────────────────────────────── */
+    .track-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .track-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px;
+    }
+
+    .track-card.current {
+      border-color: var(--info-bdr);
+      background: rgba(96,165,250,0.04);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .track-card.current::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(96,165,250,0.5), transparent);
+    }
+
+    .track-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-3);
+      margin-bottom: 6px;
+    }
+
+    .track-card.current .track-label { color: var(--info); }
+
+    .track-card h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .track-card p {
+      font-size: 12px;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+
+    .track-chip {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-top: 10px;
+    }
+
+    .chip-eng  { background: rgba(96,165,250,0.12); color: #60a5fa; border: 1px solid rgba(96,165,250,0.25); }
+    .chip-lead { background: rgba(167,139,250,0.12); color: #a78bfa; border: 1px solid rgba(167,139,250,0.25); }
+    .chip-bld  { background: var(--success-bg); color: var(--success); border: 1px solid var(--success-bdr); }
+
+    .chip-here {
+      display: inline-block;
+      background: var(--info-bg);
+      color: var(--info);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--info-bdr);
+      margin-top: 6px;
+    }
+
+    .track-note {
+      font-size: 13px;
+      color: var(--text-2);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    /* ── Week timeline ───────────────────────────────────── */
+    .week-timeline {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .week-row {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .week-row:last-child { border-bottom: none; }
+
+    .week-label-cell {
+      width: 80px;
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.02);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-3);
+      border-right: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 14px 12px;
+    }
+
+    .week-content-cell {
+      flex: 1;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+
+    .week-content-cell strong {
+      font-weight: 600;
+      color: var(--text-1);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* ── Instructor card ─────────────────────────────────── */
+    .instructor-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 22px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .instructor-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(238,79,39,0.4), transparent);
+    }
+
+    .instructor-avatar {
+      flex-shrink: 0;
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: var(--info-bg);
+      border: 1px solid var(--info-bdr);
+      color: var(--info);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .instructor-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 4px;
+    }
+
+    .instructor-role {
+      font-size: 13px;
+      color: var(--text-3);
+      margin-bottom: 12px;
+    }
+
+    .cred-list { list-style: none; }
+
+    .cred-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 13px;
+      color: var(--text-2);
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.55;
+    }
+
+    .cred-item:last-child { border-bottom: none; }
+
+    .cred-dot {
+      flex-shrink: 0;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 5px;
+    }
+
+    /* ── Stat row ────────────────────────────────────────── */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-3);
+    }
+
+    /* ── Alert chip (tip / note) ─────────────────────────── */
+    .note {
+      font-size: 13px;
+      padding: 10px 14px;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--border);
+      background: var(--glass);
+      color: var(--text-2);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .note strong { color: var(--text-1); font-weight: 600; }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .page-hero  { padding: 28px 20px 24px; }
+      .page-hero h1 { font-size: 22px; }
+      .tab-nav    { padding: 0 16px; }
+      .content-area { padding: 24px 20px 48px; }
+      .audience-grid { grid-template-columns: 1fr; }
+      .track-grid    { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Background orbs -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- Top bar -->
+<header class="top-bar">
+  <div class="top-bar-left">
+    <a class="back-btn" href="../">← 返回主頁</a>
+    <div class="top-divider"></div>
+    <span class="top-brand-tag">X Learn · Day 2</span>
   </div>
+  <div class="top-bar-right">課程總覽</div>
+</header>
 
-  <!-- Tab Nav -->
-  <div class="tab-nav-wrap">
-    <div class="tab-nav">
-      <button class="tab-btn active" onclick="showTab(0)">昨天的成果</button>
-      <button class="tab-btn" onclick="showTab(1)">這是誰的課</button>
-      <button class="tab-btn" onclick="showTab(2)">三週後你能做什麼</button>
-      <button class="tab-btn" onclick="showTab(3)">課程地圖</button>
-      <button class="tab-btn" onclick="showTab(4)">關於講師</button>
-    </div>
+<!-- Page hero -->
+<div class="page-hero">
+  <span class="hero-badge">Day 2 — 課程總覽</span>
+  <h1>這堂課是什麼、為什麼值得你花三週</h1>
+  <p class="hero-sub">在正式進入下一個專案之前，先花幾分鐘搞清楚：你正在學什麼、這對你有什麼用、三週後你能帶走什麼。</p>
+</div>
+
+<!-- Tab nav -->
+<div class="tab-nav-wrap">
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab(0)">昨天的成果</button>
+    <button class="tab-btn" onclick="showTab(1)">這是誰的課</button>
+    <button class="tab-btn" onclick="showTab(2)">三週後你能做什麼</button>
+    <button class="tab-btn" onclick="showTab(3)">課程地圖</button>
+    <button class="tab-btn" onclick="showTab(4)">關於講師</button>
   </div>
+</div>
 
-  <!-- Tab 0: 昨天的成果 -->
+<!-- Content -->
+<div class="content-area">
+
+  <!-- ════ Tab 0: 昨天的成果 ════ -->
   <div class="tab-panel active" id="tab0">
     <p class="section-label">Day 1 回顧</p>
 
-    <div class="recap-card">
-      <div class="recap-icon">✓</div>
-      <div class="recap-body">
-        <p class="recap-title">你昨天真正做了什麼</p>
-        <p class="recap-desc">一個透過聊天介面呼叫 AI 的工作流程，連接到免費的 AI 模型，全程不需要寫程式。</p>
+    <div class="glass-card">
+      <div class="recap-card">
+        <div class="recap-icon">✓</div>
+        <div>
+          <p class="recap-title">你昨天真正做了什麼</p>
+          <p class="recap-desc">一個透過聊天介面呼叫 AI 的工作流程，連接到免費的 AI 模型，全程不需要寫程式。</p>
+        </div>
       </div>
     </div>
 
-    <div class="highlight-box">
-      <p class="hb-title">「這不就是 ChatGPT 嗎？」</p>
-      <p class="hb-desc">你可能會這樣想——這個問題問得很好。差別在這裡：你建的不是一個現成工具，而是一個<span class="hb-em">你可以自己控制、擴充、整合到任何業務流程</span>的框架。接下來幾週，這個框架會長出很多腿。</p>
+    <div class="concept-box">
+      <h3>「這不就是 ChatGPT 嗎？」</h3>
+      <p>你可能會這樣想——這個問題問得很好。差別在這裡：你建的不是一個現成工具，而是一個<span class="em">你可以自己控制、擴充、整合到任何業務流程</span>的框架。接下來幾週，這個框架會長出很多腿。</p>
     </div>
 
     <div class="seed-visual">
@@ -546,18 +876,18 @@
         <span class="arrow">→</span>
         <span class="node node-base">🤖 AI Agent</span>
       </div>
-      <p class="seed-label">你現在的工作流程（Day 1）</p>
+      <p class="seed-caption">你現在的工作流程（Day 1）</p>
 
       <p class="seed-expand-label">三週後可以長成的樣子</p>
 
-      <div class="seed-row" style="margin-bottom:8px;">
+      <div class="seed-row">
         <span class="node node-solid">💬 聊天觸發器</span>
         <span class="node node-solid">📧 Email 觸發器</span>
         <span class="node node-dashed">🗓 排程觸發器</span>
         <span class="node node-dashed">🔗 Webhook</span>
       </div>
 
-      <div class="seed-row">
+      <div class="seed-row" style="margin-top:8px">
         <span class="node node-solid">🤖 AI Agent</span>
         <span class="node node-solid">🔍 搜尋工具</span>
         <span class="node node-solid">📊 資料庫</span>
@@ -569,7 +899,7 @@
     </div>
   </div>
 
-  <!-- Tab 1: 這是誰的課 -->
+  <!-- ════ Tab 1: 這是誰的課 ════ -->
   <div class="tab-panel" id="tab1">
     <p class="section-label">這門課適合你嗎</p>
 
@@ -586,8 +916,8 @@
       </div>
     </div>
 
-    <div class="spectrum-bar">
-      <p class="sb-title">技術程度不是門檻，你在這條線上的任何位置都適合</p>
+    <div class="spectrum-wrap">
+      <p class="spectrum-title">技術程度不是門檻，你在這條線上的任何位置都適合</p>
       <div class="spectrum-track">
         <div class="spectrum-dot" style="left:10%"></div>
         <div class="spectrum-dot" style="left:35%"></div>
@@ -602,13 +932,13 @@
       </div>
     </div>
 
-    <div class="highlight-box">
-      <p class="hb-title">唯一的要求</p>
-      <p class="hb-desc">你想解決一個真實的問題，願意動手做。就這樣。</p>
+    <div class="concept-box">
+      <h3>唯一的要求</h3>
+      <p>你想解決一個真實的問題，願意動手做。就這樣。</p>
     </div>
   </div>
 
-  <!-- Tab 2: 三週後你能做什麼 -->
+  <!-- ════ Tab 2: 三週後你能做什麼 ════ -->
   <div class="tab-panel" id="tab2">
     <p class="section-label">三週後，你會帶走這三件事</p>
 
@@ -636,12 +966,13 @@
       </li>
     </ul>
 
-    <div class="promise-box">
-      <span class="promise-em">核心信念：</span>技術工具是手段，不是目的。我們建每一個東西，都是從「這能解決什麼問題、帶來什麼可衡量的影響」出發——而不只是「因為 AI 很酷」。
+    <div class="concept-box">
+      <h3>核心信念</h3>
+      <p>技術工具是手段，不是目的。我們建每一個東西，都是從「這能解決什麼問題、帶來什麼可衡量的影響」出發——而不只是「因為 AI 很酷」。</p>
     </div>
   </div>
 
-  <!-- Tab 3: 課程地圖 -->
+  <!-- ════ Tab 3: 課程地圖 ════ -->
   <div class="tab-panel" id="tab3">
     <p class="section-label">這門課在整個學習路徑的位置</p>
 
@@ -696,7 +1027,7 @@
     </div>
   </div>
 
-  <!-- Tab 4: 關於講師 -->
+  <!-- ════ Tab 4: 關於講師 ════ -->
   <div class="tab-panel" id="tab4">
     <p class="section-label">為什麼要聽這個人說話</p>
 
@@ -737,20 +1068,22 @@
       </div>
     </div>
 
-    <div class="honest-note">
-      <span class="honest-em">講師的一句老實話：</span>他說他在 AI 上的技術再高超，完全被「手眼協調能力極差」這件事抵消掉了——所以你看到他示範開飛機，那只是照慣例放的有趣照片，不代表他真的適合坐在駕駛艙。但如果你想學怎麼用 AI 做出業務影響力，他保證你來對地方了。
+    <div class="note">
+      <strong>講師的一句老實話：</strong>他說他在 AI 上的技術再高超，完全被「手眼協調能力極差」這件事抵消掉了——所以你看到他示範開飛機，那只是照慣例放的有趣照片，不代表他真的適合坐在駕駛艙。但如果你想學怎麼用 AI 做出業務影響力，他保證你來對地方了。
     </div>
   </div>
 
-</div>
+</div><!-- /content-area -->
 
 <script>
-function showTab(i) {
-  document.querySelectorAll('.tab-panel').forEach((p, j) => {
-    p.classList.toggle('active', j === i);
-  });
-  document.querySelectorAll('.tab-btn').forEach((b, j) => {
-    b.classList.toggle('active', j === i);
-  });
-}
+  function showTab(i) {
+    document.querySelectorAll('.tab-panel').forEach((p, j) => {
+      p.classList.toggle('active', j === i);
+    });
+    document.querySelectorAll('.tab-btn').forEach((b, j) => {
+      b.classList.toggle('active', j === i);
+    });
+  }
 </script>
+</body>
+</html>
