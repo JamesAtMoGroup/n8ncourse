@@ -21,7 +21,7 @@
       --accent-glow:  rgba(238,79,39,0.3);
       --accent-2:     #fd8925;
 
-      --text-1:       #f0eeff;
+      --text-1:       #ffffff;
       --text-2:       #c8c4b0;
       --text-3:       #8a859e;
 
@@ -254,6 +254,62 @@
       color: var(--text-3);
       letter-spacing: 0.04em;
     }
+
+    /* ── Knowledge filters ───────────────────────── */
+    .kn-filters {
+      margin-bottom: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .filter-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 8px;
+    }
+
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-pill {
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-3);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-pill:hover {
+      color: var(--text-2);
+      border-color: rgba(255,255,255,0.16);
+    }
+
+    .filter-pill.active {
+      background: var(--accent-dim);
+      border-color: rgba(238,79,39,0.4);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .filter-pill.tag-pill.active {
+      background: rgba(253,137,37,0.12);
+      border-color: rgba(253,137,37,0.35);
+      color: var(--accent-2);
+    }
+
+    .kn-hidden { display: none !important; }
 
     /* ── Section heading ─────────────────────────────── */
     .section-wrap {
@@ -546,15 +602,13 @@
       color: var(--text-2);
       line-height: 1.8;
       white-space: pre-wrap;
-      display: -webkit-box;
-      -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical;
+      max-height: calc(14px * 1.8 * 4);
       overflow: hidden;
+      transition: max-height 0.35s ease;
     }
 
     .kn-body.expanded {
-      display: block;
-      overflow: visible;
+      max-height: 9999px;
     }
 
     .kn-read-more {
@@ -572,6 +626,27 @@
 
     .kn-section { margin-top: 16px; }
     .kn-section:first-child { margin-top: 0; }
+
+    .kn-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .kn-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(253,137,37,0.1);
+      border: 1px solid rgba(253,137,37,0.25);
+      color: var(--accent-2);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .kn-tag:hover { background: rgba(253,137,37,0.2); }
 
     .kn-embed {
       position: relative;
@@ -693,6 +768,16 @@
       <h2>每日知識庫</h2>
       <p>每天更新的文章、影片與音訊內容</p>
     </div>
+    <div class="kn-filters" id="knFilters" style="display:none">
+      <div>
+        <p class="filter-label">📅 日期</p>
+        <div class="filter-pills" id="datePills"></div>
+      </div>
+      <div>
+        <p class="filter-label">🏷️ 標籤</p>
+        <div class="filter-pills" id="tagPills"></div>
+      </div>
+    </div>
     <div class="kn-feed" id="knowledgeFeed">
       <div class="kn-empty">載入中...</div>
     </div>
@@ -802,27 +887,91 @@
     return url.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/');
   }
 
+  let allPosts = [];
+  let activeDate = '全部';
+  let activeTags = new Set();
+
   function renderKnowledge(items) {
-    const feed = document.getElementById('knowledgeFeed');
     if (!items || items.length === 0) {
-      feed.innerHTML = '<div class="kn-empty">尚無內容，敬請期待。</div>';
+      document.getElementById('knowledgeFeed').innerHTML = '<div class="kn-empty">尚無內容，敬請期待。</div>';
+      return;
+    }
+    items.sort((a, b) => new Date(b.date) - new Date(a.date));
+    allPosts = items;
+    buildFilters(items);
+    renderFeed();
+  }
+
+  function buildFilters(items) {
+    // Dates
+    const dates = ['全部', ...new Set(items.map(i => i.date))];
+    document.getElementById('datePills').innerHTML = dates.map(d =>
+      `<button class="filter-pill ${d === '全部' ? 'active' : ''}" onclick="setDate('${d}')">${d === '全部' ? '全部' : formatDate(d)}</button>`
+    ).join('');
+
+    // Tags
+    const tags = [...new Set(items.flatMap(i => i.tags || []))].sort();
+    const tagEl = document.getElementById('tagPills');
+    if (tags.length > 0) {
+      tagEl.innerHTML = tags.map(t =>
+        `<button class="filter-pill tag-pill" onclick="toggleTag('${t}')" data-tag="${t}">${t}</button>`
+      ).join('');
+      document.getElementById('knFilters').style.display = 'flex';
+    } else {
+      // show only date filter if no tags
+      document.getElementById('knFilters').style.display = 'flex';
+      tagEl.parentElement.style.display = 'none';
+    }
+  }
+
+  function formatDate(d) {
+    const [y, m, day] = d.split('-');
+    return `${m}/${day}`;
+  }
+
+  function setDate(d) {
+    activeDate = d;
+    document.querySelectorAll('#datePills .filter-pill').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent === (d === '全部' ? '全部' : formatDate(d)));
+    });
+    renderFeed();
+  }
+
+  function toggleTag(tag) {
+    if (activeTags.has(tag)) activeTags.delete(tag);
+    else activeTags.add(tag);
+    document.querySelectorAll('#tagPills .filter-pill').forEach(btn => {
+      btn.classList.toggle('active', activeTags.has(btn.dataset.tag));
+    });
+    renderFeed();
+  }
+
+  function renderFeed() {
+    const feed = document.getElementById('knowledgeFeed');
+    const filtered = allPosts.filter(item => {
+      const dateMatch = activeDate === '全部' || item.date === activeDate;
+      const tagMatch  = activeTags.size === 0 || (item.tags || []).some(t => activeTags.has(t));
+      return dateMatch && tagMatch;
+    });
+
+    if (filtered.length === 0) {
+      feed.innerHTML = '<div class="kn-empty">沒有符合條件的內容</div>';
       return;
     }
 
-    items.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    feed.innerHTML = items.map((item, idx) => {
-      // Compute type badges from whichever fields are present
+    feed.innerHTML = filtered.map((item, idx) => {
       const badges = [];
       if (item.body)     badges.push('📄 文章');
       if (item.videoUrl) badges.push('🎬 影片');
       if (item.audioUrl) badges.push('🎵 音訊');
-      if (badges.length === 0) badges.push('📄 文章'); // fallback
-
+      if (badges.length === 0) badges.push('📄 文章');
       const badgeHTML = badges.map(b => `<span class="kn-type">${b}</span>`).join('');
 
-      let sections = '';
+      const tagHTML = (item.tags || []).length
+        ? `<div class="kn-tags">${item.tags.map(t => `<span class="kn-tag" onclick="toggleTag('${t}')">${t}</span>`).join('')}</div>`
+        : '';
 
+      let sections = '';
       if (item.body) {
         sections += `
           <div class="kn-section">
@@ -830,11 +979,9 @@
             <button class="kn-read-more" id="kn-btn-${idx}" onclick="toggleBody(${idx})">展開全文 ↓</button>
           </div>`;
       }
-
       if (item.videoUrl) {
         sections += `<div class="kn-section kn-embed"><iframe src="${toEmbed(item.videoUrl)}" allowfullscreen></iframe></div>`;
       }
-
       if (item.audioUrl) {
         sections += `<div class="kn-section"><audio class="kn-audio" controls><source src="${item.audioUrl}"></audio></div>`;
       }
@@ -843,17 +990,18 @@
         <div class="kn-card">
           <div class="kn-meta">${badgeHTML}<span class="kn-date">${item.date}</span></div>
           <h3 class="kn-title">${item.title}</h3>
+          ${tagHTML}
           ${sections}
         </div>`;
     }).join('');
 
-    // Hide "read more" button on short articles that don't overflow
+    // Show/hide read-more buttons
     requestAnimationFrame(() => {
-      items.forEach((item, idx) => {
+      filtered.forEach((item, idx) => {
         if (!item.body) return;
-        const el = document.getElementById('kn-body-' + idx);
+        const el  = document.getElementById('kn-body-' + idx);
         const btn = document.getElementById('kn-btn-' + idx);
-        if (el && btn && el.scrollHeight <= el.clientHeight + 4) btn.style.display = 'none';
+        if (el && btn && el.scrollHeight <= el.clientHeight + 2) btn.style.display = 'none';
       });
     });
   }
@@ -875,6 +1023,7 @@
 </script>
 </body>
 </html>
+
 
 
 
