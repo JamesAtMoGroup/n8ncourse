@@ -330,9 +330,9 @@
 <div id="gate">
   <div class="gate-card">
     <h2>🔐 管理員登入</h2>
-    <p>輸入管理員密碼即可發布內容</p>
+    <p>輸入 GitHub Classic Personal Access Token<br>（需要 <code>repo</code> 權限）</p>
     <div class="field">
-      <input type="password" id="passwordInput" placeholder="••••••••" autocomplete="off" />
+      <input type="password" id="passwordInput" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" />
     </div>
     <button class="btn btn-primary" onclick="connect()" style="width:100%">登入</button>
   </div>
@@ -423,54 +423,80 @@
 <div id="toast"></div>
 
 <script>
-  const N8N_READ  = 'https://xuecu-n8n-server.zeabur.app/webhook/knowledge-read';
-  const N8N_WRITE = 'https://xuecu-n8n-server.zeabur.app/webhook/knowledge-write';
+  const REPO = 'JamesAtMoGroup/n8ncourse';
+  const FILE = 'knowledge.json';
 
-  let PASSWORD = '';
-  let posts    = [];
+  let TOKEN   = '';
+  let fileSha = '';
+  let posts   = [];
   let selectedFile = null;
 
   // ── Auth ───────────────────────────────────────────────────────
   async function connect() {
-    PASSWORD = document.getElementById('passwordInput').value.trim();
-    if (!PASSWORD) return toast('請輸入密碼', 'error');
+    TOKEN = document.getElementById('passwordInput').value.trim();
+    if (!TOKEN) return toast('請輸入 Token', 'error');
 
-    // Test password by sending a no-op write
     try {
-      const r = await apiRead();
-      if (!r.ok) throw new Error();
+      const r = await ghGet();
+      if (!r.ok) { const e = await r.json(); throw new Error(e.message || r.status); }
       toast('登入成功！', 'success');
       document.getElementById('gate').style.display  = 'none';
       document.getElementById('panel').style.display = 'block';
       document.getElementById('statusDot').className  = 'status-dot connected';
       document.getElementById('statusText').textContent = '已連線';
       document.getElementById('fDate').value = new Date().toISOString().split('T')[0];
-      const data = await r.json();
-      posts = data.posts || [];
-      renderList();
-      document.getElementById('postCount').textContent = posts.length;
-    } catch {
-      toast('無法連線，請稍後再試', 'error');
+      await loadPosts();
+    } catch(e) {
+      toast('連線失敗：' + e.message, 'error');
     }
   }
 
-  // ── API helpers ────────────────────────────────────────────────
-  function apiRead() {
-    return fetch(N8N_READ);
-  }
-
-  function apiWrite(body) {
-    return fetch(N8N_WRITE, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: PASSWORD, ...body })
+  // ── GitHub API helpers ─────────────────────────────────────────
+  function ghGet() {
+    return fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
+      headers: { Authorization: `token ${TOKEN}` }
     });
   }
 
+  async function ghPut(content, message) {
+    const latest = await ghGet();
+    const d = await latest.json();
+    fileSha = d.sha;
+    return fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
+      method: 'PUT',
+      headers: { Authorization: `token ${TOKEN}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, content: utfToB64(JSON.stringify(content, null, 2)), sha: fileSha })
+    });
+  }
+
+  async function ghUploadAudio(filename, base64) {
+    const path = `audio/${filename}`;
+    let sha;
+    const existing = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`,
+      { headers: { Authorization: `token ${TOKEN}` } });
+    if (existing.ok) { sha = (await existing.json()).sha; }
+    const body = { message: `audio: ${filename}`, content: base64 };
+    if (sha) body.sha = sha;
+    const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+      method: 'PUT',
+      headers: { Authorization: `token ${TOKEN}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) { const e = await res.json(); throw new Error(e.message || 'Audio upload failed'); }
+    return `https://raw.githubusercontent.com/${REPO}/main/${path}`;
+  }
+
+  function utfToB64(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+
   async function loadPosts() {
-    const r = await apiRead();
-    const data = await r.json();
-    posts = data.posts || [];
+    const r = await ghGet();
+    const d = await r.json();
+    fileSha = d.sha;
+    const raw = atob(d.content.replace(/\n/g, ''));
+    const decoded = new TextDecoder('utf-8').decode(Uint8Array.from(raw, c => c.charCodeAt(0)));
+    posts = JSON.parse(decoded);
     posts.sort((a, b) => new Date(b.date) - new Date(a.date));
     renderList();
     document.getElementById('postCount').textContent = posts.length;
@@ -565,16 +591,9 @@
           showProgress(true);
           setProgress(20);
           const base64 = await fileToBase64(selectedFile);
-          setProgress(50);
-          // Send audio as base64 through n8n write endpoint
           const filename = `${Date.now()}-${selectedFile.name.replace(/\s+/g, '-')}`;
-          const ar = await apiWrite({ action: 'upload-audio', filename, base64, mimeType: selectedFile.type });
-          if (!ar.ok) {
-            const e = await ar.json().catch(()=>({}));
-            throw new Error(e.error || `HTTP ${ar.status}`);
-          }
-          const ad = await ar.json();
-          post.audioUrl = ad.audioUrl;
+          setProgress(50);
+          post.audioUrl = await ghUploadAudio(filename, base64);
           setProgress(80);
         } else if (manualUrl) {
           post.audioUrl = manualUrl;
@@ -584,10 +603,10 @@
         }
       }
 
-      const r = await apiWrite({ action: 'add', post });
+      const r = await ghPut([post, ...posts], `content: "${title}"`);
       if (!r.ok) {
         const e = await r.json().catch(()=>({}));
-        throw new Error(e.error || `HTTP ${r.status}`);
+        throw new Error(e.message || `HTTP ${r.status}`);
       }
 
       setProgress(100);
@@ -605,10 +624,11 @@
   // ── Delete ─────────────────────────────────────────────────────
   async function deletePost(date, title) {
     if (!confirm(`確定刪除「${title}」？`)) return;
-    const r = await apiWrite({ action: 'delete', date, title });
+    const updated = posts.filter(p => !(p.title === title && p.date === date));
+    const r = await ghPut(updated, 'content: delete post');
     if (!r.ok) {
       const e = await r.json().catch(()=>({}));
-      toast('刪除失敗：' + (e.error || `HTTP ${r.status}`), 'error');
+      toast('刪除失敗：' + (e.message || `HTTP ${r.status}`), 'error');
       return;
     }
     toast('已刪除', 'success');
