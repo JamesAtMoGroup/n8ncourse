@@ -55,8 +55,6 @@
       font-size: 13px; font-weight: 800; color: #fff;
     }
 
-    .logo-mark span { color: var(--accent); }
-
     .nav-status {
       font-size: 12px; color: var(--text-3);
       display: flex; align-items: center; gap: 8px;
@@ -161,8 +159,6 @@
       font-size: 12px;
       padding: 6px 14px;
     }
-
-    .btn-sm { font-size: 12px; padding: 6px 14px; }
 
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
@@ -293,7 +289,7 @@
 
     .post-meta {
       font-size: 12px; color: var(--text-3);
-      display: flex; gap: 8px;
+      display: flex; gap: 8px; flex-wrap: wrap;
     }
 
     .post-badge {
@@ -330,18 +326,15 @@
   </div>
 </nav>
 
-<!-- Token gate -->
+<!-- Password gate -->
 <div id="gate">
   <div class="gate-card">
     <h2>🔐 管理員登入</h2>
-    <p>輸入你的 GitHub Personal Access Token（需要 <code>repo</code> 權限）</p>
+    <p>輸入管理員密碼即可發布內容</p>
     <div class="field">
-      <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" />
+      <input type="password" id="passwordInput" placeholder="••••••••" autocomplete="off" />
     </div>
-    <button class="btn btn-primary" onclick="connect()" style="width:100%">連線</button>
-    <p style="margin-top:16px;font-size:11px;color:var(--text-3)">
-      Token 只存在本機記憶體，重新整理即清除
-    </p>
+    <button class="btn btn-primary" onclick="connect()" style="width:100%">登入</button>
   </div>
 </div>
 
@@ -430,87 +423,54 @@
 <div id="toast"></div>
 
 <script>
-  const REPO = 'JamesAtMoGroup/n8ncourse';
-  const FILE = 'knowledge.json';
-  let TOKEN = '';
-  let fileSha = '';
-  let posts   = [];
+  const N8N_READ  = 'https://xuecu-n8n-server.zeabur.app/webhook/knowledge-read';
+  const N8N_WRITE = 'https://xuecu-n8n-server.zeabur.app/webhook/knowledge-write';
+
+  let PASSWORD = '';
+  let posts    = [];
   let selectedFile = null;
 
-  // ── Auth ───────────────────────────────────────
+  // ── Auth ───────────────────────────────────────────────────────
   async function connect() {
-    TOKEN = document.getElementById('tokenInput').value.trim();
-    if (!TOKEN) return toast('請輸入 Token', 'error');
+    PASSWORD = document.getElementById('passwordInput').value.trim();
+    if (!PASSWORD) return toast('請輸入密碼', 'error');
 
+    // Test password by sending a no-op write
     try {
-      const r = await ghGet();
+      const r = await apiRead();
       if (!r.ok) throw new Error();
-      toast('連線成功！', 'success');
+      toast('登入成功！', 'success');
       document.getElementById('gate').style.display  = 'none';
       document.getElementById('panel').style.display = 'block';
       document.getElementById('statusDot').className  = 'status-dot connected';
       document.getElementById('statusText').textContent = '已連線';
       document.getElementById('fDate').value = new Date().toISOString().split('T')[0];
-      await loadPosts();
+      const data = await r.json();
+      posts = data.posts || [];
+      renderList();
+      document.getElementById('postCount').textContent = posts.length;
     } catch {
-      toast('Token 錯誤或無權限', 'error');
+      toast('無法連線，請稍後再試', 'error');
     }
   }
 
-  // ── GitHub API helpers ─────────────────────────
-  async function ghGet() {
-    return fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
-      headers: { Authorization: `token ${TOKEN}` }
+  // ── API helpers ────────────────────────────────────────────────
+  function apiRead() {
+    return fetch(N8N_READ);
+  }
+
+  function apiWrite(body) {
+    return fetch(N8N_WRITE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: PASSWORD, ...body })
     });
   }
 
-  async function ghPut(content, message) {
-    // Always refresh SHA before writing to avoid stale SHA conflicts
-    const latest = await ghGet();
-    const latestData = await latest.json();
-    fileSha = latestData.sha;
-
-    return fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
-      method: 'PUT',
-      headers: { Authorization: `token ${TOKEN}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message, content: utfToB64(JSON.stringify(content, null, 2)), sha: fileSha })
-    });
-  }
-
-  async function ghUploadAudio(filename, base64) {
-    const path = `audio/${filename}`;
-    // Check if exists (get sha)
-    let sha = undefined;
-    const existing = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
-      headers: { Authorization: `token ${TOKEN}` }
-    });
-    if (existing.ok) { const d = await existing.json(); sha = d.sha; }
-
-    const body = { message: `upload: audio ${filename}`, content: base64 };
-    if (sha) body.sha = sha;
-
-    const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
-      method: 'PUT',
-      headers: { Authorization: `token ${TOKEN}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    if (!res.ok) throw new Error('音訊上傳失敗');
-    return `https://raw.githubusercontent.com/${REPO}/main/${path}`;
-  }
-
-  // base64 that handles unicode
-  function utfToB64(str) {
-    return btoa(unescape(encodeURIComponent(str)));
-  }
-
-  // ── Load posts ─────────────────────────────────
   async function loadPosts() {
-    const r = await ghGet();
-    const d = await r.json();
-    fileSha = d.sha;
-    const raw = atob(d.content.replace(/\n/g, ''));
-    const decoded = new TextDecoder('utf-8').decode(Uint8Array.from(raw, c => c.charCodeAt(0)));
-    posts = JSON.parse(decoded);
+    const r = await apiRead();
+    const data = await r.json();
+    posts = data.posts || [];
     posts.sort((a, b) => new Date(b.date) - new Date(a.date));
     renderList();
     document.getElementById('postCount').textContent = posts.length;
@@ -519,7 +479,7 @@
   function renderList() {
     const el = document.getElementById('postsList');
     if (!posts.length) { el.innerHTML = '<div class="no-posts">尚無內容</div>'; return; }
-    el.innerHTML = posts.map((p, i) => {
+    el.innerHTML = posts.map((p) => {
       const badges = [];
       if (p.body)     badges.push('📄');
       if (p.videoUrl) badges.push('🎬');
@@ -534,20 +494,21 @@
               ${(p.tags||[]).map(t => `<span class="post-badge" style="background:rgba(253,137,37,0.1);border-color:rgba(253,137,37,0.25);color:var(--accent-2)">${t}</span>`).join('')}
             </div>
           </div>
-          <button class="btn btn-danger" onclick="deletePost(${i})">刪除</button>
+          <button class="btn btn-danger" onclick="deletePost('${p.date}','${escHtml(p.title)}')">刪除</button>
         </div>`;
     }).join('');
   }
 
-  // ── Type toggles ───────────────────────────────
+  function escHtml(s) { return s.replace(/'/g, "\\'"); }
+
+  // ── Type toggles ───────────────────────────────────────────────
   function toggleType(btn) {
     btn.classList.toggle('active');
-    const type = btn.dataset.type;
-    const field = document.getElementById('field-' + type);
-    field.style.display = btn.classList.contains('active') ? 'block' : 'none';
+    document.getElementById('field-' + btn.dataset.type).style.display =
+      btn.classList.contains('active') ? 'block' : 'none';
   }
 
-  // ── File select ────────────────────────────────
+  // ── File select ────────────────────────────────────────────────
   function onFileSelect(input) {
     selectedFile = input.files[0];
     document.getElementById('fileName').textContent = selectedFile ? selectedFile.name : '';
@@ -565,7 +526,7 @@
     }
   }
 
-  // ── Publish ────────────────────────────────────
+  // ── Publish ────────────────────────────────────────────────────
   async function publish() {
     const date  = document.getElementById('fDate').value.trim();
     const title = document.getElementById('fTitle').value.trim();
@@ -601,12 +562,19 @@
       if (audioActive) {
         const manualUrl = document.getElementById('fAudioUrl').value.trim();
         if (selectedFile) {
-          // Upload file to GitHub
           showProgress(true);
+          setProgress(20);
           const base64 = await fileToBase64(selectedFile);
+          setProgress(50);
+          // Send audio as base64 through n8n write endpoint
           const filename = `${Date.now()}-${selectedFile.name.replace(/\s+/g, '-')}`;
-          setProgress(40);
-          post.audioUrl = await ghUploadAudio(filename, base64);
+          const ar = await apiWrite({ action: 'upload-audio', filename, base64, mimeType: selectedFile.type });
+          if (!ar.ok) {
+            const e = await ar.json().catch(()=>({}));
+            throw new Error(e.error || `HTTP ${ar.status}`);
+          }
+          const ad = await ar.json();
+          post.audioUrl = ad.audioUrl;
           setProgress(80);
         } else if (manualUrl) {
           post.audioUrl = manualUrl;
@@ -616,12 +584,10 @@
         }
       }
 
-      // Prepend to posts and commit
-      const updated = [post, ...posts];
-      const r = await ghPut(updated, `content: "${title}"`);
+      const r = await apiWrite({ action: 'add', post });
       if (!r.ok) {
-        const errData = await r.json().catch(() => ({}));
-        throw new Error(errData.message || `HTTP ${r.status}`);
+        const e = await r.json().catch(()=>({}));
+        throw new Error(e.error || `HTTP ${r.status}`);
       }
 
       setProgress(100);
@@ -636,29 +602,28 @@
     }
   }
 
-  // ── Delete ─────────────────────────────────────
-  async function deletePost(idx) {
-    if (!confirm(`確定刪除「${posts[idx].title}」？`)) return;
-    posts.splice(idx, 1);
-    const r = await ghPut(posts, 'content: delete post');
+  // ── Delete ─────────────────────────────────────────────────────
+  async function deletePost(date, title) {
+    if (!confirm(`確定刪除「${title}」？`)) return;
+    const r = await apiWrite({ action: 'delete', date, title });
     if (!r.ok) {
-      const err = await r.json().catch(() => ({}));
-      toast('刪除失敗：' + (err.message || r.status), 'error');
-      await loadPosts(); return;
+      const e = await r.json().catch(()=>({}));
+      toast('刪除失敗：' + (e.error || `HTTP ${r.status}`), 'error');
+      return;
     }
     toast('已刪除', 'success');
     await loadPosts();
   }
 
-  // ── Helpers ────────────────────────────────────
+  // ── Helpers ────────────────────────────────────────────────────
   function resetForm() {
-    document.getElementById('fTitle').value    = '';
-    document.getElementById('fBody').value     = '';
-    document.getElementById('fVideoUrl').value = '';
-    document.getElementById('fAudioUrl').value = '';
+    document.getElementById('fTitle').value     = '';
+    document.getElementById('fBody').value      = '';
+    document.getElementById('fVideoUrl').value  = '';
+    document.getElementById('fAudioUrl').value  = '';
     document.getElementById('fAudioFile').value = '';
     document.getElementById('fileName').textContent = '';
-    document.getElementById('fTags').value = '';
+    document.getElementById('fTags').value      = '';
     selectedFile = null;
     document.querySelectorAll('.type-btn').forEach(b => {
       b.classList.remove('active');
@@ -690,11 +655,9 @@
     setTimeout(() => { el.className = ''; }, 3000);
   }
 
-  // Enter key on token input
-  document.getElementById('tokenInput').addEventListener('keydown', e => {
+  document.getElementById('passwordInput').addEventListener('keydown', e => {
     if (e.key === 'Enter') connect();
   });
 </script>
 </body>
 </html>
-
