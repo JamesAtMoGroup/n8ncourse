@@ -13,97 +13,137 @@
   },
   {
     "day": 3,
-    "title": "工作流程的條件判斷與分支",
+    "title": "用 n8n 打造 AI Agent：完整學習路線圖與工作流程設定",
     "status": "wip"
   },
   {
     "day": 4,
-    "title": "連接 Google Sheets 自動記錄",
+    "title": "什麼是 AI Agent？理解 n8n 中的 Agentic 工作流程",
     "status": "wip"
   },
   {
     "day": 5,
-    "title": "傳送 Email 與 Line 通知",
+    "title": "OpenAI API 設定：費用優化與免費替代方案指南",
     "status": "wip"
   },
   {
     "day": 6,
-    "title": "Webhook：讓外部服務叫醒你的 Agent",
+    "title": "如何用 n8n 建立 AI Agent 並整合 OpenAI API",
     "status": "wip"
   },
   {
     "day": 7,
-    "title": "排程自動化：每天固定時間執行",
+    "title": "理解 Agentic AI：AI Agent 如何透過 LLM 與提示詞運作",
     "status": "wip"
   },
   {
     "day": 8,
-    "title": "抓取網頁資料（Web Scraping）",
+    "title": "LLM 如何在 AI 中創造記憶與推理能力的假象",
     "status": "wip"
   },
   {
     "day": 9,
-    "title": "AI 摘要：讓 Agent 讀文件",
+    "title": "Agentic AI 系統與 LLM 工作流程中的工具呼叫原理",
     "status": "wip"
   },
   {
     "day": 10,
-    "title": "串接 Notion 打造知識庫",
+    "title": "如何評估 AI Agent：停止對 LLM 擬人化",
     "status": "wip"
   },
   {
     "day": 11,
-    "title": "向量資料庫與 RAG 入門",
+    "title": "如何操作 n8n 雲端介面：管理面板、執行個體與畫布教學",
     "status": "wip"
   },
   {
     "day": 12,
-    "title": "讓 AI 搜尋網路即時資訊",
+    "title": "如何用 n8n 建立 AI 工作流程：節點、觸發器與自動化",
     "status": "wip"
   },
   {
     "day": 13,
-    "title": "AI 圖片生成工作流程",
+    "title": "如何將 Google 試算表與 Google 雲端硬碟整合至 n8n 工作流程",
     "status": "wip"
   },
   {
     "day": 14,
-    "title": "多 Agent 協作：拆解複雜任務",
+    "title": "如何在 n8n 中建立整合 Google 雲端硬碟的 AI 工作流程",
     "status": "wip"
   },
   {
     "day": 15,
-    "title": "錯誤處理與工作流程穩定性",
+    "title": "如何用 n8n 和 Google 試算表自動化股票投資組合追蹤器",
     "status": "wip"
   },
   {
     "day": 16,
-    "title": "打造 Line Bot 智慧助理",
+    "title": "如何在 n8n 中建立 AI Agent 自動草擬 Gmail 回覆",
     "status": "wip"
   },
   {
     "day": 17,
-    "title": "打造 Telegram Bot",
+    "title": "理解 n8n 中的 JSON：鍵值對、物件與陣列",
     "status": "wip"
   },
   {
     "day": 18,
-    "title": "客服自動化：FAQ 智慧回覆",
+    "title": "n8n 驗證方式：API 金鑰、OAuth2 與工作流程整合",
     "status": "wip"
   },
   {
     "day": 19,
-    "title": "業務自動化：報價與跟進流程",
+    "title": "如何將 Pushover 通知整合至 n8n 工作流程",
     "status": "wip"
   },
   {
     "day": 20,
-    "title": "部署與分享你的工作流程",
+    "title": "用 n8n 建立 Telegram 機器人：完整 AI 聊天機器人整合教學",
     "status": "wip"
   },
   {
     "day": 21,
-    "title": "期末整合：打造你的 AI 助理系統",
+    "title": "如何將 Telegram 機器人整合至 n8n AI Agent 工作流程自動化",
+    "status": "wip"
+  },
+  {
+    "day": 22,
+    "title": "如何用 n8n OAuth 整合建立 Slack 機器人與自動化",
+    "status": "wip"
+  },
+  {
+    "day": 23,
+    "title": "逐步教學：用 OAuth2 和 Webhook 觸發器將 Slack 連接至 n8n",
+    "status": "wip"
+  },
+  {
+    "day": 24,
+    "title": "n8n JSON 工作流程教學：Webhook、驗證與整合",
+    "status": "wip"
+  },
+  {
+    "day": 25,
+    "title": "n8n 節點類型說明：核心節點、子節點與叢集節點",
+    "status": "wip"
+  },
+  {
+    "day": 26,
+    "title": "用 n8n 和 Google 試算表建立 AI 驅動的投資組合再平衡工具",
+    "status": "wip"
+  },
+  {
+    "day": 27,
+    "title": "Agentic AI 工作流程自動化：在自主性與指令之間取得平衡",
+    "status": "wip"
+  },
+  {
+    "day": 28,
+    "title": "如何將 Gmail 與 Pushover 通知整合至 n8n AI Agent",
+    "status": "wip"
+  },
+  {
+    "day": 29,
+    "title": "n8n 工作流程自動化：使用 If 節點實現條件邏輯",
     "status": "wip"
   }
 ]
