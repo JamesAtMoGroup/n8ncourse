@@ -1,11 +1,850 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
-<meta charset="utf-8">
-<meta http-equiv="refresh" content="0; url=../day1/">
-<link rel="canonical" href="../day1/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 1 — 從零到第一個 AI Agent | X Learn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0918;
+  --bg-2: #1a1624;
+  --accent: #ee4f27;
+  --accent-2: #fd8925;
+  --text-1: #ffffff;
+  --text-2: #c8c4b0;
+  --text-3: #8a859e;
+  --blue: #378ADD;
+  --blue-bg: rgba(55, 138, 221, 0.15);
+  --green: #1D9E75;
+  --green-bg: rgba(29, 158, 117, 0.15);
+  --yellow: #BA7517;
+  --yellow-bg: rgba(186, 117, 23, 0.15);
+  --red: #ee4f27;
+  --red-bg: rgba(238, 79, 39, 0.15);
+  --border: rgba(255,255,255,0.12);
+  --border-blue: rgba(55, 138, 221, 0.4);
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text-1);
+}
+
+/* NAV */
+.nav-bar {
+  background: var(--bg-2);
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 18px;
+  text-decoration: none;
+}
+
+.logo-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 5px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.logo-learn {
+  color: var(--accent);
+}
+
+.back-btn {
+  display: inline-block;
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  border-radius: 99px;
+  padding: 6px 14px;
+  font-size: 13px;
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.back-btn:hover {
+  border-color: var(--accent);
+  color: var(--text-1);
+}
+
+/* MAIN */
+main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* COURSE HEADER */
+.course-badge {
+  background: var(--blue-bg);
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border-radius: 99px;
+  padding: 3px 10px;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.course-title {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-1);
+  margin: 0 0 8px;
+}
+
+.course-subtitle {
+  font-size: 15px;
+  color: var(--text-2);
+  line-height: 1.65;
+  margin: 0 0 12px;
+}
+
+.meta-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.meta-item {
+  font-size: 13px;
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+}
+
+/* PROGRESS */
+.progress-bar {
+  height: 4px;
+  background: var(--bg-2);
+  border-radius: 99px;
+  margin: 20px 0 8px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: var(--blue);
+  border-radius: 99px;
+  height: 100%;
+  width: 25%;
+  transition: width 0.3s;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+/* NAV PILLS */
+.nav-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.nav-pill {
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-2);
+  font-family: 'Inter', sans-serif;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  outline: none;
+}
+
+.nav-pill:hover {
+  color: var(--text-1);
+  border-color: rgba(255,255,255,0.25);
+}
+
+.nav-pill.active {
+  background: var(--blue-bg);
+  color: var(--blue);
+  border-color: var(--border-blue);
+}
+
+/* SECTIONS */
+.section {
+  display: none;
+}
+
+/* CONCEPT BOX */
+.concept-box {
+  background: var(--bg-2);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.concept-box-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-1);
+  margin-bottom: 8px;
+}
+
+.concept-box-body {
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ANALOGY GRID */
+.analogy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin-bottom: 1.25rem;
+}
+
+.analogy-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  background: var(--bg);
+}
+
+.analogy-emoji {
+  font-size: 24px;
+  display: block;
+}
+
+.analogy-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-1);
+  margin: 8px 0 4px;
+}
+
+.analogy-desc {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* KEYWORD GRID */
+.keyword-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.keyword-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  background: var(--bg);
+}
+
+.term-name {
+  font-size: 13px;
+  color: var(--blue);
+  font-weight: 500;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.term-def {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* NEXT BUTTON */
+.next-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  border-radius: var(--radius-md);
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.15s, color 0.15s;
+  outline: none;
+}
+
+.next-btn:hover {
+  background: rgba(255,255,255,0.05);
+  color: var(--text-1);
+}
+
+/* STEPS */
+.steps-list {
+  margin-bottom: 1.25rem;
+}
+
+.step-row {
+  display: flex;
+  gap: 14px;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.step-row:last-child {
+  border-bottom: none;
+}
+
+.step-num {
+  width: 28px;
+  height: 28px;
+  background: var(--blue-bg);
+  color: var(--blue);
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-body {
+  flex: 1;
+}
+
+.step-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+
+.step-desc {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+/* TIP BOXES */
+.tip-box {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.tip {
+  background: var(--yellow-bg);
+  color: var(--yellow);
+}
+
+.warn {
+  background: var(--red-bg);
+  color: var(--red);
+}
+
+.ok {
+  background: var(--green-bg);
+  color: var(--green);
+}
+
+/* CHECKPOINT */
+.checkpoint {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  margin: 1.25rem 0;
+}
+
+.checkpoint-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-1);
+  margin-bottom: 12px;
+}
+
+.check-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 14px;
+  color: var(--text-2);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: color 0.15s;
+}
+
+.check-label:last-child {
+  border-bottom: none;
+}
+
+.check-label.checked {
+  color: var(--text-1);
+}
+
+.check-label input[type="checkbox"] {
+  accent-color: var(--blue);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* FINAL MESSAGE */
+#finalMsg {
+  display: none;
+  text-align: center;
+  padding: 2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-top: 1.5rem;
+}
+
+.final-emoji {
+  font-size: 48px;
+  display: block;
+}
+
+.final-title {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text-1);
+  margin: 12px 0 8px;
+}
+
+.final-desc {
+  font-size: 14px;
+  color: var(--text-2);
+  max-width: 480px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.7;
+}
+
+.what-you-built {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.built-card {
+  background: var(--bg-2);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  text-align: center;
+}
+
+.built-label {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.built-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-1);
+  display: block;
+}
+
+.final-footer {
+  font-size: 13px;
+  color: var(--text-3);
+  margin-top: 1.5rem;
+  line-height: 1.6;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* RESPONSIVE */
+@media (max-width: 500px) {
+  .analogy-grid { grid-template-columns: 1fr; }
+  .keyword-grid { grid-template-columns: 1fr; }
+  .what-you-built { grid-template-columns: 1fr; }
+  .nav-bar { padding: 12px 16px; }
+  main { padding: 24px 16px; }
+}
+</style>
 </head>
 <body>
-<script>window.location.replace("../day1/");</script>
+
+<nav class="nav-bar">
+  <a href="../" class="logo" style="text-decoration:none;">
+    <span class="logo-x">X</span>
+    <span class="logo-learn">Learn</span>
+  </a>
+  <a href="../" class="back-btn">← 返回課程</a>
+</nav>
+
+<main>
+  <!-- COURSE HEADER -->
+  <div>
+    <span class="course-badge">LECTURE 1 — N8N 入門</span>
+    <h1 class="course-title">從零到第一個 AI Agent</h1>
+    <p class="course-subtitle">不需要任何程式基礎。跟著做，20 分鐘內你就會擁有一個真正在運作的 AI 自動化工作流程。</p>
+    <div class="meta-row">
+      <span class="meta-item"><span class="dot" style="background:#1D9E75;"></span>完全免費開始</span>
+      <span class="meta-item"><span class="dot" style="background:#378ADD;"></span>不需寫程式</span>
+      <span class="meta-item"><span class="dot" style="background:#fd8925;"></span>約 20 分鐘</span>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-text" id="progressText">第 1 段，共 4 段</div>
+
+  <!-- NAV PILLS -->
+  <div class="nav-pills" style="margin-top:16px;">
+    <button class="nav-pill active" onclick="showSection(0)">先搞懂在做什麼</button>
+    <button class="nav-pill" onclick="showSection(1)">取得 AI 鑰匙</button>
+    <button class="nav-pill" onclick="showSection(2)">建立 n8n 帳號</button>
+    <button class="nav-pill" onclick="showSection(3)">建立第一個 AI Agent</button>
+  </div>
+
+  <!-- SECTION 0 -->
+  <div class="section" id="sec0" style="display:block;">
+
+    <div class="concept-box">
+      <div class="concept-box-title">這堂課在做什麼？</div>
+      <p class="concept-box-body">你將會動手建立一個「工作流程」——一張讓電腦幫你自動做事的流程圖。這個工作流程會連接到 AI，讓你可以直接跟 AI 對話，而且完全免費、不用自己寫程式。</p>
+    </div>
+
+    <div class="analogy-grid">
+      <div class="analogy-card">
+        <span class="analogy-emoji">🔀</span>
+        <div class="analogy-title">n8n</div>
+        <p class="analogy-desc">就像一塊「樂高積木底板」。你把各種積木（功能）拼在上面，設計出你想要的自動化流程，不需要自己刻積木。</p>
+      </div>
+      <div class="analogy-card">
+        <span class="analogy-emoji">🗺️</span>
+        <div class="analogy-title">Open Router</div>
+        <p class="analogy-desc">就像「電信公司」。它幫你接通到各種 AI 模型（GPT、Gemini、DeepSeek 等），而且有免費方案可以用。</p>
+      </div>
+      <div class="analogy-card">
+        <span class="analogy-emoji">🔑</span>
+        <div class="analogy-title">API 金鑰</div>
+        <p class="analogy-desc">就像「門禁卡」。你拿著這張卡片，n8n 才有辦法幫你去叫 AI 做事。等一下你會拿到自己的一張。</p>
+      </div>
+    </div>
+
+    <div class="keyword-grid">
+      <div class="keyword-card">
+        <span class="term-name">工作流程 (Workflow)</span>
+        <p class="term-def">一張自動化流程圖，定義「發生什麼事 → 做什麼動作」</p>
+      </div>
+      <div class="keyword-card">
+        <span class="term-name">觸發器 (Trigger)</span>
+        <p class="term-def">工作流程的「起點」。例如：有人傳訊息進來</p>
+      </div>
+      <div class="keyword-card">
+        <span class="term-name">節點 (Node)</span>
+        <p class="term-def">流程圖上的每一個積木，代表一個動作或判斷</p>
+      </div>
+      <div class="keyword-card">
+        <span class="term-name">AI Agent</span>
+        <p class="term-def">能夠接收問題、思考並回答的 AI 節點</p>
+      </div>
+    </div>
+
+    <button class="next-btn" onclick="showSection(1)">我懂了，開始動手 →</button>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section" id="sec1">
+
+    <div class="concept-box">
+      <div class="concept-box-title">這一段要做什麼？</div>
+      <p class="concept-box-body">去 Open Router 申請帳號，取得一把「API 金鑰」。這把鑰匙等一下要填進 n8n，讓 n8n 能夠代表你去呼叫 AI。</p>
+    </div>
+
+    <div class="steps-list">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">打開 openrouter.ai</div>
+          <div class="step-desc">在瀏覽器新分頁輸入 openrouter.ai，按下右上角的 Sign Up（如果你已經有帳號，就直接登入）。</div>
+          <div class="tip-box tip">💡 建議使用 Google 帳號登入，速度最快。</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">同意條款並完成註冊</div>
+          <div class="step-desc">依地區不同，可能會出現法律同意畫面，直接接受即可。進入後會問你幾個問題，隨意填寫就好。</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">建立你的 API 金鑰</div>
+          <div class="step-desc">有兩種情況：① 系統可能會直接問你要不要建立金鑰，選「是」，給它一個名字（例如 n8n-course），其他設定留空即可。② 如果沒有出現，就點右上角的頭像 → 選「Keys」→ 點藍色的「Create API Key」按鈕。</div>
+          <div class="tip-box tip">💡 金鑰格式長這樣：sk-or-xxxxxxxxxxxxxxxx（以 sk-or- 開頭）</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">複製並安全保存金鑰</div>
+          <div class="step-desc">點「複製到剪貼簿」，然後立刻貼到一個安全的地方（記事本、備忘錄）。</div>
+          <div class="tip-box warn">⚠️ 這個金鑰只顯示一次！離開頁面後就看不到完整內容了。如果搞丟了，回來重新建立一把新的就好——可以建無限把。</div>
+          <div class="tip-box warn">⚠️ 貼到記事本時，確認沒有多餘的空格或換行。某些編輯器會自動把連字符「-」換成破折號「—」，這樣金鑰就會失效。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <div class="checkpoint-title">完成了嗎？勾選確認：</div>
+      <label class="check-label">
+        <input type="checkbox" onchange="updateCheck(this)">
+        我已經有 Open Router 帳號
+      </label>
+      <label class="check-label">
+        <input type="checkbox" onchange="updateCheck(this)">
+        我已經建立了 API 金鑰
+      </label>
+      <label class="check-label">
+        <input type="checkbox" onchange="updateCheck(this)">
+        金鑰已複製貼到安全的地方
+      </label>
+    </div>
+
+    <button class="next-btn" onclick="showSection(2)">金鑰拿到了，繼續 →</button>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section" id="sec2">
+
+    <div class="concept-box">
+      <div class="concept-box-title">這一段要做什麼？</div>
+      <p class="concept-box-body">在 n8n 雲端版申請 14 天免費試用。n8n 是我們用來畫自動化流程的工具，整個課程都在這裡操作。</p>
+    </div>
+
+    <div class="steps-list">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">前往 n8n.io</div>
+          <div class="step-desc">在瀏覽器新分頁輸入 n8n.io，找到「Get Started」或「Start Free Trial」按鈕並點擊。</div>
+          <div class="tip-box tip">💡 如果你之前用同一個 email 試用過 n8n，免費試用可能已用完。這種情況下需要付費（約 $24/月），或者用不同 email 重新試用。</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">填寫帳號資料</div>
+          <div class="step-desc">輸入你的姓名、Email、密碼，並設定一個工作區名稱（隨便取，例如你的名字）。電子報可以選擇訂閱或不訂閱。</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">點「Start 14-day free trial」</div>
+          <div class="step-desc">接著 n8n 會問幾個關於你公司或用途的問題。這些都可以隨意填：公司規模選「只有我」，團隊選「工程」或任何一個，公司描述選「自動化代理機構」，或直接跳過留空都可以。</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">跳過邀請成員</div>
+          <div class="step-desc">它會問要不要邀請團隊成員進工作區。因為你是單獨學習，直接按「跳過」即可。</div>
+          <div class="tip-box ok">✓ 看到「正在啟動」或「Start Automating」畫面，就表示工作區已經建立完成！</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">認識主畫面</div>
+          <div class="step-desc">你現在看到的就是 n8n 的主畫面（首頁）。這裡會列出所有你建立過的工作流程。目前是空的，很正常——接下來你要建第一個。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <div class="checkpoint-title">完成了嗎？勾選確認：</div>
+      <label class="check-label">
+        <input type="checkbox" onchange="updateCheck(this)">
+        我已經有 n8n 帳號，並看到主畫面
+      </label>
+    </div>
+
+    <button class="next-btn" onclick="showSection(3)">帳號好了，來建 Agent！→</button>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section" id="sec3">
+
+    <div class="concept-box">
+      <div class="concept-box-title">這一段要做什麼？</div>
+      <p class="concept-box-body">建立你生平第一個 n8n 工作流程，連接到 AI，然後跟它說話。整個過程不需要打半行程式碼。</p>
+    </div>
+
+    <div class="steps-list">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">建立新工作流程</div>
+          <div class="step-desc">在 n8n 主畫面，點「從頭開始」或「新工作流程」（New Workflow）按鈕。你會進入一個空白的畫布。</div>
+          <div class="tip-box tip">💡 畫布上的空白區域就是你的「積木底板」，等一下所有節點都會出現在這裡。</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">加入第一個節點：觸發器</div>
+          <div class="step-desc">點畫布上的大「+」按鈕 → 右側會出現一個節點選單 → 找到「當聊天訊息收到時」（On chat message）→ 點它。看完畫面後，按鍵盤左上角的 Esc 鍵，或點「返回畫布」回到畫布。</div>
+          <div class="tip-box tip">💡 這個節點的意思是：「當有人傳訊息進來，工作流程就開始跑。」它是整個工作流程的起點。</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">加入 AI Agent 節點</div>
+          <div class="step-desc">點觸發器節點右側的「+」號 → 點「AI」→ 點「AI Agent」（第一個選項）。一個很大的節點會出現在畫布上。你可以用滑鼠拖動它，把它放在觸發器的右邊。</div>
+          <div class="tip-box tip">💡 AI Agent 節點是整個工作流程的大腦，它負責理解訊息並產生回覆。</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">設定 AI 模型：連接 Open Router</div>
+          <div class="step-desc">在 AI Agent 節點裡，找到「聊天模型 (Chat Model)」旁邊的「+」號，點它。搜尋 Open Router，選「OpenRouter Chat Model」，點進去。在「憑證 (Credential)」欄位，點「在此建立新憑證」→ 把你剛才存好的 API 金鑰貼進去 → 點「儲存」。</div>
+          <div class="tip-box ok">✓ 儲存後，如果出現「測試成功」，表示金鑰正確！</div>
+          <div class="tip-box warn">⚠️ 如果出現紅色錯誤，回到 Open Router 重新建立一把金鑰再試。確認你貼的金鑰前後沒有多餘空格，格式是 sk-or-... 開頭。</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">選擇免費的 AI 模型</div>
+          <div class="step-desc">在同一個畫面，找到「模型 (Model)」下拉選單。在搜尋框輸入「free」（英文），就會看到所有免費模型。選一個你喜歡的，例如：openai/gpt-4o-mini:free（很多人用這個）。也可以選 DeepSeek 或 Gemini，都是免費的。選完後按 Esc 回到畫布。</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="step-title">開啟聊天視窗，跟 AI 說話！</div>
+          <div class="step-desc">點畫布右下角的「開啟聊天 (Open Chat)」按鈕 → 在輸入框打「嗨」，按送出。看到右邊那個圖示在旋轉嗎？那代表工作流程正在執行，AI 正在思考。幾秒後，你應該會收到 AI 的回覆。</div>
+          <div class="tip-box ok">✓ 收到回覆了？恭喜！你的第一個 AI Agent 已經在運作了。</div>
+          <div class="tip-box tip">💡 試試看多問幾個問題，例如：「請說一個關於 AI 自動化的笑話」</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="checkpoint" id="sec3Checks">
+      <div class="checkpoint-title">完成了嗎？勾選確認：</div>
+      <label class="check-label">
+        <input type="checkbox" id="chk3a" onchange="updateCheck(this)">
+        工作流程建立完成（有觸發器 + AI Agent 兩個節點）
+      </label>
+      <label class="check-label">
+        <input type="checkbox" id="chk3b" onchange="updateCheck(this)">
+        Open Router 連接成功（顯示測試成功）
+      </label>
+      <label class="check-label">
+        <input type="checkbox" id="chk3c" onchange="updateCheck(this)">
+        我傳了訊息，並且收到 AI 的回覆
+      </label>
+    </div>
+
+    <div id="finalMsg">
+      <span class="final-emoji">🎉</span>
+      <div class="final-title">你做到了！</div>
+      <p class="final-desc">你剛建立了一個在雲端運作的 AI Agent，它透過 Open Router 免費呼叫 AI，由你在畫布上設計的工作流程驅動，而且全程不需要寫一行程式碼。</p>
+      <div class="what-you-built">
+        <div class="built-card">
+          <span class="built-label">帳號建立</span>
+          <span class="built-value">Open Router + n8n</span>
+        </div>
+        <div class="built-card">
+          <span class="built-label">學會了</span>
+          <span class="built-value">Trigger + AI Agent 節點</span>
+        </div>
+        <div class="built-card">
+          <span class="built-label">成果</span>
+          <span class="built-value">第一個 AI 工作流程</span>
+        </div>
+      </div>
+      <p class="final-footer">接下來的課程，我們會學習更多節點、讓 AI 能執行真實任務、記住對話歷史……三週後你可以建出能帶來商業價值的 AI 自動化系統。</p>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+function showSection(i) {
+  const sections = document.querySelectorAll('.section');
+  sections.forEach((s, j) => s.style.display = j === i ? 'block' : 'none');
+  const pills = document.querySelectorAll('.nav-pill');
+  pills.forEach((p, j) => p.classList.toggle('active', j === i));
+  const pct = [25, 50, 75, 100][i];
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `第 ${i+1} 段，共 4 段`;
+}
+
+function updateCheck(el) {
+  el.parentElement.classList.toggle('checked', el.checked);
+  // Check if all sec3 checkboxes are checked
+  const sec3checks = document.querySelectorAll('#sec3 input[type=checkbox]');
+  const allDone = Array.from(sec3checks).every(c => c.checked);
+  const finalMsg = document.getElementById('finalMsg');
+  if (finalMsg) finalMsg.style.display = allDone ? 'block' : 'none';
+}
+</script>
+
 </body>
 </html>
