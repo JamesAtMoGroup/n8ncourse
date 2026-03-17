@@ -7,12 +7,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <style>
-    /* ── Tokens ──────────────────────────────────────────── */
+    /* ── Tokens ──────────────────────────────────────────────── */
     :root {
       --bg:            #0e0918;
       --bg-2:          #1a1624;
       --glass:         rgba(255,255,255,0.04);
       --glass-hover:   rgba(255,255,255,0.07);
+      --glass-active:  rgba(238,79,39,0.12);
       --border:        rgba(255,255,255,0.08);
       --border-hover:  rgba(255,255,255,0.16);
 
@@ -33,22 +34,23 @@
       --info-bg:       rgba(96,165,250,0.1);
       --info-bdr:      rgba(96,165,250,0.25);
 
+      --sidebar-w:     272px;
+      --header-h:      56px;
       --r:             12px;
       --r-sm:          8px;
     }
 
-    /* ── Reset ───────────────────────────────────────────── */
+    /* ── Reset ───────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg);
       color: var(--text-1);
-      min-height: 100vh;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
-    /* ── Orbs ────────────────────────────────────────────── */
+    /* ── Animated background orbs ────────────────────────────── */
     .orb {
       position: fixed;
       border-radius: 50%;
@@ -79,17 +81,220 @@
       to   { transform: translate(40px, 30px) scale(1.05); }
     }
 
-    /* ── Top bar ─────────────────────────────────────────── */
+    /* ── App shell ───────────────────────────────────────────── */
+    .app {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      height: 100vh;
+      height: 100dvh;
+    }
+
+    /* ── Sidebar ─────────────────────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: rgba(14,9,24,0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .sidebar-brand {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid rgba(238,79,39,0.25);
+      border-radius: 999px;
+      padding: 3px 10px;
+      margin-bottom: 10px;
+    }
+
+    .brand-tag::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .sidebar-brand h2 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-1);
+      line-height: 1.4;
+      margin-bottom: 4px;
+    }
+
+    .sidebar-brand p {
+      font-size: 12px;
+      color: var(--text-3);
+    }
+
+    /* Tab list */
+    .tab-list {
+      padding: 12px 12px 0;
+      flex: 1;
+    }
+
+    .tab-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      padding: 8px 8px 4px;
+    }
+
+    .tab-sidebar-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      width: 100%;
+      padding: 10px 10px;
+      border: none;
+      background: transparent;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+      margin-bottom: 2px;
+      position: relative;
+    }
+
+    .tab-sidebar-btn:hover { background: var(--glass-hover); }
+
+    .tab-sidebar-btn.active {
+      background: var(--glass-active);
+      border: 1px solid rgba(238,79,39,0.2);
+    }
+
+    .tab-sidebar-btn.viewed .tab-icon {
+      border-color: var(--success);
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .tab-icon {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-hover);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-3);
+      transition: all 0.2s;
+      margin-top: 1px;
+    }
+
+    .tab-sidebar-btn.active .tab-icon {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .tab-text { flex: 1; min-width: 0; }
+
+    .tab-num {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--text-3);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .tab-sidebar-btn.active .tab-num { color: var(--accent); }
+    .tab-sidebar-btn.viewed .tab-num { color: var(--success); }
+
+    .tab-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-2);
+      line-height: 1.4;
+      display: block;
+    }
+
+    .tab-sidebar-btn.active .tab-name { color: var(--text-1); }
+
+    /* Sidebar footer / progress */
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+    }
+
+    .overall-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-3);
+      margin-bottom: 8px;
+    }
+
+    .overall-label span:last-child { color: var(--accent); font-weight: 600; }
+
+    .overall-track {
+      height: 3px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .overall-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border-radius: 999px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    /* ── Main area ───────────────────────────────────────────── */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 0;
+    }
+
+    /* Top header */
     .top-bar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      height: 56px;
+      height: var(--header-h);
+      flex-shrink: 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 28px;
-      background: rgba(14,9,24,0.85);
+      padding: 0 24px;
+      background: rgba(14,9,24,0.8);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
@@ -98,7 +303,25 @@
     .top-bar-left {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 20px; height: 1.5px;
+      background: var(--text-2);
+      border-radius: 1px;
+      transition: all 0.2s;
     }
 
     .back-btn {
@@ -119,138 +342,95 @@
       background: var(--border-hover);
     }
 
-    .top-brand-tag {
-      display: inline-flex;
+    .breadcrumb {
+      display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--accent);
-      background: var(--accent-dim);
-      border: 1px solid rgba(238,79,39,0.25);
-      border-radius: 999px;
-      padding: 3px 10px;
-    }
-
-    .top-brand-tag::before {
-      content: '';
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--accent);
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50%       { opacity: 0.5; transform: scale(0.8); }
-    }
-
-    .top-bar-right {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--text-3);
+    }
+
+    .breadcrumb-sep { color: var(--text-3); }
+    .breadcrumb-current { color: var(--text-2); font-weight: 500; }
+
+    .tab-progress-pill {
+      font-size: 12px;
+      color: var(--text-2);
       background: var(--glass);
       border: 1px solid var(--border);
       border-radius: 999px;
       padding: 4px 12px;
     }
 
-    /* ── Page hero ───────────────────────────────────────── */
-    .page-hero {
-      position: relative;
-      z-index: 1;
-      padding: 44px 40px 36px;
-      max-width: 860px;
-      margin: 0 auto;
-      border-bottom: 1px solid var(--border);
-    }
+    .tab-progress-pill strong { color: var(--accent); }
 
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: var(--success);
-      background: var(--success-bg);
-      border: 1px solid var(--success-bdr);
-      border-radius: 999px;
-      padding: 3px 10px;
-      margin-bottom: 14px;
-    }
-
-    .page-hero h1 {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--text-1);
-      line-height: 1.3;
-      margin-bottom: 10px;
-      letter-spacing: -0.5px;
-    }
-
-    .page-hero .hero-sub {
-      font-size: 15px;
-      color: var(--text-2);
-      line-height: 1.65;
-      max-width: 580px;
-    }
-
-    /* ── Tab nav ─────────────────────────────────────────── */
-    .tab-nav-wrap {
-      position: relative;
-      z-index: 1;
-      border-bottom: 1px solid var(--border);
-      background: rgba(14,9,24,0.6);
-      backdrop-filter: blur(12px);
-    }
-
-    .tab-nav {
-      display: flex;
-      overflow-x: auto;
-      scrollbar-width: none;
-      padding: 0 40px;
-      max-width: 860px;
-      margin: 0 auto;
-    }
-    .tab-nav::-webkit-scrollbar { display: none; }
-
-    .tab-btn {
-      flex-shrink: 0;
-      background: transparent;
-      border: none;
-      border-bottom: 2px solid transparent;
-      color: var(--text-3);
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 500;
-      padding: 14px 18px;
-      cursor: pointer;
-      white-space: nowrap;
-      margin-bottom: -1px;
-      transition: color .15s, border-color .15s;
-    }
-    .tab-btn:hover { color: var(--text-2); }
-    .tab-btn.active {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
-    }
-
-    /* ── Content area ────────────────────────────────────── */
+    /* Content scroll area */
     .content-area {
-      position: relative;
-      z-index: 1;
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 36px 40px 60px;
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
     }
 
+    .content-area::-webkit-scrollbar { width: 4px; }
+    .content-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* Tab panels */
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
-    /* ── Section label ───────────────────────────────────── */
+    /* ── Panel hero ──────────────────────────────────────────── */
+    .panel-hero {
+      padding: 40px 40px 28px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel-hero::before {
+      content: attr(data-num);
+      position: absolute;
+      right: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 120px;
+      font-weight: 700;
+      color: rgba(238,79,39,0.06);
+      line-height: 1;
+      pointer-events: none;
+      letter-spacing: -4px;
+      user-select: none;
+    }
+
+    .panel-hero-tag {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .panel-hero h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .panel-hero p {
+      font-size: 14px;
+      color: var(--text-2);
+      max-width: 560px;
+      line-height: 1.65;
+    }
+
+    /* ── Panel body ──────────────────────────────────────────── */
+    .panel-body { padding: 32px 40px 40px; max-width: 760px; }
+
+    /* ── Section label ───────────────────────────────────────── */
     .section-label {
       font-size: 11px;
       font-weight: 600;
@@ -260,7 +440,7 @@
       margin-bottom: 16px;
     }
 
-    /* ── Glass card ──────────────────────────────────────── */
+    /* ── Glass card ──────────────────────────────────────────── */
     .glass-card {
       background: var(--glass);
       border: 1px solid var(--border);
@@ -268,7 +448,7 @@
       padding: 20px 22px;
       position: relative;
       overflow: hidden;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .glass-card::before {
@@ -279,7 +459,7 @@
       background: linear-gradient(90deg, transparent, rgba(238,79,39,0.4), transparent);
     }
 
-    /* ── Recap card ──────────────────────────────────────── */
+    /* ── Recap card ──────────────────────────────────────────── */
     .recap-card {
       display: flex;
       gap: 14px;
@@ -311,13 +491,13 @@
       line-height: 1.6;
     }
 
-    /* ── Concept box (accent top line = green) ───────────── */
+    /* ── Concept box ─────────────────────────────────────────── */
     .concept-box {
       background: var(--glass);
       border: 1px solid var(--border);
       border-radius: var(--r);
       padding: 18px 20px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       position: relative;
       overflow: hidden;
     }
@@ -345,18 +525,18 @@
       line-height: 1.7;
     }
 
-    .concept-box p .em {
+    .concept-box .em {
       font-weight: 600;
       color: var(--text-1);
     }
 
-    /* ── Seed visual ─────────────────────────────────────── */
+    /* ── Seed visual ─────────────────────────────────────────── */
     .seed-visual {
       background: var(--glass);
       border: 1px solid var(--border);
       border-radius: var(--r);
       padding: 24px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       text-align: center;
     }
 
@@ -418,17 +598,14 @@
       border: 1.5px dashed var(--border-hover);
     }
 
-    .arrow {
-      font-size: 16px;
-      color: var(--text-3);
-    }
+    .arrow { font-size: 16px; color: var(--text-3); }
 
-    /* ── Audience grid ───────────────────────────────────── */
+    /* ── Analogy / audience grid ─────────────────────────────── */
     .audience-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .audience-card {
@@ -438,6 +615,7 @@
       padding: 18px;
       position: relative;
       overflow: hidden;
+      transition: border-color 0.2s, background 0.2s;
     }
 
     .audience-card::before {
@@ -460,26 +638,26 @@
       margin-bottom: 10px;
     }
 
-    .audience-card .ac-title {
+    .ac-title {
       font-size: 14px;
       font-weight: 600;
       color: var(--text-1);
       margin-bottom: 6px;
     }
 
-    .audience-card .ac-desc {
+    .ac-desc {
       font-size: 13px;
       color: var(--text-2);
       line-height: 1.6;
     }
 
-    /* ── Spectrum bar ────────────────────────────────────── */
+    /* ── Spectrum bar ────────────────────────────────────────── */
     .spectrum-wrap {
       background: var(--glass);
       border: 1px solid var(--border);
       border-radius: var(--r);
       padding: 20px 22px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .spectrum-title {
@@ -514,14 +692,14 @@
       color: var(--text-3);
     }
 
-    /* ── Outcome list ────────────────────────────────────── */
+    /* ── Outcome list ────────────────────────────────────────── */
     .outcome-list {
       list-style: none;
       background: var(--glass);
       border: 1px solid var(--border);
       border-radius: var(--r);
       overflow: hidden;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .outcome-item {
@@ -560,12 +738,12 @@
       line-height: 1.6;
     }
 
-    /* ── Track grid ──────────────────────────────────────── */
+    /* ── Track grid ──────────────────────────────────────────── */
     .track-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .track-card {
@@ -646,13 +824,13 @@
       line-height: 1.6;
     }
 
-    /* ── Week timeline ───────────────────────────────────── */
+    /* ── Week timeline ───────────────────────────────────────── */
     .week-timeline {
       background: var(--glass);
       border: 1px solid var(--border);
       border-radius: var(--r);
       overflow: hidden;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .week-row {
@@ -690,126 +868,70 @@
       margin-bottom: 2px;
     }
 
-    /* ── Instructor card ─────────────────────────────────── */
-    .instructor-card {
-      background: var(--glass);
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      padding: 22px;
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-      margin-bottom: 16px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .instructor-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(238,79,39,0.4), transparent);
-    }
-
-    .instructor-avatar {
-      flex-shrink: 0;
-      width: 52px; height: 52px;
-      border-radius: 50%;
-      background: var(--info-bg);
-      border: 1px solid var(--info-bdr);
-      color: var(--info);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .instructor-name {
-      font-size: 16px;
-      font-weight: 700;
+    /* ── Next button ─────────────────────────────────────────── */
+    .next-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
       color: var(--text-1);
-      margin-bottom: 4px;
-    }
-
-    .instructor-role {
-      font-size: 13px;
-      color: var(--text-3);
-      margin-bottom: 12px;
-    }
-
-    .cred-list { list-style: none; }
-
-    .cred-item {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      font-size: 13px;
-      color: var(--text-2);
-      padding: 7px 0;
-      border-bottom: 1px solid var(--border);
-      line-height: 1.55;
-    }
-
-    .cred-item:last-child { border-bottom: none; }
-
-    .cred-dot {
-      flex-shrink: 0;
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--accent);
-      margin-top: 5px;
-    }
-
-    /* ── Stat row ────────────────────────────────────────── */
-    .stat-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .stat-card {
       background: var(--glass);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-hover);
       border-radius: var(--r-sm);
-      padding: 16px;
-      text-align: center;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
     }
 
-    .stat-num {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--text-1);
-      margin-bottom: 4px;
+    .next-btn:hover {
+      background: var(--glass-hover);
+      border-color: rgba(255,255,255,0.2);
+      box-shadow: 0 0 16px rgba(238,79,39,0.12);
     }
 
-    .stat-label {
-      font-size: 12px;
-      color: var(--text-3);
+    .next-btn-arrow { color: var(--accent); font-size: 16px; }
+
+    /* ── Mobile overlay ──────────────────────────────────────── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 40;
     }
 
-    /* ── Alert chip (tip / note) ─────────────────────────── */
-    .note {
-      font-size: 13px;
-      padding: 10px 14px;
-      border-radius: var(--r-sm);
-      border: 1px solid var(--border);
-      background: var(--glass);
-      color: var(--text-2);
-      line-height: 1.6;
-      margin-bottom: 16px;
-    }
+    /* ── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        top: 0; left: 0;
+        height: 100vh;
+        height: 100dvh;
+        z-index: 50;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        width: 280px;
+        background: #0e0918;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
 
-    .note strong { color: var(--text-1); font-weight: 600; }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.open { display: block; }
+      .hamburger { display: flex; }
 
-    /* ── Responsive ──────────────────────────────────────── */
-    @media (max-width: 640px) {
-      .page-hero  { padding: 28px 20px 24px; }
-      .page-hero h1 { font-size: 22px; }
-      .tab-nav    { padding: 0 16px; }
-      .content-area { padding: 24px 20px 48px; }
+      .panel-hero { padding: 24px 20px 20px; }
+      .panel-hero h1 { font-size: 20px; }
+      .panel-hero::before { display: none; }
+      .panel-body { padding: 20px 20px 32px; }
+
       .audience-grid { grid-template-columns: 1fr; }
       .track-grid    { grid-template-columns: 1fr; }
+
+      .top-bar { padding: 0 16px; }
+      .breadcrumb { display: none; }
     }
   </style>
 </head>
@@ -820,224 +942,380 @@
 <div class="orb orb-2"></div>
 <div class="orb orb-3"></div>
 
-<!-- Top bar -->
-<header class="top-bar">
-  <div class="top-bar-left">
-    <a class="back-btn" href="../">← 返回主頁</a>
-    <div class="top-divider"></div>
-    <span class="top-brand-tag">X Learn · Lecture 2</span>
-  </div>
-  <div class="top-bar-right">課程總覽</div>
-</header>
+<!-- Sidebar overlay (mobile) -->
+<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
 
-<!-- Page hero -->
-<div class="page-hero">
-  <span class="hero-badge">Lecture 2 — 課程總覽</span>
-  <h1>這堂課是什麼、為什麼值得你花時間</h1>
-  <p class="hero-sub">在正式進入下一個專案之前，先花幾分鐘搞清楚：你正在學什麼、這對你有什麼用、接下來你能帶走什麼。</p>
-</div>
+<div class="app">
 
-<!-- Tab nav -->
-<div class="tab-nav-wrap">
-  <div class="tab-nav">
-    <button class="tab-btn active" onclick="showTab(0)">昨天的成果</button>
-    <button class="tab-btn" onclick="showTab(1)">這是誰的課</button>
-    <button class="tab-btn" onclick="showTab(2)">接下來你能做什麼</button>
-    <button class="tab-btn" onclick="showTab(3)">課程地圖</button>
-  </div>
-</div>
+  <!-- ── Sidebar ────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-tag">X Learn · Lecture 2</span>
+      <h2>這堂課是什麼、為什麼值得你花時間</h2>
+      <p>課程總覽 · 4 個段落</p>
+    </div>
 
-<!-- Content -->
-<div class="content-area">
+    <nav class="tab-list">
+      <p class="tab-section-label">課程段落</p>
 
-  <!-- ════ Tab 0: 昨天的成果 ════ -->
-  <div class="tab-panel active" id="tab0">
-    <p class="section-label">Lecture 1 回顧</p>
+      <button class="tab-sidebar-btn active" data-tab="0" onclick="showTab(0)">
+        <div class="tab-icon" id="icon-0">01</div>
+        <div class="tab-text">
+          <span class="tab-num">Section 01</span>
+          <span class="tab-name">上一次的成果</span>
+        </div>
+      </button>
 
-    <div class="glass-card">
-      <div class="recap-card">
-        <div class="recap-icon">✓</div>
-        <div>
-          <p class="recap-title">你昨天真正做了什麼</p>
-          <p class="recap-desc">一個透過聊天介面呼叫 AI 的工作流程，連接到免費的 AI 模型，全程不需要寫程式。</p>
+      <button class="tab-sidebar-btn" data-tab="1" onclick="showTab(1)">
+        <div class="tab-icon" id="icon-1">02</div>
+        <div class="tab-text">
+          <span class="tab-num">Section 02</span>
+          <span class="tab-name">這是誰的課</span>
+        </div>
+      </button>
+
+      <button class="tab-sidebar-btn" data-tab="2" onclick="showTab(2)">
+        <div class="tab-icon" id="icon-2">03</div>
+        <div class="tab-text">
+          <span class="tab-num">Section 03</span>
+          <span class="tab-name">接下來你能做什麼</span>
+        </div>
+      </button>
+
+      <button class="tab-sidebar-btn" data-tab="3" onclick="showTab(3)">
+        <div class="tab-icon" id="icon-3">04</div>
+        <div class="tab-text">
+          <span class="tab-num">Section 04</span>
+          <span class="tab-name">課程地圖</span>
+        </div>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="overall-label">
+        <span>整體進度</span>
+        <span id="overallPct">0%</span>
+      </div>
+      <div class="overall-track">
+        <div class="overall-fill" id="overallFill"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main ───────────────────────────────────────────────── -->
+  <div class="main">
+
+    <!-- Top bar -->
+    <header class="top-bar">
+      <div class="top-bar-left">
+        <button class="hamburger" onclick="toggleSidebar()" aria-label="開啟選單">
+          <span></span><span></span><span></span>
+        </button>
+        <a class="back-btn" href="../">← 返回主頁</a>
+        <div class="top-divider"></div>
+        <div class="breadcrumb">
+          <span>Lecture 2</span>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-current" id="breadcrumbCurrent">上一次的成果</span>
         </div>
       </div>
-    </div>
-
-    <div class="concept-box">
-      <h3>「這不就是 ChatGPT 嗎？」</h3>
-      <p>你可能會這樣想——這個問題問得很好。差別在這裡：你建的不是一個現成工具，而是一個<span class="em">你可以自己控制、擴充、整合到任何業務流程</span>的框架。接下來幾週，這個框架會長出很多腿。</p>
-    </div>
-
-    <div class="seed-visual">
-      <div class="seed-row">
-        <span class="node node-base">💬 聊天觸發器</span>
-        <span class="arrow">→</span>
-        <span class="node node-base">🤖 AI Agent</span>
+      <div class="tab-progress-pill">
+        段落 <strong id="tabNum">1</strong> / 4
       </div>
-      <p class="seed-caption">你現在的工作流程（Lecture 1）</p>
+    </header>
 
-      <p class="seed-expand-label">接下來可以長成的樣子</p>
+    <!-- Scrollable content -->
+    <div class="content-area">
 
-      <div class="seed-row">
-        <span class="node node-solid">💬 聊天觸發器</span>
-        <span class="node node-solid">📧 Email 觸發器</span>
-        <span class="node node-dashed">🗓 排程觸發器</span>
-        <span class="node node-dashed">🔗 Webhook</span>
-      </div>
-
-      <div class="seed-row" style="margin-top:8px">
-        <span class="node node-solid">🤖 AI Agent</span>
-        <span class="node node-solid">🔍 搜尋工具</span>
-        <span class="node node-solid">📊 資料庫</span>
-        <span class="node node-dashed">📞 語音 Agent</span>
-        <span class="node node-dashed">⚙️ 外部 API</span>
-      </div>
-
-      <p class="seed-note">實心 = 快要學到；虛線 = 課程後段</p>
-    </div>
-  </div>
-
-  <!-- ════ Tab 1: 這是誰的課 ════ -->
-  <div class="tab-panel" id="tab1">
-    <p class="section-label">這門課適合你嗎</p>
-
-    <div class="audience-grid">
-      <div class="audience-card">
-        <span class="role-badge">商業 / 產品人</span>
-        <p class="ac-title">不會寫程式也沒關係</p>
-        <p class="ac-desc">你有業務痛點、有想法、有客戶需求——這門課讓你把這些轉化為真實運作的 AI 工具，不需要工程師幫你。</p>
-      </div>
-      <div class="audience-card">
-        <span class="role-badge">AI 工程師</span>
-        <p class="ac-title">快速交付，讓客戶自己接手</p>
-        <p class="ac-desc">你懂技術——這裡可以讓你在幾分鐘內搭出一個業務夥伴能直接操作的原型，大幅壓縮交付時間。</p>
-      </div>
-    </div>
-
-    <div class="spectrum-wrap">
-      <p class="spectrum-title">技術程度不是門檻，你在這條線上的任何位置都適合</p>
-      <div class="spectrum-track">
-        <div class="spectrum-dot" style="left:10%"></div>
-        <div class="spectrum-dot" style="left:35%"></div>
-        <div class="spectrum-dot" style="left:60%"></div>
-        <div class="spectrum-dot" style="left:85%"></div>
-      </div>
-      <div class="spectrum-ticks">
-        <span>從未寫過程式</span>
-        <span>會 Excel 公式</span>
-        <span>懂一點 coding</span>
-        <span>AI 工程師</span>
-      </div>
-    </div>
-
-    <div class="concept-box">
-      <h3>唯一的要求</h3>
-      <p>你想解決一個真實的問題，願意動手做。就這樣。</p>
-    </div>
-  </div>
-
-  <!-- ════ Tab 2: 接下來你能做什麼 ════ -->
-  <div class="tab-panel" id="tab2">
-    <p class="section-label">接下來，你會帶走這三件事</p>
-
-    <ul class="outcome-list">
-      <li class="outcome-item">
-        <div class="outcome-num">1</div>
-        <div>
-          <p class="outcome-title">解決真實商業問題的 AI Agent</p>
-          <p class="outcome-desc">不只是「做了一個 AI」——而是一個針對你的業務、你的客戶、可衡量結果的自動化系統。課程強調解決真實問題，而不是追著工具跑。</p>
+      <!-- ════ Section 01: 上一次的成果 ════ -->
+      <div class="tab-panel active" id="tab0">
+        <div class="panel-hero" data-num="01">
+          <span class="panel-hero-tag">Section 01 · Lecture 1 回顧</span>
+          <h1>上一次的成果</h1>
+          <p>回顧你在 Lecture 1 真正完成了什麼——以及為什麼這比你以為的更重要。</p>
         </div>
-      </li>
-      <li class="outcome-item">
-        <div class="outcome-num">2</div>
-        <div>
-          <p class="outcome-title">能夠提案或應徵 AI 相關工作</p>
-          <p class="outcome-desc">你會擁有真實的作品集——可以向客戶提案、向雇主展示，甚至直接交付給企業使用。不是課程練習題，是真正能用的東西。</p>
-        </div>
-      </li>
-      <li class="outcome-item">
-        <div class="outcome-num">3</div>
-        <div>
-          <p class="outcome-title">用 Agent 自動化你自己的工作</p>
-          <p class="outcome-desc">語音 Agent、資料處理、Email 自動化、客服流程——這些都會在課程中動手建出來，可直接用在自己的業務或幫客戶建。</p>
-        </div>
-      </li>
-    </ul>
+        <div class="panel-body">
 
-    <div class="concept-box">
-      <h3>核心信念</h3>
-      <p>技術工具是手段，不是目的。我們建每一個東西，都是從「這能解決什麼問題、帶來什麼可衡量的影響」出發——而不只是「因為 AI 很酷」。</p>
-    </div>
-  </div>
+          <div class="glass-card">
+            <div class="recap-card">
+              <div class="recap-icon">✓</div>
+              <div>
+                <p class="recap-title">你上次真正做了什麼</p>
+                <p class="recap-desc">一個透過聊天介面呼叫 AI 的工作流程，連接到免費的 AI 模型，全程不需要寫程式。</p>
+              </div>
+            </div>
+          </div>
 
-  <!-- ════ Tab 3: 課程地圖 ════ -->
-  <div class="tab-panel" id="tab3">
-    <p class="section-label">這門課在整個學習路徑的位置</p>
+          <div class="concept-box">
+            <h3>「這不就是 ChatGPT 嗎？」</h3>
+            <p>你可能會這樣想——這個問題問得很好。差別在這裡：你建的不是一個現成工具，而是一個<span class="em">你可以自己控制、擴充、整合到任何業務流程</span>的框架。接下來，這個框架會長出很多腿。</p>
+          </div>
 
-    <div class="track-grid">
-      <div class="track-card">
-        <p class="track-label">軌道 A</p>
-        <h4>AI 工程師軌道</h4>
-        <p>有程式基礎，想深入技術實作（LLM、MLOps）</p>
-        <span class="track-chip chip-eng">需要程式基礎</span>
-      </div>
-      <div class="track-card">
-        <p class="track-label">軌道 B</p>
-        <h4>AI 領導者軌道</h4>
-        <p>管理者、創辦人，想建立有競爭力的 AI 業務策略</p>
-        <span class="track-chip chip-lead">策略思維</span>
-      </div>
-      <div class="track-card current">
-        <p class="track-label">軌道 C ← 你在這裡</p>
-        <h4>AI 建置者軌道</h4>
-        <p>低程式碼，快速建出有業務價值的 AI 工具</p><br>
-        <span class="track-chip chip-bld">零基礎可入門</span><br>
-        <span class="chip-here">← 本課程</span>
-      </div>
-    </div>
+          <div class="seed-visual">
+            <div class="seed-row">
+              <span class="node node-base">💬 聊天觸發器</span>
+              <span class="arrow">→</span>
+              <span class="node node-base">🤖 AI Agent</span>
+            </div>
+            <p class="seed-caption">你現在的工作流程（Lecture 1）</p>
 
-    <p class="track-note">三個軌道可以任意順序搭配，不需要按順序。彼此有重疊，但重複學習是好事。</p>
+            <p class="seed-expand-label">接下來可以長成的樣子</p>
 
-    <p class="section-label">接下來的節奏</p>
+            <div class="seed-row">
+              <span class="node node-solid">💬 聊天觸發器</span>
+              <span class="node node-solid">📧 Email 觸發器</span>
+              <span class="node node-dashed">🗓 排程觸發器</span>
+              <span class="node node-dashed">🔗 Webhook</span>
+            </div>
 
-    <div class="week-timeline">
-      <div class="week-row">
-        <div class="week-label-cell">第 1 週</div>
-        <div class="week-content-cell">
-          <strong>n8n 核心 + 第一個 AI Agent</strong>
-          基礎工作流程、觸發器、AI 節點、Open Router 連接、第一次即時對話
+            <div class="seed-row" style="margin-top:8px">
+              <span class="node node-solid">🤖 AI Agent</span>
+              <span class="node node-solid">🔍 搜尋工具</span>
+              <span class="node node-solid">📊 資料庫</span>
+              <span class="node node-dashed">📞 語音 Agent</span>
+              <span class="node node-dashed">⚙️ 外部 API</span>
+            </div>
+
+            <p class="seed-note">實心 = 快要學到；虛線 = 課程後段</p>
+          </div>
+
+          <button class="next-btn" onclick="showTab(1)">
+            繼續：這是誰的課 <span class="next-btn-arrow">→</span>
+          </button>
+
         </div>
       </div>
-      <div class="week-row">
-        <div class="week-label-cell">第 2 週</div>
-        <div class="week-content-cell">
-          <strong>整合更多服務 + 語音 Agent</strong>
-          Email、資料庫、外部 API、語音輸入輸出、更複雜的條件邏輯
+
+      <!-- ════ Section 02: 這是誰的課 ════ -->
+      <div class="tab-panel" id="tab1">
+        <div class="panel-hero" data-num="02">
+          <span class="panel-hero-tag">Section 02 · 受眾</span>
+          <h1>這是誰的課</h1>
+          <p>不論你的技術背景如何，這門課都為你設計好了入口。</p>
+        </div>
+        <div class="panel-body">
+
+          <p class="section-label">這門課適合你嗎</p>
+
+          <div class="audience-grid">
+            <div class="audience-card">
+              <span class="role-badge">商業 / 產品人</span>
+              <p class="ac-title">不會寫程式也沒關係</p>
+              <p class="ac-desc">你有業務痛點、有想法、有客戶需求——這門課讓你把這些轉化為真實運作的 AI 工具，不需要工程師幫你。</p>
+            </div>
+            <div class="audience-card">
+              <span class="role-badge">AI 工程師</span>
+              <p class="ac-title">快速交付，讓客戶自己接手</p>
+              <p class="ac-desc">你懂技術——這裡可以讓你在幾分鐘內搭出一個業務夥伴能直接操作的原型，大幅壓縮交付時間。</p>
+            </div>
+          </div>
+
+          <div class="spectrum-wrap">
+            <p class="spectrum-title">技術程度不是門檻，你在這條線上的任何位置都適合</p>
+            <div class="spectrum-track">
+              <div class="spectrum-dot" style="left:10%"></div>
+              <div class="spectrum-dot" style="left:35%"></div>
+              <div class="spectrum-dot" style="left:60%"></div>
+              <div class="spectrum-dot" style="left:85%"></div>
+            </div>
+            <div class="spectrum-ticks">
+              <span>從未寫過程式</span>
+              <span>會 Excel 公式</span>
+              <span>懂一點 coding</span>
+              <span>AI 工程師</span>
+            </div>
+          </div>
+
+          <div class="concept-box">
+            <h3>唯一的要求</h3>
+            <p>你想解決一個真實的問題，願意動手做。就這樣。</p>
+          </div>
+
+          <button class="next-btn" onclick="showTab(2)">
+            繼續：接下來你能做什麼 <span class="next-btn-arrow">→</span>
+          </button>
+
         </div>
       </div>
-      <div class="week-row">
-        <div class="week-label-cell">第 3 週</div>
-        <div class="week-content-cell">
-          <strong>完整業務級 Agent + 交付</strong>
-          多 Agent 協作、記憶系統、實際商業場景，可直接交付或上線的成品
+
+      <!-- ════ Section 03: 接下來你能做什麼 ════ -->
+      <div class="tab-panel" id="tab2">
+        <div class="panel-hero" data-num="03">
+          <span class="panel-hero-tag">Section 03 · 成果</span>
+          <h1>接下來你能做什麼</h1>
+          <p>課程結束後，你會帶走的不只是知識，而是真正能用的作品。</p>
+        </div>
+        <div class="panel-body">
+
+          <p class="section-label">接下來，你會帶走這三件事</p>
+
+          <ul class="outcome-list">
+            <li class="outcome-item">
+              <div class="outcome-num">1</div>
+              <div>
+                <p class="outcome-title">解決真實商業問題的 AI Agent</p>
+                <p class="outcome-desc">不只是「做了一個 AI」——而是一個針對你的業務、你的客戶、可衡量結果的自動化系統。課程強調解決真實問題，而不是追著工具跑。</p>
+              </div>
+            </li>
+            <li class="outcome-item">
+              <div class="outcome-num">2</div>
+              <div>
+                <p class="outcome-title">能夠提案或應徵 AI 相關工作</p>
+                <p class="outcome-desc">你會擁有真實的作品集——可以向客戶提案、向雇主展示，甚至直接交付給企業使用。不是課程練習題，是真正能用的東西。</p>
+              </div>
+            </li>
+            <li class="outcome-item">
+              <div class="outcome-num">3</div>
+              <div>
+                <p class="outcome-title">用 Agent 自動化你自己的工作</p>
+                <p class="outcome-desc">語音 Agent、資料處理、Email 自動化、客服流程——這些都會在課程中動手建出來，可直接用在自己的業務或幫客戶建。</p>
+              </div>
+            </li>
+          </ul>
+
+          <div class="concept-box">
+            <h3>核心信念</h3>
+            <p>技術工具是手段，不是目的。我們建每一個東西，都是從「這能解決什麼問題、帶來什麼可衡量的影響」出發——而不只是「因為 AI 很酷」。</p>
+          </div>
+
+          <button class="next-btn" onclick="showTab(3)">
+            繼續：課程地圖 <span class="next-btn-arrow">→</span>
+          </button>
+
         </div>
       </div>
-    </div>
-  </div>
 
+      <!-- ════ Section 04: 課程地圖 ════ -->
+      <div class="tab-panel" id="tab3">
+        <div class="panel-hero" data-num="04">
+          <span class="panel-hero-tag">Section 04 · 路徑</span>
+          <h1>課程地圖</h1>
+          <p>了解這門課在整個學習路徑的位置，以及接下來的學習節奏。</p>
+        </div>
+        <div class="panel-body">
 
-</div><!-- /content-area -->
+          <p class="section-label">這門課在整個學習路徑的位置</p>
+
+          <div class="track-grid">
+            <div class="track-card">
+              <p class="track-label">軌道 A</p>
+              <h4>AI 工程師軌道</h4>
+              <p>有程式基礎，想深入技術實作（LLM、MLOps）</p>
+              <span class="track-chip chip-eng">需要程式基礎</span>
+            </div>
+            <div class="track-card">
+              <p class="track-label">軌道 B</p>
+              <h4>AI 領導者軌道</h4>
+              <p>管理者、創辦人，想建立有競爭力的 AI 業務策略</p>
+              <span class="track-chip chip-lead">策略思維</span>
+            </div>
+            <div class="track-card current">
+              <p class="track-label">軌道 C ← 你在這裡</p>
+              <h4>AI 建置者軌道</h4>
+              <p>低程式碼，快速建出有業務價值的 AI 工具</p><br>
+              <span class="track-chip chip-bld">零基礎可入門</span><br>
+              <span class="chip-here">← 本課程</span>
+            </div>
+          </div>
+
+          <p class="track-note">三個軌道可以任意順序搭配，不需要按順序。彼此有重疊，但重複學習是好事。</p>
+
+          <p class="section-label">接下來的節奏</p>
+
+          <div class="week-timeline">
+            <div class="week-row">
+              <div class="week-label-cell">第 1 階段</div>
+              <div class="week-content-cell">
+                <strong>n8n 核心 + 第一個 AI Agent</strong>
+                基礎工作流程、觸發器、AI 節點、Open Router 連接、第一次即時對話
+              </div>
+            </div>
+            <div class="week-row">
+              <div class="week-label-cell">第 2 階段</div>
+              <div class="week-content-cell">
+                <strong>整合更多服務 + 語音 Agent</strong>
+                Email、資料庫、外部 API、語音輸入輸出、更複雜的條件邏輯
+              </div>
+            </div>
+            <div class="week-row">
+              <div class="week-label-cell">第 3 階段</div>
+              <div class="week-content-cell">
+                <strong>完整業務級 Agent + 交付</strong>
+                多 Agent 協作、記憶系統、實際商業場景，可直接交付或上線的成品
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /content-area -->
+  </div><!-- /main -->
+</div><!-- /app -->
 
 <script>
+  const TAB_NAMES = ['上一次的成果', '這是誰的課', '接下來你能做什麼', '課程地圖'];
+  const TOTAL_TABS = 4;
+  const viewed = new Set(JSON.parse(localStorage.getItem('lecture2-viewed') || '[0]'));
+
+  function saveViewed() {
+    localStorage.setItem('lecture2-viewed', JSON.stringify([...viewed]));
+  }
+
   function showTab(i) {
     document.querySelectorAll('.tab-panel').forEach((p, j) => {
       p.classList.toggle('active', j === i);
     });
-    document.querySelectorAll('.tab-btn').forEach((b, j) => {
+    document.querySelectorAll('.tab-sidebar-btn').forEach((b, j) => {
       b.classList.toggle('active', j === i);
     });
+    document.getElementById('breadcrumbCurrent').textContent = TAB_NAMES[i];
+    document.getElementById('tabNum').textContent = i + 1;
+    document.querySelector('.content-area').scrollTop = 0;
+    closeSidebar();
+
+    // Mark as viewed
+    viewed.add(i);
+    saveViewed();
+    updateProgress();
   }
+
+  function updateProgress() {
+    const pct = Math.round((viewed.size / TOTAL_TABS) * 100);
+    document.getElementById('overallPct').textContent = pct + '%';
+    document.getElementById('overallFill').style.width = pct + '%';
+
+    for (let i = 0; i < TOTAL_TABS; i++) {
+      const icon = document.getElementById('icon-' + i);
+      const btn  = document.querySelector('[data-tab="' + i + '"]');
+      if (viewed.has(i)) {
+        icon.textContent = '✓';
+        btn.classList.add('viewed');
+      } else {
+        icon.textContent = String(i + 1).padStart(2, '0');
+        btn.classList.remove('viewed');
+      }
+    }
+    // Active tab icon stays accent, not green
+    const activeIdx = [...document.querySelectorAll('.tab-sidebar-btn')].findIndex(b => b.classList.contains('active'));
+    if (activeIdx >= 0) {
+      document.getElementById('icon-' + activeIdx).textContent = String(activeIdx + 1).padStart(2, '0');
+    }
+  }
+
+  // Mobile sidebar
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  }
+
+  // Init
+  updateProgress();
 </script>
 </body>
 </html>
