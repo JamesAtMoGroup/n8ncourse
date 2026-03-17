@@ -832,7 +832,7 @@
     grid.innerHTML = courses.map(c => {
       const isOpen = c.status === 'open';
       const tag     = isOpen ? 'a' : 'div';
-      const href    = isOpen ? `href="${c.url}" target="_blank"` : '';
+      const href    = isOpen ? `href="${c.url}"` : '';
       const wipClass = isOpen ? '' : 'wip';
 
       return `
