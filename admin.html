@@ -503,7 +503,9 @@
     const r = await ghGet();
     const d = await r.json();
     fileSha = d.sha;
-    posts   = JSON.parse(atob(d.content.replace(/\n/g, '')));
+    const raw = atob(d.content.replace(/\n/g, ''));
+    const decoded = new TextDecoder('utf-8').decode(Uint8Array.from(raw, c => c.charCodeAt(0)));
+    posts = JSON.parse(decoded);
     posts.sort((a, b) => new Date(b.date) - new Date(a.date));
     renderList();
     document.getElementById('postCount').textContent = posts.length;
@@ -631,7 +633,11 @@
     if (!confirm(`確定刪除「${posts[idx].title}」？`)) return;
     posts.splice(idx, 1);
     const r = await ghPut(posts, 'content: delete post');
-    if (!r.ok) { toast('刪除失敗', 'error'); await loadPosts(); return; }
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      toast('刪除失敗：' + (err.message || r.status), 'error');
+      await loadPosts(); return;
+    }
     toast('已刪除', 'success');
     await loadPosts();
   }
