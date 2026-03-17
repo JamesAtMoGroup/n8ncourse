@@ -738,8 +738,8 @@
         <span class="stat-label">已開放課程</span>
       </div>
       <div class="stat">
-        <span class="stat-num">21</span>
-        <span class="stat-label">天</span>
+        <span class="stat-num" id="totalLectures">—</span>
+        <span class="stat-label">堂課</span>
       </div>
       <div class="stat">
         <span class="stat-num">0</span>
@@ -753,7 +753,7 @@
 <div class="section-wrap">
   <div class="section-header">
     <h2>所有課程</h2>
-    <span class="section-count" id="courseCount">共 21 天</span>
+    <span class="section-count" id="courseCount">共 — 堂</span>
   </div>
 
   <div class="course-grid" id="courseGrid"></div>
@@ -826,6 +826,8 @@
     const grid = document.getElementById('courseGrid');
     const openCount = courses.filter(c => c.status === 'open').length;
     document.getElementById('totalDays').textContent = openCount;
+    document.getElementById('totalLectures').textContent = courses.length;
+    document.getElementById('courseCount').textContent = `共 ${courses.length} 堂`;
 
     grid.innerHTML = courses.map(c => {
       const isOpen = c.status === 'open';
@@ -837,7 +839,7 @@
         <${tag} class="course-card ${wipClass}" ${href}>
           <div class="card-banner">
             <div class="card-banner-bg"></div>
-            <span class="day-badge">Day ${c.day}</span>
+            <span class="day-badge">Lecture ${c.day}</span>
             <span class="day-number">${String(c.day).padStart(2,'0')}</span>
           </div>
           <div class="card-body">
