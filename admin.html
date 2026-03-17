@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>每日知識庫 Admin | X Learn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #0e0918;
+      --bg-2:      #1a1624;
+      --bg-3:      #221d30;
+      --border:    rgba(255,255,255,0.08);
+      --accent:    #ee4f27;
+      --accent-dim:rgba(238,79,39,0.15);
+      --accent-2:  #fd8925;
+      --text-1:    #f0eeff;
+      --text-2:    #a2a687;
+      --text-3:    #4a4560;
+      --success:   #34d399;
+      --danger:    #f87171;
+      --r:         12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text-1);
+      min-height: 100vh;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px;
+      background: rgba(14,9,24,0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 15px; font-weight: 700; color: var(--text-1);
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 28px; height: 28px; border-radius: 7px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800; color: #fff;
+    }
+
+    .logo-mark span { color: var(--accent); }
+
+    .nav-status {
+      font-size: 12px; color: var(--text-3);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--text-3);
+    }
+
+    .status-dot.connected { background: var(--success); box-shadow: 0 0 6px var(--success); }
+
+    /* ── Layout ── */
+    .wrap {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 32px 80px;
+    }
+
+    /* ── Token gate ── */
+    #gate {
+      min-height: 80vh;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .gate-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      width: 100%; max-width: 440px;
+      text-align: center;
+    }
+
+    .gate-card h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .gate-card p  { font-size: 13px; color: var(--text-3); margin-bottom: 24px; line-height: 1.6; }
+
+    /* ── Form elements ── */
+    label {
+      display: block;
+      font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+      color: var(--text-3); margin-bottom: 6px; text-transform: uppercase;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="password"],
+    input[type="url"],
+    textarea {
+      width: 100%;
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text-1);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input:focus, textarea:focus {
+      border-color: rgba(238,79,39,0.5);
+    }
+
+    textarea { resize: vertical; min-height: 120px; line-height: 1.7; }
+
+    .field { margin-bottom: 20px; }
+
+    .field-hint {
+      font-size: 12px; color: var(--text-3);
+      margin-top: 5px; line-height: 1.5;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-family: inherit; font-size: 14px; font-weight: 600;
+      padding: 10px 22px; border-radius: 8px;
+      border: none; cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .btn:hover { opacity: 0.88; }
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+    }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+    }
+
+    .btn-danger {
+      background: rgba(248,113,113,0.12);
+      border: 1px solid rgba(248,113,113,0.25);
+      color: var(--danger);
+      font-size: 12px;
+      padding: 6px 14px;
+    }
+
+    .btn-sm { font-size: 12px; padding: 6px 14px; }
+
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── Section titles ── */
+    .section-title {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-3);
+      margin-bottom: 16px;
+    }
+
+    /* ── New post card ── */
+    .card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 24px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(238,79,39,0.5), transparent);
+    }
+
+    .card-title {
+      font-size: 16px; font-weight: 700; margin-bottom: 20px;
+    }
+
+    /* ── Type toggle ── */
+    .type-toggle {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .type-btn {
+      font-family: inherit; font-size: 13px; font-weight: 600;
+      padding: 7px 16px; border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent; color: var(--text-3);
+      cursor: pointer; transition: all 0.15s;
+    }
+
+    .type-btn.active {
+      background: var(--accent-dim);
+      border-color: rgba(238,79,39,0.4);
+      color: var(--accent);
+    }
+
+    /* ── Audio upload area ── */
+    .upload-area {
+      border: 1.5px dashed var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+
+    .upload-area:hover, .upload-area.drag-over {
+      border-color: rgba(238,79,39,0.4);
+      background: var(--accent-dim);
+    }
+
+    .upload-area input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer;
+      width: 100%; height: 100%;
+    }
+
+    .upload-area p {
+      font-size: 13px; color: var(--text-3); pointer-events: none;
+    }
+
+    .upload-area .upload-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+    .upload-area .upload-name { font-size: 13px; color: var(--accent); margin-top: 6px; }
+
+    /* ── Progress bar ── */
+    .progress-wrap {
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px; height: 4px;
+      margin-top: 10px; overflow: hidden;
+      display: none;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border-radius: 999px;
+      transition: width 0.3s;
+      width: 0%;
+    }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+      padding: 12px 24px; border-radius: 999px;
+      font-size: 14px; font-weight: 600;
+      background: var(--bg-3); border: 1px solid var(--border);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s, bottom 0.25s;
+      z-index: 999; white-space: nowrap;
+    }
+
+    #toast.show { opacity: 1; bottom: 36px; }
+    #toast.success { color: var(--success); border-color: rgba(52,211,153,0.3); }
+    #toast.error   { color: var(--danger);  border-color: rgba(248,113,113,0.3); }
+
+    /* ── Posts list ── */
+    .post-item {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 16px;
+      padding: 14px 18px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    .post-info { flex: 1; min-width: 0; }
+
+    .post-title {
+      font-size: 14px; font-weight: 600; color: var(--text-1);
+      margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .post-meta {
+      font-size: 12px; color: var(--text-3);
+      display: flex; gap: 8px;
+    }
+
+    .post-badge {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+      background: var(--accent-dim); color: var(--accent);
+      border: 1px solid rgba(238,79,39,0.2);
+      border-radius: 999px; padding: 2px 8px;
+    }
+
+    .no-posts { text-align: center; padding: 32px 16px; font-size: 14px; color: var(--text-3); }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px; background: var(--border);
+      margin: 28px 0;
+    }
+
+    @media (max-width: 600px) {
+      .wrap { padding: 28px 20px 60px; }
+      nav { padding: 0 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">
+    <div class="logo-mark">X</div>
+    X <span style="color:var(--accent);margin-left:2px">Learn</span> &nbsp;Admin
+  </a>
+  <div class="nav-status">
+    <div class="status-dot" id="statusDot"></div>
+    <span id="statusText">未連線</span>
+  </div>
+</nav>
+
+<!-- Token gate -->
+<div id="gate">
+  <div class="gate-card">
+    <h2>🔐 管理員登入</h2>
+    <p>輸入你的 GitHub Personal Access Token（需要 <code>repo</code> 權限）</p>
+    <div class="field">
+      <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" />
+    </div>
+    <button class="btn btn-primary" onclick="connect()" style="width:100%">連線</button>
+    <p style="margin-top:16px;font-size:11px;color:var(--text-3)">
+      Token 只存在本機記憶體，重新整理即清除
+    </p>
+  </div>
+</div>
+
+<!-- Admin panel (hidden until connected) -->
+<div id="panel" style="display:none">
+  <div class="wrap">
+
+    <!-- New post -->
+    <div class="card">
+      <div class="card-title">✏️ 新增內容</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="field">
+          <label>日期</label>
+          <input type="date" id="fDate" />
+        </div>
+        <div class="field">
+          <label>標題</label>
+          <input type="text" id="fTitle" placeholder="今日主題..." />
+        </div>
+      </div>
+
+      <!-- Content type toggles -->
+      <label>內容類型（可多選）</label>
+      <div class="type-toggle" style="margin-top:8px">
+        <button class="type-btn" data-type="article" onclick="toggleType(this)">📄 文章</button>
+        <button class="type-btn" data-type="video"   onclick="toggleType(this)">🎬 影片</button>
+        <button class="type-btn" data-type="audio"   onclick="toggleType(this)">🎵 音訊</button>
+      </div>
+
+      <!-- Article body -->
+      <div id="field-article" class="field" style="display:none">
+        <label>文章內容</label>
+        <textarea id="fBody" placeholder="在這裡輸入文章內容...&#10;支援換行"></textarea>
+      </div>
+
+      <!-- Video URL -->
+      <div id="field-video" class="field" style="display:none">
+        <label>YouTube 連結</label>
+        <input type="url" id="fVideoUrl" placeholder="https://www.youtube.com/watch?v=..." />
+        <p class="field-hint">貼上 YouTube 影片連結，系統會自動轉換</p>
+      </div>
+
+      <!-- Audio -->
+      <div id="field-audio" class="field" style="display:none">
+        <label>音訊（上傳檔案或貼上 URL）</label>
+        <div class="upload-area" id="dropzone"
+          ondragover="event.preventDefault();this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="handleDrop(event)">
+          <input type="file" id="fAudioFile" accept="audio/*" onchange="onFileSelect(this)" />
+          <span class="upload-icon">🎵</span>
+          <p>拖曳音訊檔案到這裡，或點擊選擇</p>
+          <p>支援 MP3、M4A、WAV（建議 < 25MB）</p>
+          <div class="upload-name" id="fileName"></div>
+        </div>
+        <div class="progress-wrap" id="progressWrap">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <p class="field-hint" style="margin-top:10px">— 或者貼上已有的音訊 URL —</p>
+        <input type="url" id="fAudioUrl" placeholder="https://example.com/audio.mp3" style="margin-top:8px" />
+      </div>
+
+      <div style="display:flex;gap:12px;margin-top:8px">
+        <button class="btn btn-primary" id="publishBtn" onclick="publish()">🚀 發布</button>
+        <button class="btn btn-ghost" onclick="resetForm()">清除</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Existing posts -->
+    <p class="section-title">現有內容（<span id="postCount">0</span> 篇）</p>
+    <div id="postsList"><div class="no-posts">載入中...</div></div>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  const REPO = 'JamesAtMoGroup/n8ncourse';
+  const FILE = 'knowledge.json';
+  let TOKEN = '';
+  let fileSha = '';
+  let posts   = [];
+  let selectedFile = null;
+
+  // ── Auth ───────────────────────────────────────
+  async function connect() {
+    TOKEN = document.getElementById('tokenInput').value.trim();
+    if (!TOKEN) return toast('請輸入 Token', 'error');
+
+    try {
+      const r = await ghGet();
+      if (!r.ok) throw new Error();
+      toast('連線成功！', 'success');
+      document.getElementById('gate').style.display  = 'none';
+      document.getElementById('panel').style.display = 'block';
+      document.getElementById('statusDot').className  = 'status-dot connected';
+      document.getElementById('statusText').textContent = '已連線';
+      document.getElementById('fDate').value = new Date().toISOString().split('T')[0];
+      await loadPosts();
+    } catch {
+      toast('Token 錯誤或無權限', 'error');
+    }
+  }
+
+  // ── GitHub API helpers ─────────────────────────
+  async function ghGet() {
+    return fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
+      headers: { Authorization: `token ${TOKEN}` }
+    });
+  }
+
+  async function ghPut(content, message) {
+    return fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
+      method: 'PUT',
+      headers: { Authorization: `token ${TOKEN}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, content: utfToB64(JSON.stringify(content, null, 2)), sha: fileSha })
+    });
+  }
+
+  async function ghUploadAudio(filename, base64) {
+    const path = `audio/${filename}`;
+    // Check if exists (get sha)
+    let sha = undefined;
+    const existing = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+      headers: { Authorization: `token ${TOKEN}` }
+    });
+    if (existing.ok) { const d = await existing.json(); sha = d.sha; }
+
+    const body = { message: `upload: audio ${filename}`, content: base64 };
+    if (sha) body.sha = sha;
+
+    const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+      method: 'PUT',
+      headers: { Authorization: `token ${TOKEN}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error('音訊上傳失敗');
+    return `https://raw.githubusercontent.com/${REPO}/main/${path}`;
+  }
+
+  // base64 that handles unicode
+  function utfToB64(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+
+  // ── Load posts ─────────────────────────────────
+  async function loadPosts() {
+    const r = await ghGet();
+    const d = await r.json();
+    fileSha = d.sha;
+    posts   = JSON.parse(atob(d.content.replace(/\n/g, '')));
+    posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+    renderList();
+    document.getElementById('postCount').textContent = posts.length;
+  }
+
+  function renderList() {
+    const el = document.getElementById('postsList');
+    if (!posts.length) { el.innerHTML = '<div class="no-posts">尚無內容</div>'; return; }
+    el.innerHTML = posts.map((p, i) => {
+      const badges = [];
+      if (p.body)     badges.push('📄');
+      if (p.videoUrl) badges.push('🎬');
+      if (p.audioUrl) badges.push('🎵');
+      return `
+        <div class="post-item">
+          <div class="post-info">
+            <div class="post-title">${p.title}</div>
+            <div class="post-meta">
+              <span>${p.date}</span>
+              ${badges.map(b => `<span class="post-badge">${b}</span>`).join('')}
+            </div>
+          </div>
+          <button class="btn btn-danger" onclick="deletePost(${i})">刪除</button>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Type toggles ───────────────────────────────
+  function toggleType(btn) {
+    btn.classList.toggle('active');
+    const type = btn.dataset.type;
+    const field = document.getElementById('field-' + type);
+    field.style.display = btn.classList.contains('active') ? 'block' : 'none';
+  }
+
+  // ── File select ────────────────────────────────
+  function onFileSelect(input) {
+    selectedFile = input.files[0];
+    document.getElementById('fileName').textContent = selectedFile ? selectedFile.name : '';
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('dropzone').classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('audio/')) {
+      selectedFile = file;
+      document.getElementById('fileName').textContent = file.name;
+    } else {
+      toast('請選擇音訊檔案', 'error');
+    }
+  }
+
+  // ── Publish ────────────────────────────────────
+  async function publish() {
+    const date  = document.getElementById('fDate').value.trim();
+    const title = document.getElementById('fTitle').value.trim();
+    if (!date || !title) return toast('日期和標題為必填', 'error');
+
+    const articleActive = document.querySelector('[data-type="article"]').classList.contains('active');
+    const videoActive   = document.querySelector('[data-type="video"]').classList.contains('active');
+    const audioActive   = document.querySelector('[data-type="audio"]').classList.contains('active');
+
+    if (!articleActive && !videoActive && !audioActive) return toast('至少選一種內容類型', 'error');
+
+    const btn = document.getElementById('publishBtn');
+    btn.disabled = true; btn.textContent = '發布中...';
+
+    try {
+      const post = { date, title };
+
+      if (articleActive) {
+        const body = document.getElementById('fBody').value.trim();
+        if (!body) { toast('文章內容不能為空', 'error'); btn.disabled = false; btn.textContent = '🚀 發布'; return; }
+        post.body = body;
+      }
+
+      if (videoActive) {
+        const url = document.getElementById('fVideoUrl').value.trim();
+        if (!url) { toast('請輸入 YouTube 連結', 'error'); btn.disabled = false; btn.textContent = '🚀 發布'; return; }
+        post.videoUrl = url;
+      }
+
+      if (audioActive) {
+        const manualUrl = document.getElementById('fAudioUrl').value.trim();
+        if (selectedFile) {
+          // Upload file to GitHub
+          showProgress(true);
+          const base64 = await fileToBase64(selectedFile);
+          const filename = `${Date.now()}-${selectedFile.name.replace(/\s+/g, '-')}`;
+          setProgress(40);
+          post.audioUrl = await ghUploadAudio(filename, base64);
+          setProgress(80);
+        } else if (manualUrl) {
+          post.audioUrl = manualUrl;
+        } else {
+          toast('請上傳音訊檔案或輸入音訊 URL', 'error');
+          btn.disabled = false; btn.textContent = '🚀 發布'; return;
+        }
+      }
+
+      // Prepend to posts and commit
+      const updated = [post, ...posts];
+      const r = await ghPut(updated, `content: "${title}"`);
+      if (!r.ok) throw new Error();
+
+      setProgress(100);
+      toast('✅ 發布成功！', 'success');
+      resetForm();
+      await loadPosts();
+    } catch (e) {
+      toast('發布失敗：' + (e.message || '請重試'), 'error');
+    } finally {
+      btn.disabled = false; btn.textContent = '🚀 發布';
+      showProgress(false); setProgress(0);
+    }
+  }
+
+  // ── Delete ─────────────────────────────────────
+  async function deletePost(idx) {
+    if (!confirm(`確定刪除「${posts[idx].title}」？`)) return;
+    posts.splice(idx, 1);
+    const r = await ghPut(posts, 'content: delete post');
+    if (!r.ok) { toast('刪除失敗', 'error'); await loadPosts(); return; }
+    toast('已刪除', 'success');
+    await loadPosts();
+  }
+
+  // ── Helpers ────────────────────────────────────
+  function resetForm() {
+    document.getElementById('fTitle').value    = '';
+    document.getElementById('fBody').value     = '';
+    document.getElementById('fVideoUrl').value = '';
+    document.getElementById('fAudioUrl').value = '';
+    document.getElementById('fAudioFile').value = '';
+    document.getElementById('fileName').textContent = '';
+    selectedFile = null;
+    document.querySelectorAll('.type-btn').forEach(b => {
+      b.classList.remove('active');
+      document.getElementById('field-' + b.dataset.type).style.display = 'none';
+    });
+  }
+
+  function fileToBase64(file) {
+    return new Promise((res, rej) => {
+      const reader = new FileReader();
+      reader.onload  = () => res(reader.result.split(',')[1]);
+      reader.onerror = rej;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function showProgress(show) {
+    document.getElementById('progressWrap').style.display = show ? 'block' : 'none';
+  }
+
+  function setProgress(pct) {
+    document.getElementById('progressBar').style.width = pct + '%';
+  }
+
+  function toast(msg, type = 'success') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className   = 'show ' + type;
+    setTimeout(() => { el.className = ''; }, 3000);
+  }
+
+  // Enter key on token input
+  document.getElementById('tokenInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') connect();
+  });
+</script>
+</body>
+</html>
