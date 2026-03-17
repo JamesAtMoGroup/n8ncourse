@@ -14,9 +14,9 @@
       --accent:    #ee4f27;
       --accent-dim:rgba(238,79,39,0.15);
       --accent-2:  #fd8925;
-      --text-1:    #f0eeff;
-      --text-2:    #a2a687;
-      --text-3:    #4a4560;
+      --text-1:    #ffffff;
+      --text-2:    #c8c4b0;
+      --text-3:    #8a859e;
       --success:   #34d399;
       --danger:    #f87171;
       --r:         12px;
@@ -405,6 +405,13 @@
         <input type="url" id="fAudioUrl" placeholder="https://example.com/audio.mp3" style="margin-top:8px" />
       </div>
 
+      <!-- Tags -->
+      <div class="field">
+        <label>標籤（用逗號分隔）</label>
+        <input type="text" id="fTags" placeholder="例如：n8n, 自動化, AI" />
+        <p class="field-hint">留空則不加標籤</p>
+      </div>
+
       <div style="display:flex;gap:12px;margin-top:8px">
         <button class="btn btn-primary" id="publishBtn" onclick="publish()">🚀 發布</button>
         <button class="btn btn-ghost" onclick="resetForm()">清除</button>
@@ -517,6 +524,7 @@
             <div class="post-meta">
               <span>${p.date}</span>
               ${badges.map(b => `<span class="post-badge">${b}</span>`).join('')}
+              ${(p.tags||[]).map(t => `<span class="post-badge" style="background:rgba(253,137,37,0.1);border-color:rgba(253,137,37,0.25);color:var(--accent-2)">${t}</span>`).join('')}
             </div>
           </div>
           <button class="btn btn-danger" onclick="deletePost(${i})">刪除</button>
@@ -566,7 +574,10 @@
     btn.disabled = true; btn.textContent = '發布中...';
 
     try {
+      const tagsRaw = document.getElementById('fTags').value.trim();
+      const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
       const post = { date, title };
+      if (tags.length) post.tags = tags;
 
       if (articleActive) {
         const body = document.getElementById('fBody').value.trim();
@@ -633,6 +644,7 @@
     document.getElementById('fAudioUrl').value = '';
     document.getElementById('fAudioFile').value = '';
     document.getElementById('fileName').textContent = '';
+    document.getElementById('fTags').value = '';
     selectedFile = null;
     document.querySelectorAll('.type-btn').forEach(b => {
       b.classList.remove('active');
@@ -671,3 +683,4 @@
 </script>
 </body>
 </html>
+
