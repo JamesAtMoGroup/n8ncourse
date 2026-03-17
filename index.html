@@ -25,13 +25,6 @@
       --text-2:       #94a3b8;
       --text-3:       #475569;
 
-      --open-bg:      rgba(52,211,153,0.1);
-      --open-bdr:     rgba(52,211,153,0.25);
-      --open-text:    #34d399;
-
-      --wip-bg:       rgba(251,191,36,0.08);
-      --wip-bdr:      rgba(251,191,36,0.2);
-      --wip-text:     #fbbf24;
     }
 
     /* ── Reset ──────────────────────────────────────── */
@@ -216,12 +209,6 @@
       letter-spacing: 0.04em;
     }
 
-    .stat-divider {
-      width: 1px;
-      background: var(--border);
-      align-self: stretch;
-    }
-
     /* ── Section heading ─────────────────────────────── */
     .section-wrap {
       position: relative;
@@ -372,40 +359,6 @@
       color: var(--text-2);
     }
 
-    /* Status badge */
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      border-radius: 999px;
-      padding: 4px 10px;
-      width: fit-content;
-    }
-
-    .status-badge.open {
-      background: var(--open-bg);
-      border: 1px solid var(--open-bdr);
-      color: var(--open-text);
-    }
-
-    .status-badge.wip {
-      background: var(--wip-bg);
-      border: 1px solid var(--wip-bdr);
-      color: var(--wip-text);
-    }
-
-    .status-dot {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .status-badge.open  .status-dot { background: var(--open-text); animation: pulse 2s ease-in-out infinite; }
-    .status-badge.wip   .status-dot { background: var(--wip-text); }
-
     /* Card footer */
     .card-footer {
       padding: 10px 18px 14px;
@@ -476,31 +429,21 @@
 <!-- Nav -->
 <nav>
   <a class="nav-logo" href="#">
-    <div class="logo-mark">M</div>
-    <span class="logo-text">Mo<span>Group</span></span>
+    <div class="logo-mark" id="logoMark"></div>
+    <span class="logo-text" id="logoText"></span>
   </a>
-  <span class="nav-badge">n8n 自動化課程</span>
+  <span class="nav-badge" id="navBadge"></span>
 </nav>
 
 <!-- Hero -->
 <section class="hero">
-  <span class="hero-eyebrow">線上課程平台</span>
-  <h1>用 n8n 打造<br>你的 AI 自動化系統</h1>
-  <p>從零開始，不需要任何程式基礎。跟著每日課程，三週內建出能帶來商業價值的 AI 工作流程。</p>
+  <span class="hero-eyebrow" id="heroEyebrow"></span>
+  <h1 id="heroTitle"></h1>
+  <p id="heroSubtitle"></p>
   <div class="hero-stats">
     <div class="stat">
-      <span class="stat-num" id="totalDays">1</span>
+      <span class="stat-num" id="totalDays">—</span>
       <span class="stat-label">已開放課程</span>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat">
-      <span class="stat-num">21</span>
-      <span class="stat-label">完整天數</span>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat">
-      <span class="stat-num">0</span>
-      <span class="stat-label">需要程式基礎</span>
     </div>
   </div>
 </section>
@@ -517,50 +460,51 @@
 
 <!-- Footer -->
 <footer>
-  © 2026 MoGroup · 課程持續更新中 ·
-  <a href="https://n8ndayone.zeabur.app/" target="_blank">n8n Day 1</a>
+  <span id="footerText"></span>
 </footer>
 
 <script>
-  const courses = [
-    {
-      day: 1,
-      title: '從零到第一個 AI Agent',
-      status: 'open',
-      url: 'https://n8ndayone.zeabur.app/'
-    },
-    { day:  2, title: 'AI Agent 記憶：讓 AI 記住對話', status: 'wip' },
-    { day:  3, title: '工作流程的條件判斷與分支',       status: 'wip' },
-    { day:  4, title: '連接 Google Sheets 自動記錄',   status: 'wip' },
-    { day:  5, title: '傳送 Email 與 Line 通知',       status: 'wip' },
-    { day:  6, title: 'Webhook：讓外部服務叫醒你的 Agent', status: 'wip' },
-    { day:  7, title: '排程自動化：每天固定時間執行',    status: 'wip' },
-    { day:  8, title: '抓取網頁資料（Web Scraping）',   status: 'wip' },
-    { day:  9, title: 'AI 摘要：讓 Agent 讀文件',       status: 'wip' },
-    { day: 10, title: '串接 Notion 打造知識庫',         status: 'wip' },
-    { day: 11, title: '向量資料庫與 RAG 入門',           status: 'wip' },
-    { day: 12, title: '讓 AI 搜尋網路即時資訊',          status: 'wip' },
-    { day: 13, title: 'AI 圖片生成工作流程',             status: 'wip' },
-    { day: 14, title: '多 Agent 協作：拆解複雜任務',     status: 'wip' },
-    { day: 15, title: '錯誤處理與工作流程穩定性',         status: 'wip' },
-    { day: 16, title: '打造 Line Bot 智慧助理',          status: 'wip' },
-    { day: 17, title: '打造 Telegram Bot',              status: 'wip' },
-    { day: 18, title: '客服自動化：FAQ 智慧回覆',         status: 'wip' },
-    { day: 19, title: '業務自動化：報價與跟進流程',        status: 'wip' },
-    { day: 20, title: '部署與分享你的工作流程',            status: 'wip' },
-    { day: 21, title: '期末整合：打造你的 AI 助理系統',   status: 'wip' },
-  ];
+  /* ═══════════════════════════════════════════════
+     SITE CONFIG — edit this section to customise
+     the logo, branding text, and page copy.
+  ═══════════════════════════════════════════════ */
+  const CONFIG = {
+    logoLetter:   'M',                        // Single letter shown in the logo mark
+    logoName:     'Mo<span>Group</span>',     // Brand name (HTML allowed for colour split)
+    navBadge:     'n8n 自動化課程',
+    heroEyebrow:  '線上課程平台',
+    heroTitle:    '用 n8n 打造<br>你的 AI 自動化系統',
+    heroSubtitle: '從零開始，不需要任何程式基礎。跟著每日課程，三週內建出能帶來商業價值的 AI 工作流程。',
+    footerText:   '© 2026 MoGroup · 課程持續更新中',
+  };
 
-  function renderCourses() {
+  /* Apply config to DOM */
+  document.getElementById('logoMark').textContent  = CONFIG.logoLetter;
+  document.getElementById('logoText').innerHTML    = CONFIG.logoName;
+  document.getElementById('navBadge').textContent  = CONFIG.navBadge;
+  document.getElementById('heroEyebrow').textContent = CONFIG.heroEyebrow;
+  document.getElementById('heroTitle').innerHTML   = CONFIG.heroTitle;
+  document.getElementById('heroSubtitle').textContent = CONFIG.heroSubtitle;
+  document.getElementById('footerText').textContent = CONFIG.footerText;
+
+  /* ═══════════════════════════════════════════════
+     COURSES — loaded from courses.json
+     To add/edit courses, edit courses.json only.
+     Fields:
+       day    : number
+       title  : string
+       status : "open" | "wip"
+       url    : string (required when status = "open")
+  ═══════════════════════════════════════════════ */
+  function renderCourses(courses) {
     const grid = document.getElementById('courseGrid');
     const openCount = courses.filter(c => c.status === 'open').length;
-
     document.getElementById('totalDays').textContent = openCount;
 
     grid.innerHTML = courses.map(c => {
       const isOpen = c.status === 'open';
-      const tag = isOpen ? 'a' : 'div';
-      const href = isOpen ? `href="${c.url}" target="_blank"` : '';
+      const tag     = isOpen ? 'a' : 'div';
+      const href    = isOpen ? `href="${c.url}" target="_blank"` : '';
       const wipClass = isOpen ? '' : 'wip';
 
       return `
@@ -572,10 +516,6 @@
           </div>
           <div class="card-body">
             <div class="card-title">${c.title}</div>
-            <span class="status-badge ${isOpen ? 'open' : 'wip'}">
-              <span class="status-dot"></span>
-              ${isOpen ? '開啟' : '更新中'}
-            </span>
           </div>
           <div class="card-footer">
             ${isOpen
@@ -588,7 +528,13 @@
     }).join('');
   }
 
-  renderCourses();
+  fetch('courses.json')
+    .then(r => r.json())
+    .then(renderCourses)
+    .catch(() => {
+      document.getElementById('courseGrid').innerHTML =
+        '<p style="color:var(--text-3);font-size:14px;">無法載入課程資料，請確認 courses.json 存在。</p>';
+    });
 </script>
 </body>
 </html>

@@ -1,0 +1,23 @@
+[
+  { "day": 1,  "title": "從零到第一個 AI Agent",            "status": "open", "url": "https://n8ndayone.zeabur.app/" },
+  { "day": 2,  "title": "AI Agent 記憶：讓 AI 記住對話",    "status": "wip" },
+  { "day": 3,  "title": "工作流程的條件判斷與分支",           "status": "wip" },
+  { "day": 4,  "title": "連接 Google Sheets 自動記錄",      "status": "wip" },
+  { "day": 5,  "title": "傳送 Email 與 Line 通知",          "status": "wip" },
+  { "day": 6,  "title": "Webhook：讓外部服務叫醒你的 Agent", "status": "wip" },
+  { "day": 7,  "title": "排程自動化：每天固定時間執行",        "status": "wip" },
+  { "day": 8,  "title": "抓取網頁資料（Web Scraping）",      "status": "wip" },
+  { "day": 9,  "title": "AI 摘要：讓 Agent 讀文件",          "status": "wip" },
+  { "day": 10, "title": "串接 Notion 打造知識庫",            "status": "wip" },
+  { "day": 11, "title": "向量資料庫與 RAG 入門",              "status": "wip" },
+  { "day": 12, "title": "讓 AI 搜尋網路即時資訊",             "status": "wip" },
+  { "day": 13, "title": "AI 圖片生成工作流程",                "status": "wip" },
+  { "day": 14, "title": "多 Agent 協作：拆解複雜任務",        "status": "wip" },
+  { "day": 15, "title": "錯誤處理與工作流程穩定性",            "status": "wip" },
+  { "day": 16, "title": "打造 Line Bot 智慧助理",             "status": "wip" },
+  { "day": 17, "title": "打造 Telegram Bot",                 "status": "wip" },
+  { "day": 18, "title": "客服自動化：FAQ 智慧回覆",            "status": "wip" },
+  { "day": 19, "title": "業務自動化：報價與跟進流程",           "status": "wip" },
+  { "day": 20, "title": "部署與分享你的工作流程",               "status": "wip" },
+  { "day": 21, "title": "期末整合：打造你的 AI 助理系統",      "status": "wip" }
+]
