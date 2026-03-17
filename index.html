@@ -116,6 +116,32 @@
       color: var(--accent);
     }
 
+    .nav-center {
+      display: flex;
+      gap: 4px;
+    }
+
+    .nav-tab {
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-3);
+      padding: 6px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .nav-tab:hover { color: var(--text-2); background: var(--glass); }
+
+    .nav-tab.active {
+      color: var(--text-1);
+      background: var(--glass);
+      border: 1px solid var(--border);
+    }
+
     .nav-badge {
       font-size: 11px;
       font-weight: 600;
@@ -427,6 +453,137 @@
       text-decoration: none;
     }
 
+    /* ── Page visibility ────────────────────────────── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── Knowledge feed ──────────────────────────────── */
+    .kn-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 48px 40px 80px;
+    }
+
+    .kn-header {
+      margin-bottom: 32px;
+    }
+
+    .kn-header h2 {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-1);
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .kn-header p {
+      font-size: 14px;
+      color: var(--text-3);
+    }
+
+    .kn-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .kn-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 26px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .kn-card:hover { border-color: rgba(238,79,39,0.25); }
+
+    .kn-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(238,79,39,0.4), transparent);
+    }
+
+    .kn-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .kn-type {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid rgba(238,79,39,0.25);
+      border-radius: 999px;
+      padding: 3px 10px;
+    }
+
+    .kn-date {
+      font-size: 12px;
+      color: var(--text-3);
+    }
+
+    .kn-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .kn-body {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+
+    .kn-embed {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--bg-2);
+    }
+
+    .kn-embed iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      border: none;
+    }
+
+    .kn-audio {
+      width: 100%;
+      border-radius: 8px;
+      accent-color: var(--accent);
+    }
+
+    .kn-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-3);
+      font-size: 14px;
+    }
+
+    @media (max-width: 640px) {
+      .kn-wrap { padding: 32px 20px 60px; }
+      .kn-title { font-size: 16px; }
+      .nav-center { gap: 2px; }
+      .nav-tab { font-size: 13px; padding: 6px 10px; }
+    }
+
     /* ── Responsive ─────────────────────────────────── */
     @media (max-width: 640px) {
       nav { padding: 0 20px; }
@@ -452,8 +609,14 @@
     <div class="logo-mark" id="logoMark"></div>
     <span class="logo-text" id="logoText"></span>
   </a>
+  <div class="nav-center">
+    <button class="nav-tab active" data-page="home" onclick="showPage('home')">我的主頁</button>
+    <button class="nav-tab" data-page="knowledge" onclick="showPage('knowledge')">每日知識庫</button>
+  </div>
   <span class="nav-badge" id="navBadge"></span>
 </nav>
+
+<div id="page-home" class="page active">
 
 <!-- Hero -->
 <div class="hero-wrap">
@@ -495,6 +658,21 @@
 
   <div class="course-grid" id="courseGrid"></div>
 </div>
+
+</div><!-- /page-home -->
+
+<!-- Knowledge page -->
+<div id="page-knowledge" class="page">
+  <div class="kn-wrap">
+    <div class="kn-header">
+      <h2>每日知識庫</h2>
+      <p>每天更新的文章、影片與音訊內容</p>
+    </div>
+    <div class="kn-feed" id="knowledgeFeed">
+      <div class="kn-empty">載入中...</div>
+    </div>
+  </div>
+</div><!-- /page-knowledge -->
 
 <!-- Footer -->
 <footer>
@@ -573,9 +751,73 @@
       document.getElementById('courseGrid').innerHTML =
         '<p style="color:var(--text-3);font-size:14px;">無法載入課程資料，請確認 courses.json 存在。</p>';
     });
+
+  /* ═══════════════════════════════════════════════
+     PAGE SWITCHER
+  ═══════════════════════════════════════════════ */
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('[data-page="' + name + '"]').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  /* ═══════════════════════════════════════════════
+     KNOWLEDGE FEED — loaded from knowledge.json
+     To add content, edit knowledge.json only.
+     Fields:
+       date  : "YYYY-MM-DD"
+       type  : "article" | "video" | "audio"
+       title : string
+       body  : string  (article only — supports line breaks)
+       url   : string  (video: YouTube embed URL, audio: direct file URL)
+  ═══════════════════════════════════════════════ */
+  function renderKnowledge(items) {
+    const feed = document.getElementById('knowledgeFeed');
+    if (!items || items.length === 0) {
+      feed.innerHTML = '<div class="kn-empty">尚無內容，敬請期待。</div>';
+      return;
+    }
+
+    items.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    const typeLabel = { article: '📄 文章', video: '🎬 影片', audio: '🎵 音訊' };
+
+    feed.innerHTML = items.map(item => {
+      let content = '';
+      if (item.type === 'article') {
+        content = `<div class="kn-body">${item.body.replace(/\n/g, '<br>')}</div>`;
+      } else if (item.type === 'video') {
+        content = `<div class="kn-embed"><iframe src="${item.url}" allowfullscreen></iframe></div>`;
+      } else if (item.type === 'audio') {
+        content = `<audio class="kn-audio" controls><source src="${item.url}"></audio>`;
+      }
+
+      return `
+        <div class="kn-card">
+          <div class="kn-meta">
+            <span class="kn-type">${typeLabel[item.type] || item.type}</span>
+            <span class="kn-date">${item.date}</span>
+          </div>
+          <h3 class="kn-title">${item.title}</h3>
+          ${content}
+        </div>
+      `;
+    }).join('');
+  }
+
+  fetch('knowledge.json')
+    .then(r => r.json())
+    .then(renderKnowledge)
+    .catch(() => {
+      document.getElementById('knowledgeFeed').innerHTML =
+        '<div class="kn-empty">尚無內容，敬請期待。</div>';
+    });
 </script>
 </body>
 </html>
+
 
 
 
