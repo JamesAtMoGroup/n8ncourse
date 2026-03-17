@@ -3,27 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>n8n 自動化課程 | MoGroup</title>
+  <title>X Learn | n8n 自動化課程</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     /* ── Tokens ─────────────────────────────────────── */
     :root {
-      --bg:           #07071c;
-      --bg-2:         #0d0d26;
+      --bg:           #0e0918;
+      --bg-2:         #1a1624;
       --glass:        rgba(255,255,255,0.04);
       --glass-hover:  rgba(255,255,255,0.07);
-      --border:       rgba(255,255,255,0.07);
-      --border-hover: rgba(255,255,255,0.14);
+      --border:       rgba(255,255,255,0.08);
+      --border-hover: rgba(255,255,255,0.16);
 
-      --accent:       #3b82f6;
-      --accent-dim:   rgba(59,130,246,0.15);
-      --accent-glow:  rgba(59,130,246,0.25);
-      --accent-2:     #8b5cf6;
+      --accent:       #ee4f27;
+      --accent-dim:   rgba(238,79,39,0.15);
+      --accent-glow:  rgba(238,79,39,0.3);
+      --accent-2:     #fd8925;
 
-      --text-1:       #e2e8f0;
-      --text-2:       #94a3b8;
-      --text-3:       #475569;
+      --text-1:       #f0eeff;
+      --text-2:       #a2a687;
+      --text-3:       #4a4560;
 
     }
 
@@ -51,18 +51,18 @@
     }
     .orb-1 {
       width: 700px; height: 700px;
-      background: radial-gradient(circle, rgba(59,130,246,0.13), transparent 70%);
+      background: radial-gradient(circle, rgba(238,79,39,0.12), transparent 70%);
       top: -250px; left: -150px;
     }
     .orb-2 {
       width: 550px; height: 550px;
-      background: radial-gradient(circle, rgba(139,92,246,0.1), transparent 70%);
+      background: radial-gradient(circle, rgba(234,75,113,0.09), transparent 70%);
       bottom: -180px; right: -120px;
       animation-delay: -9s;
     }
     .orb-3 {
       width: 350px; height: 350px;
-      background: radial-gradient(circle, rgba(59,130,246,0.07), transparent 70%);
+      background: radial-gradient(circle, rgba(253,137,37,0.07), transparent 70%);
       top: 40%; left: 55%;
       animation-duration: 26s;
     }
@@ -81,7 +81,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 40px;
-      background: rgba(7,7,28,0.75);
+      background: rgba(14,9,24,0.8);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
@@ -136,34 +136,7 @@
       margin: 0 auto;
     }
 
-    .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--accent);
-      background: var(--accent-dim);
-      border: 1px solid rgba(59,130,246,0.2);
-      border-radius: 999px;
-      padding: 5px 14px;
-      margin-bottom: 20px;
-    }
-
-    .hero-eyebrow::before {
-      content: '';
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--accent);
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%,100% { opacity:1; transform:scale(1); }
-      50%      { opacity:0.4; transform:scale(0.75); }
-    }
+    .hero-eyebrow { display: none; }
 
     .hero h1 {
       font-size: 48px;
@@ -260,10 +233,10 @@
     }
 
     .course-card:not(.wip):hover {
-      border-color: rgba(59,130,246,0.3);
+      border-color: rgba(238,79,39,0.3);
       background: var(--glass-hover);
       transform: translateY(-3px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(59,130,246,0.1);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(238,79,39,0.1);
     }
 
     .course-card.wip {
@@ -277,7 +250,7 @@
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(59,130,246,0.5), transparent);
+      background: linear-gradient(90deg, transparent, rgba(238,79,39,0.5), transparent);
     }
 
     /* Card banner */
@@ -297,8 +270,8 @@
 
     .course-card:not(.wip) .card-banner-bg {
       background: linear-gradient(135deg,
-        rgba(59,130,246,0.18) 0%,
-        rgba(139,92,246,0.12) 100%);
+        rgba(238,79,39,0.18) 0%,
+        rgba(253,137,37,0.10) 100%);
     }
 
     .course-card.wip .card-banner-bg {
@@ -314,8 +287,8 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--accent);
-      background: rgba(59,130,246,0.15);
-      border: 1px solid rgba(59,130,246,0.25);
+      background: rgba(238,79,39,0.15);
+      border: 1px solid rgba(238,79,39,0.25);
       border-radius: 999px;
       padding: 3px 10px;
     }
@@ -477,13 +450,13 @@
      the logo, branding text, and page copy.
   ═══════════════════════════════════════════════ */
   const CONFIG = {
-    logoLetter:   'M',                        // Single letter shown in the logo mark
-    logoName:     'Mo<span>Group</span>',     // Brand name (HTML allowed for colour split)
+    logoLetter:   'X',
+    logoName:     'X <span>Learn</span>',
     navBadge:     'n8n 自動化課程',
-    heroEyebrow:  '線上課程平台',
+    heroEyebrow:  '',
     heroTitle:    '用 n8n 打造<br>你的 AI 自動化系統',
     heroSubtitle: '從零開始，不需要任何程式基礎。跟著每日課程，三週內建出能帶來商業價值的 AI 工作流程。',
-    footerText:   '© 2026 MoGroup · 課程持續更新中',
+    footerText:   '© 2026 X Learn · 課程持續更新中',
   };
 
   /* Apply config to DOM */
@@ -546,4 +519,5 @@
 </script>
 </body>
 </html>
+
 
