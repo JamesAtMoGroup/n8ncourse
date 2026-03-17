@@ -465,6 +465,11 @@
   }
 
   async function ghPut(content, message) {
+    // Always refresh SHA before writing to avoid stale SHA conflicts
+    const latest = await ghGet();
+    const latestData = await latest.json();
+    fileSha = latestData.sha;
+
     return fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
       method: 'PUT',
       headers: { Authorization: `token ${TOKEN}`, 'Content-Type': 'application/json' },
@@ -614,7 +619,10 @@
       // Prepend to posts and commit
       const updated = [post, ...posts];
       const r = await ghPut(updated, `content: "${title}"`);
-      if (!r.ok) throw new Error();
+      if (!r.ok) {
+        const errData = await r.json().catch(() => ({}));
+        throw new Error(errData.message || `HTTP ${r.status}`);
+      }
 
       setProgress(100);
       toast('✅ 發布成功！', 'success');
