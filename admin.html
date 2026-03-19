@@ -3,681 +3,677 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>每日知識庫 Admin | X Learn</title>
+  <title>Admin | X Learn</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg:        #0e0918;
-      --bg-2:      #1a1624;
-      --bg-3:      #221d30;
-      --border:    rgba(255,255,255,0.08);
-      --accent:    #ee4f27;
-      --accent-dim:rgba(238,79,39,0.15);
-      --accent-2:  #fd8925;
-      --text-1:    #ffffff;
-      --text-2:    #c8c4b0;
-      --text-3:    #8a859e;
-      --success:   #34d399;
-      --danger:    #f87171;
-      --r:         12px;
+      --bg:#0e0918; --bg-2:#1a1624; --bg-3:#221d30;
+      --border:rgba(255,255,255,0.08); --border-hover:rgba(255,255,255,0.16);
+      --accent:#ee4f27; --accent-dim:rgba(238,79,39,0.15); --accent-glow:rgba(238,79,39,0.3); --accent-2:#fd8925;
+      --text-1:#ffffff; --text-2:#c8c4b0; --text-3:#8a859e;
+      --success:#34d399; --success-bg:rgba(52,211,153,0.1); --success-bdr:rgba(52,211,153,0.2);
+      --danger:#f87171; --danger-bg:rgba(248,113,113,0.1); --danger-bdr:rgba(248,113,113,0.25);
+      --info:#60a5fa; --info-bg:rgba(96,165,250,0.1); --info-bdr:rgba(96,165,250,0.25);
+      --r:12px;
     }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-1);min-height:100vh}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Loading */
+    .loading-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center}
+    .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text-1);
-      min-height: 100vh;
+    /* Nav */
+    nav{position:sticky;top:0;z-index:100;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(14,9,24,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+    .nav-brand{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;color:var(--text-1);text-decoration:none}
+    .logo-mark{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff}
+    .nav-right{display:flex;align-items:center;gap:12px}
+    .nav-user{font-size:13px;color:var(--text-3)}
+    .btn-logout{font-family:inherit;font-size:12px;font-weight:600;color:var(--text-3);background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:5px 12px;cursor:pointer;transition:color 0.15s}
+    .btn-logout:hover{color:var(--text-2)}
+
+    /* Tabs */
+    .tabs-bar{display:flex;gap:4px;padding:20px 32px 0;border-bottom:1px solid var(--border)}
+    .tab-btn{font-family:inherit;font-size:14px;font-weight:500;color:var(--text-3);background:none;border:none;padding:8px 18px;border-radius:8px 8px 0 0;cursor:pointer;transition:color 0.15s,background 0.15s;border-bottom:2px solid transparent;margin-bottom:-1px}
+    .tab-btn:hover{color:var(--text-2)}
+    .tab-btn.active{color:var(--text-1);border-bottom-color:var(--accent)}
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
+
+    /* Wrap */
+    .wrap{max-width:900px;margin:0 auto;padding:32px 32px 80px}
+
+    /* Form elements */
+    label{display:block;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px}
+    input[type="text"],input[type="email"],input[type="password"],input[type="url"],input[type="date"],select,textarea{
+      width:100%;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;
+      padding:10px 14px;font-family:inherit;font-size:14px;color:var(--text-1);outline:none;transition:border-color 0.15s
     }
+    input:focus,select:focus,textarea:focus{border-color:rgba(238,79,39,0.5)}
+    select{cursor:pointer}
+    select option{background:var(--bg-3)}
+    textarea{resize:vertical;min-height:80px;line-height:1.6}
+    .field{margin-bottom:16px}
 
-    /* ── Nav ── */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      height: 56px;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 32px;
-      background: rgba(14,9,24,0.9);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-    }
+    /* Buttons */
+    .btn{display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:14px;font-weight:600;padding:9px 20px;border-radius:8px;border:none;cursor:pointer;transition:opacity 0.15s,transform 0.1s}
+    .btn:hover{opacity:0.85}
+    .btn:active{transform:scale(0.98)}
+    .btn:disabled{opacity:0.4;cursor:not-allowed}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff}
+    .btn-ghost{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text-2)}
+    .btn-danger{background:var(--danger-bg);border:1px solid var(--danger-bdr);color:var(--danger);font-size:12px;padding:5px 12px}
+    .btn-sm{font-size:12px;padding:5px 12px}
 
-    .nav-brand {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 15px; font-weight: 700; color: var(--text-1);
-      text-decoration: none;
-    }
+    /* Card */
+    .card{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:24px;position:relative;overflow:hidden}
+    .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(238,79,39,0.4),transparent)}
+    .card-title{font-size:15px;font-weight:700;margin-bottom:18px;color:var(--text-1)}
 
-    .logo-mark {
-      width: 28px; height: 28px; border-radius: 7px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 800; color: #fff;
-    }
+    /* Section title */
+    .section-label{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px}
 
-    .nav-status {
-      font-size: 12px; color: var(--text-3);
-      display: flex; align-items: center; gap: 8px;
-    }
+    /* Search */
+    .search-row{display:flex;gap:12px;align-items:center;margin-bottom:20px}
+    .search-row input{flex:1}
 
-    .status-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--text-3);
-    }
+    /* Member table */
+    .member-table{width:100%;border-collapse:collapse}
+    .member-table th{font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-3);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border)}
+    .member-table td{font-size:13px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle}
+    .member-table tr:last-child td{border-bottom:none}
+    .member-table tr:hover td{background:rgba(255,255,255,0.02)}
+    .role-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:2px 9px;border-radius:999px}
+    .role-badge.admin{background:var(--accent-dim);border:1px solid rgba(238,79,39,0.3);color:var(--accent)}
+    .role-badge.member{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text-3)}
+    .table-actions{display:flex;gap:6px;align-items:center}
+    .empty-row{text-align:center;padding:40px;color:var(--text-3);font-size:14px}
 
-    .status-dot.connected { background: var(--success); box-shadow: 0 0 6px var(--success); }
+    /* Import */
+    .upload-area{border:1.5px dashed var(--border);border-radius:8px;padding:32px 24px;text-align:center;cursor:pointer;transition:border-color 0.2s,background 0.2s;position:relative}
+    .upload-area:hover,.upload-area.drag-over{border-color:rgba(238,79,39,0.4);background:var(--accent-dim)}
+    .upload-area input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .upload-area .icon{font-size:32px;margin-bottom:10px;display:block}
+    .upload-area p{font-size:13px;color:var(--text-3);pointer-events:none}
+    .upload-area .fname{font-size:13px;color:var(--accent);margin-top:6px}
 
-    /* ── Layout ── */
-    .wrap {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 40px 32px 80px;
-    }
+    /* Import preview */
+    .preview-wrap{margin-top:20px;display:none}
+    .preview-table{width:100%;border-collapse:collapse;font-size:13px}
+    .preview-table th{font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text-3);padding:6px 10px;border-bottom:1px solid var(--border);text-align:left}
+    .preview-table td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .preview-table tr.err-row td{color:var(--danger)}
+    .status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px}
+    .status-dot.ok{background:var(--success)}
+    .status-dot.fail{background:var(--danger)}
+    .status-dot.pending{background:var(--text-3)}
 
-    /* ── Token gate ── */
-    #gate {
-      min-height: 80vh;
-      display: flex; align-items: center; justify-content: center;
-    }
+    /* Progress */
+    .progress-wrap{background:rgba(255,255,255,0.06);border-radius:999px;height:4px;margin-top:10px;overflow:hidden;display:none}
+    .progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:999px;transition:width 0.3s;width:0%}
 
-    .gate-card {
-      background: var(--bg-2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 40px;
-      width: 100%; max-width: 440px;
-      text-align: center;
-    }
+    /* Alert */
+    .alert{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
+    .alert.show{display:block}
+    .alert.success{background:var(--success-bg);border:1px solid var(--success-bdr);color:var(--success)}
+    .alert.error{background:var(--danger-bg);border:1px solid var(--danger-bdr);color:var(--danger)}
+    .alert.info{background:var(--info-bg);border:1px solid var(--info-bdr);color:var(--info)}
 
-    .gate-card h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-    .gate-card p  { font-size: 13px; color: var(--text-3); margin-bottom: 24px; line-height: 1.6; }
+    /* Grid */
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .divider{height:1px;background:var(--border);margin:24px 0}
 
-    /* ── Form elements ── */
-    label {
-      display: block;
-      font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
-      color: var(--text-3); margin-bottom: 6px; text-transform: uppercase;
-    }
+    /* Toast */
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:999px;font-size:14px;font-weight:600;background:var(--bg-3);border:1px solid var(--border);opacity:0;pointer-events:none;transition:opacity 0.25s,bottom 0.25s;z-index:999;white-space:nowrap}
+    #toast.show{opacity:1;bottom:36px}
+    #toast.success{color:var(--success);border-color:rgba(52,211,153,0.3)}
+    #toast.error{color:var(--danger);border-color:rgba(248,113,113,0.3)}
 
-    input[type="text"],
-    input[type="date"],
-    input[type="password"],
-    input[type="url"],
-    textarea {
-      width: 100%;
-      background: var(--bg-3);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-family: inherit;
-      font-size: 14px;
-      color: var(--text-1);
-      outline: none;
-      transition: border-color 0.15s;
-    }
+    /* Course list items */
+    .course-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg-3);border:1px solid var(--border);border-radius:10px;margin-bottom:8px}
+    .course-item-num{font-size:11px;font-weight:700;color:var(--text-3);width:24px;flex-shrink:0}
+    .course-item-title{flex:1;font-size:14px;font-weight:500;color:var(--text-1)}
+    .course-item-status{font-size:10px;font-weight:700;text-transform:uppercase;padding:2px 8px;border-radius:999px}
+    .course-item-status.open{background:var(--success-bg);border:1px solid var(--success-bdr);color:var(--success)}
+    .course-item-status.wip{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text-3)}
 
-    input:focus, textarea:focus {
-      border-color: rgba(238,79,39,0.5);
-    }
+    /* Token note */
+    .token-note{background:var(--info-bg);border:1px solid var(--info-bdr);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--info);margin-bottom:20px}
 
-    textarea { resize: vertical; min-height: 120px; line-height: 1.7; }
-
-    .field { margin-bottom: 20px; }
-
-    .field-hint {
-      font-size: 12px; color: var(--text-3);
-      margin-top: 5px; line-height: 1.5;
-    }
-
-    /* ── Buttons ── */
-    .btn {
-      display: inline-flex; align-items: center; gap: 7px;
-      font-family: inherit; font-size: 14px; font-weight: 600;
-      padding: 10px 22px; border-radius: 8px;
-      border: none; cursor: pointer;
-      transition: opacity 0.15s, transform 0.1s;
-    }
-
-    .btn:hover { opacity: 0.88; }
-    .btn:active { transform: scale(0.98); }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #fff;
-    }
-
-    .btn-ghost {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid var(--border);
-      color: var(--text-2);
-    }
-
-    .btn-danger {
-      background: rgba(248,113,113,0.12);
-      border: 1px solid rgba(248,113,113,0.25);
-      color: var(--danger);
-      font-size: 12px;
-      padding: 6px 14px;
-    }
-
-    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    /* ── Section titles ── */
-    .section-title {
-      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--text-3);
-      margin-bottom: 16px;
-    }
-
-    /* ── New post card ── */
-    .card {
-      background: var(--bg-2);
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      padding: 24px;
-      margin-bottom: 32px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(238,79,39,0.5), transparent);
-    }
-
-    .card-title {
-      font-size: 16px; font-weight: 700; margin-bottom: 20px;
-    }
-
-    /* ── Type toggle ── */
-    .type-toggle {
-      display: flex; gap: 8px; flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-
-    .type-btn {
-      font-family: inherit; font-size: 13px; font-weight: 600;
-      padding: 7px 16px; border-radius: 999px;
-      border: 1px solid var(--border);
-      background: transparent; color: var(--text-3);
-      cursor: pointer; transition: all 0.15s;
-    }
-
-    .type-btn.active {
-      background: var(--accent-dim);
-      border-color: rgba(238,79,39,0.4);
-      color: var(--accent);
-    }
-
-    /* ── Audio upload area ── */
-    .upload-area {
-      border: 1.5px dashed var(--border);
-      border-radius: 8px;
-      padding: 24px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      position: relative;
-    }
-
-    .upload-area:hover, .upload-area.drag-over {
-      border-color: rgba(238,79,39,0.4);
-      background: var(--accent-dim);
-    }
-
-    .upload-area input[type="file"] {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer;
-      width: 100%; height: 100%;
-    }
-
-    .upload-area p {
-      font-size: 13px; color: var(--text-3); pointer-events: none;
-    }
-
-    .upload-area .upload-icon { font-size: 28px; margin-bottom: 8px; display: block; }
-    .upload-area .upload-name { font-size: 13px; color: var(--accent); margin-top: 6px; }
-
-    /* ── Progress bar ── */
-    .progress-wrap {
-      background: rgba(255,255,255,0.06);
-      border-radius: 999px; height: 4px;
-      margin-top: 10px; overflow: hidden;
-      display: none;
-    }
-
-    .progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      border-radius: 999px;
-      transition: width 0.3s;
-      width: 0%;
-    }
-
-    /* ── Toast ── */
-    #toast {
-      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
-      padding: 12px 24px; border-radius: 999px;
-      font-size: 14px; font-weight: 600;
-      background: var(--bg-3); border: 1px solid var(--border);
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.25s, bottom 0.25s;
-      z-index: 999; white-space: nowrap;
-    }
-
-    #toast.show { opacity: 1; bottom: 36px; }
-    #toast.success { color: var(--success); border-color: rgba(52,211,153,0.3); }
-    #toast.error   { color: var(--danger);  border-color: rgba(248,113,113,0.3); }
-
-    /* ── Posts list ── */
-    .post-item {
-      display: flex; align-items: flex-start; justify-content: space-between;
-      gap: 16px;
-      padding: 14px 18px;
-      background: var(--bg-2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      margin-bottom: 8px;
-    }
-
-    .post-info { flex: 1; min-width: 0; }
-
-    .post-title {
-      font-size: 14px; font-weight: 600; color: var(--text-1);
-      margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-
-    .post-meta {
-      font-size: 12px; color: var(--text-3);
-      display: flex; gap: 8px; flex-wrap: wrap;
-    }
-
-    .post-badge {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
-      background: var(--accent-dim); color: var(--accent);
-      border: 1px solid rgba(238,79,39,0.2);
-      border-radius: 999px; padding: 2px 8px;
-    }
-
-    .no-posts { text-align: center; padding: 32px 16px; font-size: 14px; color: var(--text-3); }
-
-    /* ── Divider ── */
-    .divider {
-      height: 1px; background: var(--border);
-      margin: 28px 0;
-    }
-
-    @media (max-width: 600px) {
-      .wrap { padding: 28px 20px 60px; }
-      nav { padding: 0 20px; }
+    @media(max-width:640px){
+      .wrap{padding:24px 20px 60px}
+      nav{padding:0 20px}
+      .tabs-bar{padding:16px 20px 0}
+      .grid-2{grid-template-columns:1fr}
     }
   </style>
 </head>
 <body>
 
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+
+<!-- Nav -->
 <nav>
   <a class="nav-brand" href="index.html">
     <div class="logo-mark">X</div>
-    X <span style="color:var(--accent);margin-left:2px">Learn</span> &nbsp;Admin
+    X <span style="color:var(--accent);margin-left:2px">Learn</span> &nbsp;<span style="color:var(--text-3);font-weight:400">Admin</span>
   </a>
-  <div class="nav-status">
-    <div class="status-dot" id="statusDot"></div>
-    <span id="statusText">未連線</span>
+  <div class="nav-right">
+    <span class="nav-user" id="navUser"></span>
+    <button class="btn-logout" onclick="logout()">登出</button>
   </div>
 </nav>
 
-<!-- Password gate -->
-<div id="gate">
-  <div class="gate-card">
-    <h2>🔐 管理員登入</h2>
-    <p>輸入 GitHub Classic Personal Access Token<br>（需要 <code>repo</code> 權限）</p>
-    <div class="field">
-      <input type="password" id="passwordInput" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" />
+<!-- Tabs -->
+<div class="tabs-bar">
+  <button class="tab-btn active" onclick="showTab('members')">👥 會員管理</button>
+  <button class="tab-btn" onclick="showTab('import')">📥 批量匯入</button>
+  <button class="tab-btn" onclick="showTab('courses')">📚 課程管理</button>
+</div>
+
+<!-- ═══ TAB: 會員管理 ═══ -->
+<div id="tab-members" class="tab-panel active">
+  <div class="wrap">
+
+    <!-- Add member -->
+    <div class="card">
+      <div class="card-title">新增會員</div>
+      <div class="grid-2">
+        <div class="field"><label>姓名</label><input type="text" id="addName" placeholder="王小明" /></div>
+        <div class="field"><label>電子郵件</label><input type="email" id="addEmail" placeholder="user@example.com" /></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>密碼</label><input type="password" id="addPassword" placeholder="至少 6 個字元" /></div>
+        <div class="field"><label>角色</label>
+          <select id="addRole">
+            <option value="member">會員 (Member)</option>
+            <option value="admin">管理員 (Admin)</option>
+          </select>
+        </div>
+      </div>
+      <div class="alert" id="addAlert"></div>
+      <button class="btn btn-primary" id="addBtn" onclick="addMember()">＋ 新增會員</button>
     </div>
-    <button class="btn btn-primary" onclick="connect()" style="width:100%">登入</button>
+
+    <!-- Member list -->
+    <div class="section-label" id="memberCount">會員列表</div>
+    <div class="search-row">
+      <input type="text" id="memberSearch" placeholder="搜尋姓名或 Email..." oninput="filterMembers()" />
+    </div>
+    <div id="memberTableWrap">
+      <table class="member-table">
+        <thead><tr>
+          <th>姓名</th><th>電子郵件</th><th>角色</th><th>加入時間</th><th>操作</th>
+        </tr></thead>
+        <tbody id="memberTbody"><tr><td colspan="5" class="empty-row">載入中...</td></tr></tbody>
+      </table>
+    </div>
+
   </div>
 </div>
 
-<!-- Admin panel (hidden until connected) -->
-<div id="panel" style="display:none">
+<!-- ═══ TAB: 批量匯入 ═══ -->
+<div id="tab-import" class="tab-panel">
   <div class="wrap">
-
-    <!-- New post -->
     <div class="card">
-      <div class="card-title">✏️ 新增內容</div>
+      <div class="card-title">批量匯入會員</div>
+      <div class="alert info show" style="margin-bottom:16px">
+        <strong>CSV 格式說明：</strong> 第一列為標題列 <code>name,email,password,role</code>（role 可選，預設 member）<br>
+        <span style="color:var(--text-3);font-size:12px;margin-top:4px;display:block">範例：王小明,wang@example.com,pass1234,member</span>
+      </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="upload-area" id="csvDropzone"
+        ondragover="event.preventDefault();this.classList.add('drag-over')"
+        ondragleave="this.classList.remove('drag-over')"
+        ondrop="handleCsvDrop(event)">
+        <input type="file" id="csvFile" accept=".csv,text/csv" onchange="onCsvSelect(this)" />
+        <span class="icon">📋</span>
+        <p>拖曳 CSV 檔案到這裡，或點擊選擇</p>
+        <div class="fname" id="csvFileName"></div>
+      </div>
+
+      <div class="preview-wrap" id="previewWrap">
+        <div class="divider"></div>
+        <div class="section-label" id="previewLabel"></div>
+        <div style="overflow-x:auto">
+          <table class="preview-table">
+            <thead><tr><th>#</th><th>姓名</th><th>Email</th><th>角色</th><th>狀態</th></tr></thead>
+            <tbody id="previewBody"></tbody>
+          </table>
+        </div>
+        <div class="progress-wrap" id="importProgressWrap">
+          <div class="progress-bar" id="importProgressBar"></div>
+        </div>
+        <div class="alert" id="importAlert" style="margin-top:12px"></div>
+        <div style="display:flex;gap:12px;margin-top:16px">
+          <button class="btn btn-primary" id="importBtn" onclick="runImport()">🚀 開始匯入</button>
+          <button class="btn btn-ghost" onclick="clearCsv()">清除</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB: 課程管理 ═══ -->
+<div id="tab-courses" class="tab-panel">
+  <div class="wrap">
+    <div class="token-note" id="tokenNote">需要 GitHub Token 來編輯課程內容。<a href="#" onclick="document.getElementById('tokenSection').style.display='block';this.closest('.token-note').style.display='none'" style="color:var(--info);margin-left:6px">設定 Token →</a></div>
+
+    <div id="tokenSection" style="display:none">
+      <div class="card">
+        <div class="card-title">GitHub Token 設定</div>
         <div class="field">
-          <label>日期</label>
-          <input type="date" id="fDate" />
+          <label>Personal Access Token（需要 repo 權限）</label>
+          <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx" />
         </div>
-        <div class="field">
-          <label>標題</label>
-          <input type="text" id="fTitle" placeholder="今日主題..." />
-        </div>
-      </div>
-
-      <!-- Content type toggles -->
-      <label>內容類型（可多選）</label>
-      <div class="type-toggle" style="margin-top:8px">
-        <button class="type-btn" data-type="article" onclick="toggleType(this)">📄 文章</button>
-        <button class="type-btn" data-type="video"   onclick="toggleType(this)">🎬 影片</button>
-        <button class="type-btn" data-type="audio"   onclick="toggleType(this)">🎵 音訊</button>
-      </div>
-
-      <!-- Article body -->
-      <div id="field-article" class="field" style="display:none">
-        <label>文章內容</label>
-        <textarea id="fBody" placeholder="在這裡輸入文章內容...&#10;支援換行"></textarea>
-      </div>
-
-      <!-- Video URL -->
-      <div id="field-video" class="field" style="display:none">
-        <label>YouTube 連結</label>
-        <input type="url" id="fVideoUrl" placeholder="https://www.youtube.com/watch?v=..." />
-        <p class="field-hint">貼上 YouTube 影片連結，系統會自動轉換</p>
-      </div>
-
-      <!-- Audio -->
-      <div id="field-audio" class="field" style="display:none">
-        <label>音訊（上傳檔案或貼上 URL）</label>
-        <div class="upload-area" id="dropzone"
-          ondragover="event.preventDefault();this.classList.add('drag-over')"
-          ondragleave="this.classList.remove('drag-over')"
-          ondrop="handleDrop(event)">
-          <input type="file" id="fAudioFile" accept="audio/*" onchange="onFileSelect(this)" />
-          <span class="upload-icon">🎵</span>
-          <p>拖曳音訊檔案到這裡，或點擊選擇</p>
-          <p>支援 MP3、M4A、WAV（建議 < 25MB）</p>
-          <div class="upload-name" id="fileName"></div>
-        </div>
-        <div class="progress-wrap" id="progressWrap">
-          <div class="progress-bar" id="progressBar"></div>
-        </div>
-        <p class="field-hint" style="margin-top:10px">— 或者貼上已有的音訊 URL —</p>
-        <input type="url" id="fAudioUrl" placeholder="https://example.com/audio.mp3" style="margin-top:8px" />
-      </div>
-
-      <!-- Tags -->
-      <div class="field">
-        <label>標籤（用逗號分隔）</label>
-        <input type="text" id="fTags" placeholder="例如：n8n, 自動化, AI" />
-        <p class="field-hint">留空則不加標籤</p>
-      </div>
-
-      <div style="display:flex;gap:12px;margin-top:8px">
-        <button class="btn btn-primary" id="publishBtn" onclick="publish()">🚀 發布</button>
-        <button class="btn btn-ghost" onclick="resetForm()">清除</button>
+        <button class="btn btn-ghost btn-sm" onclick="connectGitHub()">連線</button>
       </div>
     </div>
 
-    <div class="divider"></div>
+    <div id="coursePanel" style="display:none">
+      <!-- Add course -->
+      <div class="card">
+        <div class="card-title">新增 / 編輯課程</div>
+        <div class="grid-2">
+          <div class="field"><label>Lecture 編號</label><input type="text" id="cDay" placeholder="3" /></div>
+          <div class="field"><label>狀態</label>
+            <select id="cStatus">
+              <option value="wip">即將推出 (wip)</option>
+              <option value="open">已開放 (open)</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label>課程標題</label><input type="text" id="cTitle" placeholder="課程標題..." /></div>
+        <div class="field"><label>課程連結（狀態為 open 時必填）</label><input type="url" id="cUrl" placeholder="./lecture3/" /></div>
+        <div style="display:flex;gap:12px">
+          <button class="btn btn-primary btn-sm" onclick="saveCourse()">儲存</button>
+          <button class="btn btn-ghost btn-sm" onclick="clearCourseForm()">清除</button>
+        </div>
+      </div>
 
-    <!-- Existing posts -->
-    <p class="section-title">現有內容（<span id="postCount">0</span> 篇）</p>
-    <div id="postsList"><div class="no-posts">載入中...</div></div>
-
+      <!-- Course list -->
+      <div class="section-label">現有課程（<span id="courseListCount">0</span> 堂）</div>
+      <div id="courseList"></div>
+    </div>
   </div>
 </div>
 
 <div id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  const SUPABASE_URL     = 'https://hkdmbfpwqfrjylvsexdu.supabase.co';
+  const SUPABASE_ANON    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhrZG1iZnB3cWZyanlsdnNleGR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MDU1NjIsImV4cCI6MjA4OTQ4MTU2Mn0.7BmLMAiStA_OZpnSqgnq8CuXRmp0r7Apg28MJVTURLU';
+  const SUPABASE_SERVICE = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhrZG1iZnB3cWZyanlsdnNleGR1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzkwNTU2MiwiZXhwIjoyMDg5NDgxNTYyfQ.YvehdS8n87gxOe55qeTkB3DeRuaK9GwIBbJd1cuXjRI';
+
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  const sbAdmin = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE, {
+    auth: { autoRefreshToken: false, persistSession: false }
+  });
+
+  let allMembers = [];
+
+  // ── Auth check ─────────────────────────────────────────────────
+  sb.auth.getSession().then(async ({ data: { session } }) => {
+    if (!session) { window.location.href = './login.html'; return; }
+    const { data: profile } = await sb.from('profiles').select('name, email, role').eq('id', session.user.id).single();
+    if (profile?.role !== 'admin') { window.location.href = './'; return; }
+    document.getElementById('navUser').textContent = profile?.name || session.user.email;
+    document.getElementById('loadingOverlay').style.display = 'none';
+    loadMembers();
+  });
+
+  async function logout() {
+    await sb.auth.signOut();
+    window.location.href = './login.html';
+  }
+
+  // ── Tabs ───────────────────────────────────────────────────────
+  function showTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  // ══════════════════════════════════════════════════════
+  // MEMBER MANAGEMENT
+  // ══════════════════════════════════════════════════════
+
+  async function loadMembers() {
+    const { data, error } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
+    if (error) { toast('載入失敗：' + error.message, 'error'); return; }
+    allMembers = data || [];
+    renderMembers(allMembers);
+    document.getElementById('memberCount').textContent = `會員列表（共 ${allMembers.length} 人）`;
+  }
+
+  function renderMembers(list) {
+    const tbody = document.getElementById('memberTbody');
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty-row">尚無會員</td></tr>';
+      return;
+    }
+    tbody.innerHTML = list.map(m => `
+      <tr>
+        <td style="font-weight:500">${esc(m.name || '—')}</td>
+        <td style="color:var(--text-2)">${esc(m.email)}</td>
+        <td><span class="role-badge ${m.role}">${m.role === 'admin' ? '管理員' : '會員'}</span></td>
+        <td style="color:var(--text-3)">${formatDate(m.created_at)}</td>
+        <td>
+          <div class="table-actions">
+            <button class="btn btn-ghost btn-sm" onclick="toggleRole('${m.id}','${m.role}')">
+              ${m.role === 'admin' ? '降為會員' : '升為管理員'}
+            </button>
+            <button class="btn btn-danger" onclick="deleteMember('${m.id}','${esc(m.email)}')">刪除</button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+
+  function filterMembers() {
+    const q = document.getElementById('memberSearch').value.toLowerCase();
+    const filtered = allMembers.filter(m =>
+      (m.name || '').toLowerCase().includes(q) || m.email.toLowerCase().includes(q)
+    );
+    renderMembers(filtered);
+  }
+
+  async function addMember() {
+    const name     = document.getElementById('addName').value.trim();
+    const email    = document.getElementById('addEmail').value.trim();
+    const password = document.getElementById('addPassword').value;
+    const role     = document.getElementById('addRole').value;
+    const alertEl  = document.getElementById('addAlert');
+    const btn      = document.getElementById('addBtn');
+
+    if (!email || !password) { showAlert(alertEl, '請填寫 Email 和密碼', 'error'); return; }
+    if (password.length < 6) { showAlert(alertEl, '密碼至少 6 個字元', 'error'); return; }
+
+    btn.disabled = true; btn.textContent = '新增中...';
+    alertEl.classList.remove('show');
+
+    const { data, error } = await sbAdmin.auth.admin.createUser({
+      email, password,
+      email_confirm: true,
+      user_metadata: { name: name || email.split('@')[0], role }
+    });
+
+    if (error) {
+      showAlert(alertEl, error.message, 'error');
+      btn.disabled = false; btn.textContent = '＋ 新增會員';
+      return;
+    }
+
+    showAlert(alertEl, `✅ 已新增 ${email}`, 'success');
+    document.getElementById('addName').value = '';
+    document.getElementById('addEmail').value = '';
+    document.getElementById('addPassword').value = '';
+    btn.disabled = false; btn.textContent = '＋ 新增會員';
+    await loadMembers();
+  }
+
+  async function toggleRole(id, currentRole) {
+    const newRole = currentRole === 'admin' ? 'member' : 'admin';
+    const { error } = await sb.from('profiles').update({ role: newRole }).eq('id', id);
+    if (error) { toast('更新失敗：' + error.message, 'error'); return; }
+    toast(`已更新為 ${newRole}`, 'success');
+    await loadMembers();
+  }
+
+  async function deleteMember(id, email) {
+    if (!confirm(`確定刪除 ${email}？此操作無法復原。`)) return;
+    const { error: authErr } = await sbAdmin.auth.admin.deleteUser(id);
+    if (authErr) { toast('刪除失敗：' + authErr.message, 'error'); return; }
+    toast('已刪除', 'success');
+    await loadMembers();
+  }
+
+  // ══════════════════════════════════════════════════════
+  // BULK IMPORT
+  // ══════════════════════════════════════════════════════
+
+  let csvRows = [];
+
+  function onCsvSelect(input) {
+    const file = input.files[0];
+    if (file) parseCsv(file);
+  }
+
+  function handleCsvDrop(e) {
+    e.preventDefault();
+    document.getElementById('csvDropzone').classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) parseCsv(file);
+  }
+
+  function parseCsv(file) {
+    document.getElementById('csvFileName').textContent = file.name;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const lines = e.target.result.split('\n').map(l => l.trim()).filter(Boolean);
+      if (lines.length < 2) { toast('CSV 內容不足', 'error'); return; }
+      const headers = lines[0].toLowerCase().split(',').map(h => h.trim());
+      const nameIdx  = headers.indexOf('name');
+      const emailIdx = headers.indexOf('email');
+      const passIdx  = headers.indexOf('password');
+      const roleIdx  = headers.indexOf('role');
+      if (emailIdx === -1) { toast('CSV 缺少 email 欄位', 'error'); return; }
+
+      csvRows = lines.slice(1).map((line, i) => {
+        const cols = line.split(',').map(c => c.trim());
+        return {
+          idx: i + 1,
+          name:     nameIdx  >= 0 ? cols[nameIdx]  : '',
+          email:    emailIdx >= 0 ? cols[emailIdx] : '',
+          password: passIdx  >= 0 ? cols[passIdx]  : generatePassword(),
+          role:     roleIdx  >= 0 ? cols[roleIdx]  : 'member',
+          status: 'pending'
+        };
+      }).filter(r => r.email);
+
+      renderPreview();
+      document.getElementById('previewWrap').style.display = 'block';
+      document.getElementById('previewLabel').textContent = `預覽（${csvRows.length} 筆）`;
+    };
+    reader.readAsText(file);
+  }
+
+  function renderPreview() {
+    document.getElementById('previewBody').innerHTML = csvRows.map(r => `
+      <tr id="prow-${r.idx}" class="${r.status === 'fail' ? 'err-row' : ''}">
+        <td>${r.idx}</td>
+        <td>${esc(r.name || '—')}</td>
+        <td>${esc(r.email)}</td>
+        <td>${r.role}</td>
+        <td><span class="status-dot ${r.status}"></span>${statusLabel(r.status)}${r.error ? ' — ' + esc(r.error) : ''}</td>
+      </tr>`).join('');
+  }
+
+  function statusLabel(s) {
+    return s === 'ok' ? '成功' : s === 'fail' ? '失敗' : s === 'skip' ? '已存在' : '待匯入';
+  }
+
+  async function runImport() {
+    const btn = document.getElementById('importBtn');
+    btn.disabled = true; btn.textContent = '匯入中...';
+    const alertEl = document.getElementById('importAlert');
+    alertEl.classList.remove('show');
+    document.getElementById('importProgressWrap').style.display = 'block';
+
+    let ok = 0, fail = 0, skip = 0;
+    for (let i = 0; i < csvRows.length; i++) {
+      const r = csvRows[i];
+      setProgress(Math.round((i / csvRows.length) * 100));
+
+      const { data, error } = await sbAdmin.auth.admin.createUser({
+        email: r.email, password: r.password, email_confirm: true,
+        user_metadata: { name: r.name || r.email.split('@')[0], role: r.role }
+      });
+
+      if (error) {
+        if (error.message.includes('already been registered') || error.message.includes('already exists')) {
+          r.status = 'skip'; skip++;
+        } else {
+          r.status = 'fail'; r.error = error.message; fail++;
+        }
+      } else {
+        r.status = 'ok'; ok++;
+      }
+      renderPreview();
+    }
+
+    setProgress(100);
+    const msg = `完成：${ok} 成功，${skip} 已存在，${fail} 失敗`;
+    showAlert(alertEl, msg, fail > 0 ? 'error' : 'success');
+    btn.disabled = false; btn.textContent = '🚀 開始匯入';
+    await loadMembers();
+  }
+
+  function clearCsv() {
+    csvRows = [];
+    document.getElementById('csvFile').value = '';
+    document.getElementById('csvFileName').textContent = '';
+    document.getElementById('previewWrap').style.display = 'none';
+    document.getElementById('importProgressWrap').style.display = 'none';
+    document.getElementById('importProgressBar').style.width = '0%';
+    document.getElementById('importAlert').classList.remove('show');
+    document.getElementById('importBtn').textContent = '🚀 開始匯入';
+  }
+
+  function setProgress(pct) {
+    document.getElementById('importProgressBar').style.width = pct + '%';
+  }
+
+  function generatePassword() {
+    return Math.random().toString(36).slice(-10) + 'A1!';
+  }
+
+  // ══════════════════════════════════════════════════════
+  // COURSE MANAGEMENT (GitHub API)
+  // ══════════════════════════════════════════════════════
+
   const REPO = 'JamesAtMoGroup/n8ncourse';
-  const FILE = 'knowledge.json';
+  const COURSES_FILE = 'courses.json';
+  let ghToken = '';
+  let coursesSha = '';
+  let courses = [];
 
-  let TOKEN   = '';
-  let fileSha = '';
-  let posts   = [];
-  let selectedFile = null;
-
-  // ── Auth ───────────────────────────────────────────────────────
-  async function connect() {
-    TOKEN = document.getElementById('passwordInput').value.trim();
-    if (!TOKEN) return toast('請輸入 Token', 'error');
-
+  async function connectGitHub() {
+    ghToken = document.getElementById('ghToken').value.trim();
+    if (!ghToken) { toast('請輸入 GitHub Token', 'error'); return; }
     try {
-      const r = await ghGet();
-      if (!r.ok) { const e = await r.json(); throw new Error(e.message || r.status); }
-      toast('登入成功！', 'success');
-      document.getElementById('gate').style.display  = 'none';
-      document.getElementById('panel').style.display = 'block';
-      document.getElementById('statusDot').className  = 'status-dot connected';
-      document.getElementById('statusText').textContent = '已連線';
-      document.getElementById('fDate').value = new Date().toISOString().split('T')[0];
-      await loadPosts();
+      await loadCoursesFromGitHub();
+      document.getElementById('tokenSection').style.display = 'none';
+      document.getElementById('coursePanel').style.display = 'block';
+      toast('GitHub 連線成功', 'success');
     } catch(e) {
       toast('連線失敗：' + e.message, 'error');
     }
   }
 
-  // ── GitHub API helpers ─────────────────────────────────────────
-  function ghGet() {
-    return fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
-      headers: { Authorization: `token ${TOKEN}` }
+  async function loadCoursesFromGitHub() {
+    const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${COURSES_FILE}`, {
+      headers: { Authorization: `token ${ghToken}` }
     });
-  }
-
-  async function ghPut(content, message) {
-    const latest = await ghGet();
-    const d = await latest.json();
-    fileSha = d.sha;
-    return fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
-      method: 'PUT',
-      headers: { Authorization: `token ${TOKEN}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message, content: utfToB64(JSON.stringify(content, null, 2)), sha: fileSha })
-    });
-  }
-
-  async function ghUploadAudio(filename, base64) {
-    const path = `audio/${filename}`;
-    let sha;
-    const existing = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`,
-      { headers: { Authorization: `token ${TOKEN}` } });
-    if (existing.ok) { sha = (await existing.json()).sha; }
-    const body = { message: `audio: ${filename}`, content: base64 };
-    if (sha) body.sha = sha;
-    const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
-      method: 'PUT',
-      headers: { Authorization: `token ${TOKEN}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    if (!res.ok) { const e = await res.json(); throw new Error(e.message || 'Audio upload failed'); }
-    return `https://raw.githubusercontent.com/${REPO}/main/${path}`;
-  }
-
-  function utfToB64(str) {
-    return btoa(unescape(encodeURIComponent(str)));
-  }
-
-  async function loadPosts() {
-    const r = await ghGet();
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const d = await r.json();
-    fileSha = d.sha;
+    coursesSha = d.sha;
     const raw = atob(d.content.replace(/\n/g, ''));
-    const decoded = new TextDecoder('utf-8').decode(Uint8Array.from(raw, c => c.charCodeAt(0)));
-    posts = JSON.parse(decoded);
-    posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-    renderList();
-    document.getElementById('postCount').textContent = posts.length;
+    courses = JSON.parse(new TextDecoder().decode(Uint8Array.from(raw, c => c.charCodeAt(0))));
+    renderCourseList();
   }
 
-  function renderList() {
-    const el = document.getElementById('postsList');
-    if (!posts.length) { el.innerHTML = '<div class="no-posts">尚無內容</div>'; return; }
-    el.innerHTML = posts.map((p) => {
-      const badges = [];
-      if (p.body)     badges.push('📄');
-      if (p.videoUrl) badges.push('🎬');
-      if (p.audioUrl) badges.push('🎵');
-      return `
-        <div class="post-item">
-          <div class="post-info">
-            <div class="post-title">${p.title}</div>
-            <div class="post-meta">
-              <span>${p.date}</span>
-              ${badges.map(b => `<span class="post-badge">${b}</span>`).join('')}
-              ${(p.tags||[]).map(t => `<span class="post-badge" style="background:rgba(253,137,37,0.1);border-color:rgba(253,137,37,0.25);color:var(--accent-2)">${t}</span>`).join('')}
-            </div>
-          </div>
-          <button class="btn btn-danger" onclick="deletePost('${p.date}','${escHtml(p.title)}')">刪除</button>
-        </div>`;
-    }).join('');
+  function renderCourseList() {
+    document.getElementById('courseListCount').textContent = courses.length;
+    document.getElementById('courseList').innerHTML = courses.map(c => `
+      <div class="course-item">
+        <span class="course-item-num">${c.day}</span>
+        <span class="course-item-title">${esc(c.title)}</span>
+        <span class="course-item-status ${c.status}">${c.status === 'open' ? '已開放' : '即將推出'}</span>
+        <button class="btn btn-ghost btn-sm" onclick="editCourse(${c.day})">編輯</button>
+        <button class="btn btn-danger" onclick="deleteCourse(${c.day})">刪除</button>
+      </div>`).join('');
   }
 
-  function escHtml(s) { return s.replace(/'/g, "\\'"); }
-
-  // ── Type toggles ───────────────────────────────────────────────
-  function toggleType(btn) {
-    btn.classList.toggle('active');
-    document.getElementById('field-' + btn.dataset.type).style.display =
-      btn.classList.contains('active') ? 'block' : 'none';
+  function editCourse(day) {
+    const c = courses.find(x => x.day === day);
+    if (!c) return;
+    document.getElementById('cDay').value    = c.day;
+    document.getElementById('cTitle').value  = c.title;
+    document.getElementById('cStatus').value = c.status;
+    document.getElementById('cUrl').value    = c.url || '';
+    window.scrollTo(0, 0);
   }
 
-  // ── File select ────────────────────────────────────────────────
-  function onFileSelect(input) {
-    selectedFile = input.files[0];
-    document.getElementById('fileName').textContent = selectedFile ? selectedFile.name : '';
+  async function saveCourse() {
+    const day    = parseInt(document.getElementById('cDay').value);
+    const title  = document.getElementById('cTitle').value.trim();
+    const status = document.getElementById('cStatus').value;
+    const url    = document.getElementById('cUrl').value.trim();
+    if (!day || !title) { toast('請填寫編號和標題', 'error'); return; }
+    if (status === 'open' && !url) { toast('已開放課程需要連結', 'error'); return; }
+
+    const entry = { day, title, status };
+    if (url) entry.url = url;
+
+    const idx = courses.findIndex(c => c.day === day);
+    if (idx >= 0) courses[idx] = entry;
+    else courses.push(entry);
+    courses.sort((a, b) => a.day - b.day);
+
+    await pushCourses('update course: ' + title);
+    clearCourseForm();
+    toast('課程已儲存', 'success');
+    renderCourseList();
   }
 
-  function handleDrop(e) {
-    e.preventDefault();
-    document.getElementById('dropzone').classList.remove('drag-over');
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('audio/')) {
-      selectedFile = file;
-      document.getElementById('fileName').textContent = file.name;
-    } else {
-      toast('請選擇音訊檔案', 'error');
-    }
-  }
-
-  // ── Publish ────────────────────────────────────────────────────
-  async function publish() {
-    const date  = document.getElementById('fDate').value.trim();
-    const title = document.getElementById('fTitle').value.trim();
-    if (!date || !title) return toast('日期和標題為必填', 'error');
-
-    const articleActive = document.querySelector('[data-type="article"]').classList.contains('active');
-    const videoActive   = document.querySelector('[data-type="video"]').classList.contains('active');
-    const audioActive   = document.querySelector('[data-type="audio"]').classList.contains('active');
-
-    if (!articleActive && !videoActive && !audioActive) return toast('至少選一種內容類型', 'error');
-
-    const btn = document.getElementById('publishBtn');
-    btn.disabled = true; btn.textContent = '發布中...';
-
-    try {
-      const tagsRaw = document.getElementById('fTags').value.trim();
-      const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
-      const post = { date, title };
-      if (tags.length) post.tags = tags;
-
-      if (articleActive) {
-        const body = document.getElementById('fBody').value.trim();
-        if (!body) { toast('文章內容不能為空', 'error'); btn.disabled = false; btn.textContent = '🚀 發布'; return; }
-        post.body = body;
-      }
-
-      if (videoActive) {
-        const url = document.getElementById('fVideoUrl').value.trim();
-        if (!url) { toast('請輸入 YouTube 連結', 'error'); btn.disabled = false; btn.textContent = '🚀 發布'; return; }
-        post.videoUrl = url;
-      }
-
-      if (audioActive) {
-        const manualUrl = document.getElementById('fAudioUrl').value.trim();
-        if (selectedFile) {
-          showProgress(true);
-          setProgress(20);
-          const base64 = await fileToBase64(selectedFile);
-          const filename = `${Date.now()}-${selectedFile.name.replace(/\s+/g, '-')}`;
-          setProgress(50);
-          post.audioUrl = await ghUploadAudio(filename, base64);
-          setProgress(80);
-        } else if (manualUrl) {
-          post.audioUrl = manualUrl;
-        } else {
-          toast('請上傳音訊檔案或輸入音訊 URL', 'error');
-          btn.disabled = false; btn.textContent = '🚀 發布'; return;
-        }
-      }
-
-      const r = await ghPut([post, ...posts], `content: "${title}"`);
-      if (!r.ok) {
-        const e = await r.json().catch(()=>({}));
-        throw new Error(e.message || `HTTP ${r.status}`);
-      }
-
-      setProgress(100);
-      toast('✅ 發布成功！', 'success');
-      resetForm();
-      await loadPosts();
-    } catch (e) {
-      toast('發布失敗：' + (e.message || '請重試'), 'error');
-    } finally {
-      btn.disabled = false; btn.textContent = '🚀 發布';
-      showProgress(false); setProgress(0);
-    }
-  }
-
-  // ── Delete ─────────────────────────────────────────────────────
-  async function deletePost(date, title) {
-    if (!confirm(`確定刪除「${title}」？`)) return;
-    const updated = posts.filter(p => !(p.title === title && p.date === date));
-    const r = await ghPut(updated, 'content: delete post');
-    if (!r.ok) {
-      const e = await r.json().catch(()=>({}));
-      toast('刪除失敗：' + (e.message || `HTTP ${r.status}`), 'error');
-      return;
-    }
+  async function deleteCourse(day) {
+    const c = courses.find(x => x.day === day);
+    if (!confirm(`確定刪除 Lecture ${day}？`)) return;
+    courses = courses.filter(x => x.day !== day);
+    await pushCourses('remove course: lecture ' + day);
     toast('已刪除', 'success');
-    await loadPosts();
+    renderCourseList();
+  }
+
+  async function pushCourses(message) {
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(courses, null, 2))));
+    const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${COURSES_FILE}`, {
+      method: 'PUT',
+      headers: { Authorization: `token ${ghToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, content, sha: coursesSha })
+    });
+    if (!r.ok) { const e = await r.json(); throw new Error(e.message || `HTTP ${r.status}`); }
+    const d = await r.json();
+    coursesSha = d.content.sha;
+  }
+
+  function clearCourseForm() {
+    ['cDay','cTitle','cUrl'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('cStatus').value = 'wip';
   }
 
   // ── Helpers ────────────────────────────────────────────────────
-  function resetForm() {
-    document.getElementById('fTitle').value     = '';
-    document.getElementById('fBody').value      = '';
-    document.getElementById('fVideoUrl').value  = '';
-    document.getElementById('fAudioUrl').value  = '';
-    document.getElementById('fAudioFile').value = '';
-    document.getElementById('fileName').textContent = '';
-    document.getElementById('fTags').value      = '';
-    selectedFile = null;
-    document.querySelectorAll('.type-btn').forEach(b => {
-      b.classList.remove('active');
-      document.getElementById('field-' + b.dataset.type).style.display = 'none';
-    });
+  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  function formatDate(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
   }
 
-  function fileToBase64(file) {
-    return new Promise((res, rej) => {
-      const reader = new FileReader();
-      reader.onload  = () => res(reader.result.split(',')[1]);
-      reader.onerror = rej;
-      reader.readAsDataURL(file);
-    });
-  }
-
-  function showProgress(show) {
-    document.getElementById('progressWrap').style.display = show ? 'block' : 'none';
-  }
-
-  function setProgress(pct) {
-    document.getElementById('progressBar').style.width = pct + '%';
+  function showAlert(el, msg, type) {
+    el.textContent = msg;
+    el.className = `alert ${type} show`;
   }
 
   function toast(msg, type = 'success') {
     const el = document.getElementById('toast');
-    el.textContent = msg;
-    el.className   = 'show ' + type;
+    el.textContent = msg; el.className = 'show ' + type;
     setTimeout(() => { el.className = ''; }, 3000);
   }
-
-  document.getElementById('passwordInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') connect();
-  });
 </script>
 </body>
 </html>
