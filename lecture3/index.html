@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 3 — 完整學習路線圖與工作流程設定 | X Learn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0918;
+  --bg-2: #1a1624;
+  --bg-3: #221d30;
+  --accent: #ee4f27;
+  --accent-2: #fd8925;
+  --text-1: #ffffff;
+  --text-2: #c8c4b0;
+  --text-3: #8a859e;
+  --blue: #378ADD;
+  --blue-bg: rgba(55,138,221,0.12);
+  --green: #1D9E75;
+  --green-bg: rgba(29,158,117,0.12);
+  --yellow: #d4900a;
+  --yellow-bg: rgba(212,144,10,0.12);
+  --red-bg: rgba(238,79,39,0.12);
+  --border: rgba(255,255,255,0.1);
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0; padding: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text-1);
+}
+
+/* NAV */
+.nav-bar {
+  background: var(--bg-2);
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 18px; text-decoration: none; }
+.logo-x { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 5px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; font-size: 14px; font-weight: 700; }
+.logo-learn { color: var(--accent); }
+.back-btn { display: inline-block; border: 1px solid var(--border); color: var(--text-2); border-radius: 99px; padding: 6px 14px; font-size: 13px; text-decoration: none; font-family: 'Inter', sans-serif; transition: border-color 0.15s, color 0.15s; }
+.back-btn:hover { border-color: var(--accent); color: var(--text-1); }
+
+/* MAIN */
+main { max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; }
+
+/* HEADER */
+.course-badge { font-size: 11px; font-weight: 500; letter-spacing: 0.04em; border-radius: 99px; padding: 3px 10px; display: inline-block; margin-bottom: 12px; }
+.badge-blue { background: var(--blue-bg); color: var(--blue); }
+.course-title { font-size: 22px; font-weight: 500; color: var(--text-1); margin: 0 0 8px; }
+.course-subtitle { font-size: 15px; color: var(--text-2); line-height: 1.65; margin: 0; }
+
+/* META ROW */
+.meta { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 0.75rem; }
+.meta-item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--text-3); }
+.mdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* DIVIDER */
+.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+/* TABS */
+.tab-nav { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 24px; overflow-x: auto; scrollbar-width: none; }
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-btn { background: transparent; color: var(--text-2); border: none; border-bottom: 2px solid transparent; padding: 10px 18px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; transition: color 0.15s, border-color 0.15s; outline: none; margin-bottom: -1px; }
+.tab-btn:hover { color: var(--text-1); }
+.tab-btn.active { color: var(--blue); border-bottom: 2px solid var(--blue); }
+
+/* PANELS */
+.tab-panel { display: none; }
+
+/* SECTION LABEL */
+.sec-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); margin-bottom: 1rem; display: block; }
+
+/* HI BOX (highlight) */
+.hi { background: var(--bg-2); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.25rem; border: 1px solid var(--border); }
+.hi-title { font-size: 15px; font-weight: 500; color: var(--text-1); margin: 0 0 6px; }
+.hi-body { font-size: 14px; color: var(--text-2); line-height: 1.7; margin: 0; }
+
+/* TYPE GRID */
+.type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+.tcard { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.9rem; }
+.tcard-dot { width: 10px; height: 10px; border-radius: 50%; margin-bottom: 8px; }
+.tcard-title { font-size: 13px; font-weight: 500; color: var(--text-1); margin: 0 0 5px; }
+.tcard-desc { font-size: 12px; color: var(--text-3); line-height: 1.5; margin: 0; }
+
+/* PHASE ROW */
+.phase-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.25rem; }
+.pcard { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.1rem; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+.pcard:hover { border-color: rgba(55,138,221,0.4); background: var(--bg-2); }
+.pcard.sel { border: 2px solid var(--blue); background: var(--bg-2); }
+.pnum { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); margin-bottom: 5px; display: block; }
+.pcard h3 { font-size: 15px; font-weight: 500; color: var(--text-1); margin: 0 0 5px; }
+.pcard p { font-size: 13px; color: var(--text-2); line-height: 1.55; margin: 0; }
+.ptag { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 99px; margin-top: 8px; }
+.t1 { background: var(--blue-bg); color: var(--blue); }
+.t2 { background: var(--yellow-bg); color: var(--yellow); }
+.t3 { background: var(--green-bg); color: var(--green); }
+
+/* DETAIL BOX */
+.detail-box { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1.5rem; }
+.detail-head { background: var(--bg-2); padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
+.detail-head h4 { font-size: 15px; font-weight: 500; color: var(--text-1); margin: 0 0 3px; }
+.detail-head p { font-size: 13px; color: var(--text-3); margin: 0; }
+.detail-body { padding: 1rem 1.25rem; }
+
+/* CHIPS */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0.75rem 0; }
+.chip { font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: var(--radius-md); border: 1px solid; }
+.chip-p { background: rgba(127,119,221,0.15); border-color: rgba(127,119,221,0.4); color: #b8b3f0; }
+.chip-y { background: var(--yellow-bg); border-color: rgba(212,144,10,0.4); color: #f0b040; }
+.chip-g { background: var(--green-bg); border-color: rgba(29,158,117,0.4); color: #4dbf90; }
+
+/* CALLOUT */
+.callout { border-radius: var(--radius-md); padding: 10px 14px; font-size: 13px; line-height: 1.6; margin-top: 10px; }
+.c-blue   { background: var(--blue-bg);   color: #7fc3f5; }
+.c-amber  { background: var(--yellow-bg); color: #f0b040; }
+.c-green  { background: var(--green-bg);  color: #4dbf90; }
+.c-red    { background: var(--red-bg);    color: #f08060; }
+
+/* BODY PARAGRAPH */
+.body-p { font-size: 14px; color: var(--text-2); line-height: 1.72; margin: 0 0 1rem; }
+
+/* STEP LIST */
+.clist { list-style: none; padding: 0; margin: 0; }
+.citem { display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--border); }
+.citem:last-child { border-bottom: none; }
+.cnum { width: 28px; height: 28px; border-radius: 50%; background: var(--blue-bg); color: var(--blue); font-size: 13px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+.citem-body { flex: 1; }
+.citem-body h4 { font-size: 15px; font-weight: 500; color: var(--text-1); margin: 0 0 6px; }
+.citem-body p { font-size: 14px; color: var(--text-2); line-height: 1.7; margin: 0; }
+
+/* CMP2 (comparison) */
+.cmp2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 1.25rem 0; }
+.cbox { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.1rem; }
+.clbl { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); margin-bottom: 5px; display: block; }
+.cbox h4 { font-size: 14px; font-weight: 500; color: var(--text-1); margin: 0 0 12px; }
+.cbox ul { list-style: none; padding: 0; margin: 0; }
+.cbox ul li { font-size: 13px; color: var(--text-2); line-height: 1.6; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.cbox ul li:last-child { border-bottom: none; }
+.cbox ul li::before { content: '・'; color: var(--text-3); }
+
+/* ANALOGY */
+.analogy { display: flex; gap: 12px; padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 10px; }
+.analogy-icon { font-size: 22px; flex-shrink: 0; }
+.analogy h4 { font-size: 14px; font-weight: 500; color: var(--text-1); margin: 0 0 5px; }
+.analogy p { font-size: 13px; color: var(--text-2); line-height: 1.55; margin: 0; }
+
+/* FLOW */
+.flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 1.25rem 0; }
+.flow-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.fnode { font-size: 12px; color: var(--text-2); background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 6px 12px; white-space: nowrap; }
+.fnode.hi2 { background: var(--blue-bg); border-color: rgba(55,138,221,0.3); color: var(--blue); }
+.farr { font-size: 16px; color: var(--text-3); }
+
+/* TERM GRID */
+.term-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin: 1.25rem 0; }
+.tcard2 { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.85rem 1rem; }
+.term { font-size: 13px; font-weight: 500; color: var(--blue); margin-bottom: 4px; display: block; }
+.def { font-size: 13px; color: var(--text-2); line-height: 1.55; }
+
+/* AUTH BOX */
+.auth-box { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin: 1.25rem 0; }
+.auth-row { display: flex; border-bottom: 1px solid var(--border); }
+.auth-row:last-child { border-bottom: none; }
+.auth-n { width: 44px; background: var(--bg-2); border-right: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: var(--text-3); flex-shrink: 0; }
+.auth-c { padding: 12px 16px; font-size: 13px; color: var(--text-2); line-height: 1.6; flex: 1; }
+.auth-c strong { font-weight: 500; color: var(--text-1); display: block; margin-bottom: 2px; }
+
+/* SUMMARY BOX */
+.summary-box { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 1.5rem; }
+
+/* NAV BUTTON */
+.nav-btn { display: inline-block; margin-top: 1.75rem; background: var(--bg-2); border: 1px solid var(--border); color: var(--text-2); border-radius: var(--radius-md); padding: 10px 18px; font-size: 13px; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: border-color 0.15s, color 0.15s; }
+.nav-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+  .phase-row  { grid-template-columns: 1fr; }
+  .type-grid  { grid-template-columns: 1fr; }
+  .cmp2       { grid-template-columns: 1fr; }
+  .term-grid  { grid-template-columns: 1fr; }
+  main        { padding: 24px 16px 60px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Auth guard -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  var sb = supabase.createClient(
+    'https://hkdmbfpwqfrjylvsexdu.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhrZG1iZnB3cWZyanlsdnNleGR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MDU1NjIsImV4cCI6MjA4OTQ4MTU2Mn0.7BmLMAiStA_OZpnSqgnq8CuXRmp0r7Apg28MJVTURLU'
+  );
+  sb.auth.getSession().then(function(r){
+    if(!r.data.session) window.location.href='../login.html';
+  });
+})();
+</script>
+
+<nav class="nav-bar">
+  <a href="../" class="logo" style="text-decoration:none;">
+    <span class="logo-x">X</span>
+    <span class="logo-learn">Learn</span>
+  </a>
+  <a href="../" class="back-btn">← 返回課程</a>
+</nav>
+
+<main>
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <span class="course-badge badge-blue">LECTURE 3</span>
+    <h1 class="course-title">完整學習路線圖與工作流程設定</h1>
+    <p class="course-subtitle">這堂課涵蓋三大主題：課程三階段學習地圖、LLM 的本質與正確認知，以及 API 的基本概念——後面每堂的操作都奠基在這裡。</p>
+    <div class="meta">
+      <div class="meta-item"><span class="mdot" style="background:#1D9E75"></span>含理論與實作框架</div>
+      <div class="meta-item"><span class="mdot" style="background:#378ADD"></span>共 4 個段落</div>
+      <div class="meta-item"><span class="mdot" style="background:#d4900a"></span>上一堂：Lecture 2 ／ 下一堂：Lecture 4</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- TAB NAV -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="go(0)">1. 課程三階段地圖</button>
+    <button class="tab-btn" onclick="go(1)">2. LLM 是什麼</button>
+    <button class="tab-btn" onclick="go(2)">3. 模型 vs 產品</button>
+    <button class="tab-btn" onclick="go(3)">4. API 是什麼</button>
+  </div>
+
+  <!-- ═══ PANEL 0：課程三階段地圖 ═══ -->
+  <div class="tab-panel" id="p0">
+
+    <span class="sec-label">課程整體架構</span>
+
+    <div class="hi">
+      <p class="hi-title">三種課程類型</p>
+      <p class="hi-body">整個課程的所有單元都屬於以下三種類型之一，三者搭配推進你的能力。</p>
+    </div>
+
+    <div class="type-grid">
+      <div class="tcard">
+        <div class="tcard-dot" style="background:#7F77DD"></div>
+        <p class="tcard-title">核心技能堂</p>
+        <p class="tcard-desc">聚焦 Agentic AI 與 n8n 核心能力，建立你的技術基礎。</p>
+      </div>
+      <div class="tcard">
+        <div class="tcard-dot" style="background:#d4900a"></div>
+        <p class="tcard-title">整合堂</p>
+        <p class="tcard-desc">把 n8n 接上真實世界的服務（Google、Email、Telegram、Slack 等），創造業務價值的關鍵。</p>
+      </div>
+      <div class="tcard">
+        <div class="tcard-dot" style="background:#1D9E75"></div>
+        <p class="tcard-title">真實世界專案堂</p>
+        <p class="tcard-desc">每個學習階段結尾，用真實商業場景把前面技能串起來，做出可交付的成品。</p>
+      </div>
+    </div>
+
+    <span class="sec-label">點選任一階段查看詳細內容</span>
+
+    <div class="phase-row">
+      <div class="pcard sel" onclick="showPhase(0)">
+        <span class="pnum">第一階段</span>
+        <h3>自動化</h3>
+        <p>用 n8n 雲端版為你的業務建立第一批自動化工作流程</p>
+        <span class="ptag t1">Automate</span>
+      </div>
+      <div class="pcard" onclick="showPhase(1)">
+        <span class="pnum">第二階段</span>
+        <h3>加速</h3>
+        <p>加入語音 Agent、RAG 等進階能力，讓工作流程更強大</p>
+        <span class="ptag t2">Accelerate</span>
+      </div>
+      <div class="pcard" onclick="showPhase(2)">
+        <span class="pnum">第三階段</span>
+        <h3>放大</h3>
+        <p>多 Agent 系統、MCP、情境工程，把 AI 能力擴展到整個業務</p>
+        <span class="ptag t3">Scale</span>
+      </div>
+    </div>
+
+    <div class="detail-box">
+      <div class="detail-head">
+        <h4 id="dh">第一階段：自動化（Automate）</h4>
+        <p id="ds">目標：熟悉 n8n 基本操作，把 AI 接上真實服務，完成第一個商業專案。</p>
+      </div>
+      <div class="detail-body">
+        <div id="db">
+          <p class="body-p">這個階段讓你從零開始，理解 Agentic AI 的運作方式，並動手建立第一批有意義的工作流程。</p>
+          <div class="chips">
+            <span class="chip chip-p">核心：AI Agent 基礎</span>
+            <span class="chip chip-p">核心：n8n 介面操作</span>
+            <span class="chip chip-y">整合：Google 試算表 / 雲端硬碟</span>
+            <span class="chip chip-y">整合：Gmail</span>
+            <span class="chip chip-g">專案：股票投資組合追蹤器</span>
+          </div>
+          <div class="callout c-blue">學完這個階段，你能夠建立可處理真實資料、發送通知、自動回覆 Email 的 AI 工作流程。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hi">
+      <p class="hi-title">完成整個課程之後</p>
+      <p class="hi-body">你將能夠<span style="font-weight:500;color:var(--text-1)">自動化、加速並放大你的業務</span>——這三個能力加在一起，就是課程要帶給你的核心競爭力。課程完成後你會取得結業證書，可以說：「我現在是一位 AI Agent 建置者。」</p>
+    </div>
+
+    <button class="nav-btn" onclick="go(1)">下一段：LLM 是什麼 →</button>
+  </div>
+
+  <!-- ═══ PANEL 1：LLM 是什麼 ═══ -->
+  <div class="tab-panel" id="p1">
+
+    <span class="sec-label">核心概念：大型語言模型（LLM）</span>
+
+    <div class="hi">
+      <p class="hi-title">為什麼要先學這個？</p>
+      <p class="hi-body">你不需要成為 AI 科學家。但對 LLM 有正確認識，會讓你在設計工作流程時少走很多冤枉路——你會知道它能做什麼、不能做什麼，以及為什麼它有時候的行為讓你感到奇怪。</p>
+    </div>
+
+    <ul class="clist">
+      <li class="citem">
+        <div class="cnum">1</div>
+        <div class="citem-body">
+          <h4>LLM 的本質：一個非常強大的「下一個字預測機器」</h4>
+          <p>大型語言模型（Large Language Model，LLM）本質上是一個統計程式。它從海量的網路文字資料中學習（這個過程叫做「訓練」），找出語言的模式規律。<br><br>當你輸入一段文字，它做的事情是：根據已學到的模式，預測接下來最可能出現的文字。如果輸入是一個問題，它預測的是答案；如果輸入是「接下來該做什麼」，它預測的是行動。</p>
+          <div class="callout c-blue" style="margin-top:8px">它不是在「思考」——它是在做大規模的模式匹配。牢記這一點，對你後續設計工作流程非常重要。</div>
+        </div>
+      </li>
+      <li class="citem">
+        <div class="cnum">2</div>
+        <div class="citem-body">
+          <h4>LLM 是「無狀態的」——每次呼叫都是全新開始</h4>
+          <p>這是很多人沒有意識到的關鍵特性。每當你呼叫一個 LLM（例如 GPT），它對之前發生的任何事情都一無所知。它只接收這一次的輸入，然後給出輸出。<br><br>就像每次打電話，對方都完全失憶，不記得之前任何對話。</p>
+          <div class="callout c-amber" style="margin-top:8px">那 ChatGPT 為什麼看起來記得我說過的話？這是靠「技巧」做到的——第五點會詳細說明。</div>
+        </div>
+      </li>
+      <li class="citem">
+        <div class="cnum">3</div>
+        <div class="citem-body">
+          <h4>不要把 LLM 當成人類——避免擬人化</h4>
+          <p>我們很自然地會把 LLM 擬人化——覺得自己在跟它「建立關係」，覺得它有動機、有意圖。這種想法會讓你對它的行為產生錯誤期待，在工作流程出問題時找不到原因。<br><br>實際上，LLM 是一個非常有效的模式匹配統計引擎。它「看起來有智慧」這件事，是大規模訓練的副產品，有人稱之為「突發智慧」——但本質上仍然是統計計算。</p>
+          <div class="callout c-red" style="margin-top:8px">避免擬人化 LLM，會讓你設計出更穩健的工作流程，也更容易在它出現奇怪行為時找到原因。</div>
+        </div>
+      </li>
+      <li class="citem">
+        <div class="cnum">4</div>
+        <div class="citem-body">
+          <h4>LLM 能做哪些事？</h4>
+          <p>雖然本質是統計引擎，但 LLM 能做的事情非常廣泛，因為它在極大規模的資料上訓練過：</p>
+          <div class="chips" style="margin-top:8px">
+            <span class="chip chip-p">回答問題</span>
+            <span class="chip chip-p">生成文字內容</span>
+            <span class="chip chip-p">進行對話</span>
+            <span class="chip chip-y">決定下一步行動</span>
+            <span class="chip chip-y">決定要呼叫哪個工具</span>
+            <span class="chip chip-g">預測要執行的指令</span>
+          </div>
+          <div class="callout c-green" style="margin-top:8px">在 n8n 的 AI Agent 節點中，LLM 的核心任務是：根據你的輸入和設定，決定工作流程接下來要執行什麼動作、呼叫什麼工具。</div>
+        </div>
+      </li>
+      <li class="citem">
+        <div class="cnum">5</div>
+        <div class="citem-body">
+          <h4>記憶、對話這些「功能」是怎麼做到的？</h4>
+          <p>我們說 LLM 是無狀態的，但 ChatGPT 看起來能記住你說過的話——這不是矛盾，而是透過巧妙的技術手段做到的。<br><br>例如，所謂的「記憶功能」，實際上是把過去的對話記錄一起塞進這次的輸入中，讓 LLM「看到」之前說過什麼。LLM 本身還是無狀態的——是外部的軟體邏輯在管理這些狀態。</p>
+          <div class="callout c-blue" style="margin-top:8px">接下來的課堂會教你怎麼在 n8n 工作流程中實作這些技巧，讓你的 AI Agent 也能「記住」對話內容。</div>
+        </div>
+      </li>
+    </ul>
+
+    <button class="nav-btn" onclick="go(2)">下一段：模型 vs 產品 →</button>
+  </div>
+
+  <!-- ═══ PANEL 2：模型 vs 產品 ═══ -->
+  <div class="tab-panel" id="p2">
+
+    <span class="sec-label">重要區別：模型 vs 產品</span>
+
+    <div class="hi">
+      <p class="hi-title">很多人分不清楚這兩個東西</p>
+      <p class="hi-body">「GPT」和「ChatGPT」不是同一個東西。理解這個區別，能讓你更清楚地知道在 n8n 裡你在操作哪個層面的東西。</p>
+    </div>
+
+    <div class="cmp2">
+      <div class="cbox">
+        <span class="clbl">模型（Model）</span>
+        <h4>GPT — 大型語言模型本體</h4>
+        <ul>
+          <li>OpenAI 訓練出來的統計引擎本體</li>
+          <li>接收輸入序列，產生輸出序列</li>
+          <li>無狀態：每次呼叫都是全新的，不記得之前</li>
+          <li>不會主動做任何事，需要被呼叫才產生輸出</li>
+          <li>就是一個功能非常強大的「文字預測函式」</li>
+        </ul>
+      </div>
+      <div class="cbox">
+        <span class="clbl">產品（Product）</span>
+        <h4>ChatGPT — 建在模型上的應用軟體</h4>
+        <ul>
+          <li>OpenAI 建立在 GPT 模型上的軟體產品</li>
+          <li>加了記憶功能（把對話歷史塞進每次請求）</li>
+          <li>加了網路搜尋功能</li>
+          <li>加了圖片生成整合</li>
+          <li>以上這些都是用一般程式碼寫出來的</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hi">
+      <p class="hi-title">這跟我們在 n8n 做的事有什麼關係？</p>
+      <p class="hi-body" style="margin-bottom:10px">在 Lecture 1，你建的那個工作流程，就是在做一件事：<span style="font-weight:500;color:var(--text-1)">用 n8n 這個軟體，連接 Open Router 上的 LLM 模型，建立一個能夠對話的產品。</span></p>
+      <p class="hi-body">你是在做 ChatGPT 做的那件事——只是你自己控制這個產品的行為，而不是被 OpenAI 的產品限制住。Open Router 讓你可以在許多不同的 AI 模型之間切換，這就是它存在的價值。</p>
+    </div>
+
+    <span class="sec-label">一個有助於記憶的比喻</span>
+
+    <div class="analogy">
+      <div class="analogy-icon">🔧</div>
+      <div>
+        <h4>引擎（模型）vs 汽車（產品）</h4>
+        <p>GPT 是引擎：強大，但自己不會跑。ChatGPT 是整台車：有方向盤、儀表板、冷氣，讓你可以真正使用它。你在 n8n 裡做的事，就是自己組裝一台車，選用你想要的引擎，加上你需要的功能——而且比買成品車還要彈性得多。</p>
+      </div>
+    </div>
+
+    <div class="callout c-green" style="margin-top:1rem">
+      重點整理：LLM（模型）是無狀態的統計引擎 → ChatGPT（產品）在上面加了記憶、搜尋等功能 → 你在 n8n 建的工作流程，是在做同樣一件事，只是自己掌控所有細節。
+    </div>
+
+    <button class="nav-btn" onclick="go(3)">下一段：API 是什麼 →</button>
+  </div>
+
+  <!-- ═══ PANEL 3：API 是什麼 ═══ -->
+  <div class="tab-panel" id="p3">
+
+    <span class="sec-label">核心概念：API</span>
+
+    <div class="hi">
+      <p class="hi-title">API 到底是什麼？</p>
+      <p class="hi-body">很多人聽過 API 這個詞，但說不清楚它是什麼。這是因為 API 這個詞本身定義鬆散，被用在很多不同情境。這裡建立一個實用的理解。</p>
+    </div>
+
+    <p class="body-p">API（Application Programming Interface）是一種讓不同軟體程式互相溝通的標準方式。你可以把它想成是軟體世界的「電源插座標準」——因為有統一規格，任何電器都能插進去用，不需要為每個品牌各做一種插座。</p>
+    <p class="body-p">多年以前，要連接不同的軟體產品是極大的技術挑戰。現在因為有通用標準，這已經變得容易很多——但連接事物仍然是一項挑戰。這正是 n8n 解決的問題：它把連接不同系統的複雜過程，包裝成幾個設定欄位，讓你不需要自己寫程式碼。</p>
+
+    <span class="sec-label">n8n 工作流程呼叫外部 API 的流程</span>
+
+    <div class="flow-row">
+      <span class="fnode">你的 n8n 工作流程</span>
+      <span class="farr">→</span>
+      <span class="fnode hi2">HTTP 請求 + API 金鑰</span>
+      <span class="farr">→</span>
+      <span class="fnode">外部服務（OpenAI、Gmail...）</span>
+    </div>
+    <div class="flow-row">
+      <span class="fnode">你的 n8n 工作流程</span>
+      <span class="farr">←</span>
+      <span class="fnode hi2">回傳 JSON 資料</span>
+      <span class="farr">←</span>
+      <span class="fnode">外部服務執行後回應</span>
+    </div>
+
+    <span class="sec-label" style="margin-top:1.25rem">你會常聽到的 API 相關詞彙</span>
+
+    <div class="term-grid">
+      <div class="tcard2">
+        <span class="term">端點（Endpoint）</span>
+        <span class="def">你呼叫 API 時使用的特定 URL 位址。就像電話分機號碼，每個功能都有自己的端點。</span>
+      </div>
+      <div class="tcard2">
+        <span class="term">HTTP 請求</span>
+        <span class="def">API 呼叫通常透過 HTTP 協定進行——和瀏覽網頁使用同樣的技術，只是在呼叫另一個軟體做事。</span>
+      </div>
+      <div class="tcard2">
+        <span class="term">JSON</span>
+        <span class="def">API 之間交換資料最常用的格式。它是一種程式碼，但也是最低程度的低程式碼——課程後面你會越來越習慣它。</span>
+      </div>
+      <div class="tcard2">
+        <span class="term">API 金鑰</span>
+        <span class="def">呼叫 API 時用來證明你身份的「密碼」，讓對方知道是你在發出請求，也知道要把費用計在你的帳戶上。</span>
+      </div>
+    </div>
+
+    <span class="sec-label">API 金鑰的完整運作流程</span>
+
+    <div class="auth-box">
+      <div class="auth-row">
+        <div class="auth-n">1</div>
+        <div class="auth-c"><strong>你向第三方服務申請帳號</strong>例如 Open Router，完成後取得一把專屬於你的 API 金鑰（格式：sk-or-xxxxxxxx）。</div>
+      </div>
+      <div class="auth-row">
+        <div class="auth-n">2</div>
+        <div class="auth-c"><strong>你在 n8n 填入這把金鑰</strong>設定憑證時貼上金鑰。之後每次工作流程呼叫 Open Router，n8n 都會自動帶上這把金鑰。</div>
+      </div>
+      <div class="auth-row">
+        <div class="auth-n">3</div>
+        <div class="auth-c"><strong>Open Router 收到請求，驗證金鑰</strong>確認「是你」在呼叫之後，執行請求（呼叫你選的 AI 模型），然後把結果回傳給你的 n8n 工作流程。</div>
+      </div>
+      <div class="auth-row">
+        <div class="auth-n">4</div>
+        <div class="auth-c"><strong>費用（如果有的話）計在你的帳戶</strong>因為金鑰跟你的帳戶綁定，使用量和費用會被正確歸屬到你的帳號。免費模型則不會有費用產生。</div>
+      </div>
+    </div>
+
+    <div class="callout c-blue">你在 Lecture 1 做的事，就是這整個流程的實際演練：申請 Open Router 帳號 → 取得 API 金鑰 → 填入 n8n 憑證 → 工作流程成功呼叫 AI。你已經完成了一次真實的 API 整合。</div>
+
+    <div class="summary-box">
+      <span class="sec-label">本堂課三大核心收穫</span>
+      <div class="chips">
+        <span class="chip chip-p">課程分三階段：自動化 → 加速 → 放大</span>
+        <span class="chip chip-y">LLM = 大規模統計模式匹配，無狀態</span>
+        <span class="chip chip-y">模型（GPT）≠ 產品（ChatGPT）</span>
+        <span class="chip chip-g">API = 軟體之間溝通的標準方式</span>
+        <span class="chip chip-g">API 金鑰 = 呼叫外部服務時的身份密碼</span>
+      </div>
+      <div class="callout c-green" style="margin-top:1rem">
+        下一堂（Lecture 4）：什麼是 AI Agent？深入理解 Agentic 工作流程的概念與運作原理。
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+  const phases = [
+    {
+      h: "第一階段：自動化（Automate）",
+      s: "目標：熟悉 n8n 基本操作，把 AI 接上真實服務，完成第一個商業專案。",
+      b: `<p class="body-p">這個階段讓你從零開始，理解 Agentic AI 的運作方式，並動手建立第一批有意義的工作流程。</p>
+          <div class="chips">
+            <span class="chip chip-p">核心：AI Agent 基礎</span>
+            <span class="chip chip-p">核心：n8n 介面操作</span>
+            <span class="chip chip-y">整合：Google 試算表 / 雲端硬碟</span>
+            <span class="chip chip-y">整合：Gmail</span>
+            <span class="chip chip-g">專案：股票投資組合追蹤器</span>
+          </div>
+          <div class="callout c-blue">學完這個階段，你能夠建立可處理真實資料、發送通知、自動回覆 Email 的 AI 工作流程。</div>`
+    },
+    {
+      h: "第二階段：加速（Accelerate）",
+      s: "目標：在自動化基礎上加入更進階的 AI 能力，讓工作流程產生更大的業務價值。",
+      b: `<p class="body-p">這個階段會引入幾個讓很多人聽了卻不確定是什麼的技術名詞，到了這個階段你就會理解了。</p>
+          <div class="chips">
+            <span class="chip chip-p">核心：RAG（Retrieval-Augmented Generation）</span>
+            <span class="chip chip-y">整合：Telegram Bot</span>
+            <span class="chip chip-y">整合：Slack Bot</span>
+            <span class="chip chip-y">整合：Pushover 通知</span>
+            <span class="chip chip-g">專案：語音 Agent</span>
+          </div>
+          <div class="callout c-amber">RAG 讓 AI 能夠讀取你自己的文件或資料庫，回答「只有你的資料才能回答的問題」。</div>`
+    },
+    {
+      h: "第三階段：放大（Scale）",
+      s: "目標：用多 Agent 系統和進階架構，把 AI 能力擴展到整個業務規模。",
+      b: `<p class="body-p">這個階段會碰到現在 AI 圈最熱門的兩個詞：MCP 和 Sub-agents。課程會讓你看清楚哪些是真正有價值的技術、哪些只是行銷噱頭。</p>
+          <div class="chips">
+            <span class="chip chip-p">核心：MCP（Model Context Protocol）</span>
+            <span class="chip chip-p">核心：情境工程 / Sub-agents</span>
+            <span class="chip chip-p">進階：本地模型自架 n8n</span>
+            <span class="chip chip-y">進階整合</span>
+            <span class="chip chip-g">專案：業務放大級 AI Agent 系統</span>
+          </div>
+          <div class="callout c-green">完成這個階段後，你能夠自動化、加速、並放大你的業務——課程的三大核心能力全部到位。</div>`
+    }
+  ];
+
+  function showPhase(i) {
+    document.querySelectorAll('.pcard').forEach((c, idx) => {
+      c.classList.toggle('sel', idx === i);
+    });
+    document.getElementById('dh').textContent = phases[i].h;
+    document.getElementById('ds').textContent = phases[i].s;
+    document.getElementById('db').innerHTML   = phases[i].b;
+  }
+
+  function go(i) {
+    document.querySelectorAll('.tab-panel').forEach((p, idx) => {
+      p.style.display = idx === i ? 'block' : 'none';
+    });
+    document.querySelectorAll('.tab-btn').forEach((b, idx) => {
+      b.classList.toggle('active', idx === i);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Init
+  go(0);
+</script>
+</body>
+</html>
