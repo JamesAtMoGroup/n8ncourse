@@ -58,7 +58,12 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .nav-right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+    .nav-back {
+      font-size: 14px; font-weight: 500; color: var(--text-2);
+      text-decoration: none; transition: color 0.15s;
+    }
+    .nav-back:hover { color: var(--text-1); }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
     .nav-badge {
       font-size: 11px; font-weight: 600; letter-spacing: 0.06em; color: var(--text-3);
       background: var(--glass); border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px;
@@ -167,7 +172,6 @@
   </style>
 </head>
 <body>
-<a href="../" style="position:fixed;top:12px;left:16px;z-index:9999;font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;font-family:Inter,sans-serif;">← 返回課程選單</a>
 
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
@@ -178,6 +182,7 @@
 <div class="orb orb-3"></div>
 
 <nav>
+  <a href="../" class="nav-back">← 返回課程選單</a>
   <div class="nav-right">
     <span class="nav-badge">n8n 自動化課程</span>
     <span class="nav-user" id="navUser"></span>
