@@ -210,6 +210,7 @@
   </style>
 </head>
 <body>
+<a href="../" style="position:fixed;top:12px;left:16px;z-index:9999;font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;font-family:Inter,sans-serif;">← 返回課程選單</a>
 
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
@@ -299,7 +300,7 @@
 
   // Auth check
   sb.auth.getSession().then(async ({ data: { session } }) => {
-    if (!session) { window.location.href = './login.html'; return; }
+    if (!session) { window.location.href = '../login.html'; return; }
     // Get profile
     const { data: profile } = await sb.from('profiles').select('name, email, role').eq('id', session.user.id).single();
     document.getElementById('navUser').textContent = profile?.name || session.user.email;
@@ -309,7 +310,7 @@
 
   async function logout() {
     await sb.auth.signOut();
-    window.location.href = './login.html';
+    window.location.href = '../login.html';
   }
 
   function renderCourses(courses) {
