@@ -1,0 +1,12 @@
+[
+  {
+    "id": "n8ncourse",
+    "title": "n8n AI 自動化課程",
+    "description": "從零打造 AI Agent，不需寫程式",
+    "thumbnail": null,
+    "lectureTotal": 29,
+    "lectureOpen": 3,
+    "status": "active",
+    "url": "./n8ncourse/"
+  }
+]

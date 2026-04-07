@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的課程 | AI School</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #000000;
+      --bg-2: #111111;
+      --bg-3: #1a1a1a;
+      --accent: #7cffb2;
+      --accent-dim: rgba(124,255,178,0.10);
+      --accent-glow: rgba(124,255,178,0.25);
+      --text-1: #ffffff;
+      --text-2: #a0a0a0;
+      --border: rgba(255,255,255,0.08);
+      --border-hover: rgba(255,255,255,0.15);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background: var(--bg);
+      color: var(--text-1);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 60px;
+      background: rgba(0,0,0,0.85);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .nav-brand img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+    .nav-brand-text {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-1);
+      letter-spacing: 0.04em;
+    }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .nav-user {
+      font-size: 13px;
+      color: var(--text-2);
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .btn-logout {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-family: 'Noto Sans TC', sans-serif;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-logout:hover {
+      border-color: var(--border-hover);
+      color: var(--text-1);
+    }
+
+    /* ── Main layout ── */
+    .main {
+      margin-top: 60px;
+      flex: 1;
+      padding: 48px 24px 80px;
+      max-width: 1100px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── Hero section ── */
+    .hero {
+      margin-bottom: 36px;
+    }
+    .hero-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 6px;
+    }
+    .hero-sub {
+      font-size: 14px;
+      color: var(--text-2);
+    }
+
+    /* ── Course grid ── */
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    /* ── Course card ── */
+    .course-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      display: block;
+    }
+    .course-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    /* Thumbnail */
+    .card-thumb {
+      position: relative;
+      height: 200px;
+      background: var(--bg-3);
+      overflow: hidden;
+    }
+    .card-thumb-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .card-thumb-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 56px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--bg-3);
+      user-select: none;
+    }
+    /* Bottom gradient overlay on thumbnail */
+    .card-thumb::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 80px;
+      background: linear-gradient(to top, rgba(17,17,17,0.9), transparent);
+      pointer-events: none;
+    }
+
+    /* Card body */
+    .card-body {
+      padding: 16px 18px 18px;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-1);
+      line-height: 1.4;
+    }
+    .card-desc {
+      font-size: 12px;
+      color: var(--text-2);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-active {
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+    .badge-upcoming {
+      color: var(--text-2);
+      background: rgba(255,255,255,0.06);
+    }
+    .card-lectures {
+      font-size: 12px;
+      color: var(--text-2);
+    }
+    .card-lectures span {
+      color: var(--text-1);
+      font-weight: 500;
+    }
+
+    /* Loading / empty state */
+    .state-msg {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-2);
+      font-size: 14px;
+    }
+    .state-spinner {
+      width: 28px; height: 28px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: var(--text-2);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      .main { padding: 32px 16px 60px; }
+      .nav { padding: 0 16px; }
+      .nav-user { max-width: 120px; }
+      .hero-title { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <a class="nav-brand" href="#">
+      <img src="./assets/aischool-logo.webp" alt="AI School Logo">
+      <span class="nav-brand-text">AI School</span>
+    </a>
+    <div class="nav-right">
+      <span class="nav-user" id="navUser"></span>
+      <button class="btn-logout" onclick="logout()">登出</button>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="hero">
+      <h1 class="hero-title">我的課程</h1>
+      <p class="hero-sub">選擇一門課程開始學習</p>
+    </div>
+
+    <div class="course-grid" id="courseGrid">
+      <div class="state-msg">
+        <div class="state-spinner"></div>
+        載入課程中…
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">© AI School</footer>
+
+  <script>
+    // ── Auth guard ──
+    var currentUser = null;
+    (function() {
+      try {
+        currentUser = JSON.parse(localStorage.getItem('aischool_user') || 'null');
+      } catch(e) { currentUser = null; }
+      if (!currentUser) {
+        window.location.href = './login.html';
+      }
+    })();
+
+    // Show user info in nav
+    if (currentUser) {
+      document.getElementById('navUser').textContent = currentUser.name || currentUser.email || '';
+    }
+
+    // Logout
+    function logout() {
+      localStorage.removeItem('aischool_user');
+      window.location.href = './login.html';
+    }
+
+    // ── Load courses ──
+    async function loadCourses() {
+      const grid = document.getElementById('courseGrid');
+      try {
+        const res = await fetch('./courses.json?t=' + Date.now());
+        if (!res.ok) throw new Error('fetch failed');
+        const courses = await res.json();
+
+        if (!courses || courses.length === 0) {
+          grid.innerHTML = '<div class="state-msg">目前沒有可用的課程</div>';
+          return;
+        }
+
+        grid.innerHTML = courses.map(renderCard).join('');
+      } catch(err) {
+        grid.innerHTML = '<div class="state-msg">課程載入失敗，請重新整理頁面</div>';
+      }
+    }
+
+    function renderCard(c) {
+      // Badge
+      var badgeClass, badgeLabel;
+      if (c.status === 'active') {
+        badgeClass = 'badge-active';
+        badgeLabel = '進行中';
+      } else {
+        badgeClass = 'badge-upcoming';
+        badgeLabel = '即將推出';
+      }
+
+      // Thumbnail
+      var thumbHtml;
+      if (c.thumbnail) {
+        thumbHtml = '<img class="card-thumb-img" src="' + c.thumbnail + '" alt="' + escHtml(c.title) + '">';
+      } else {
+        var initial = (c.title || '?').charAt(0);
+        thumbHtml = '<div class="card-thumb-placeholder">' + escHtml(initial) + '</div>';
+      }
+
+      // Lectures info
+      var lectureHtml = '';
+      if (c.lectureTotal) {
+        var open = c.lectureOpen || 0;
+        lectureHtml = '<div class="card-lectures"><span>' + open + '</span> / ' + c.lectureTotal + ' 堂</div>';
+      }
+
+      return '<a class="course-card" href="' + escHtml(c.url || '#') + '">'
+        + '<div class="card-thumb">' + thumbHtml + '</div>'
+        + '<div class="card-body">'
+        +   '<div class="card-title">' + escHtml(c.title) + '</div>'
+        +   '<div class="card-desc">' + escHtml(c.description || '') + '</div>'
+        +   '<div class="card-meta">'
+        +     '<span class="badge ' + badgeClass + '">' + badgeLabel + '</span>'
+        +     lectureHtml
+        +   '</div>'
+        + '</div>'
+        + '</a>';
+    }
+
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    loadCourses();
+  </script>
+</body>
+</html>
