@@ -279,7 +279,7 @@
       try {
         const user = JSON.parse(localStorage.getItem('aischool_user') || 'null');
         if (user && user.email) {
-          window.location.href = './n8ncourse/';
+          window.location.href = './';
         }
       } catch(e) {}
     })();
@@ -339,7 +339,7 @@
           }));
           showSuccess('驗證成功，正在跳轉...');
           setTimeout(function() {
-            window.location.href = './n8ncourse/';
+            window.location.href = './';
           }, 600);
         } else {
           showError('此 Email 尚未取得課程授權');
