@@ -3,120 +3,351 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>登入 | X Learn</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>登入 | AI School</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg:#0e0918; --bg-2:#1a1624; --bg-3:#221d30;
-      --border:rgba(255,255,255,0.08);
-      --accent:#ee4f27; --accent-dim:rgba(238,79,39,0.15); --accent-glow:rgba(238,79,39,0.3); --accent-2:#fd8925;
-      --text-1:#ffffff; --text-2:#c8c4b0; --text-3:#8a859e;
-      --danger:#f87171;
+      --bg: #000000;
+      --bg-2: #111111;
+      --bg-3: #1a1a1a;
+      --accent: #7cffb2;
+      --accent-dim: rgba(124,255,178,0.10);
+      --accent-glow: rgba(124,255,178,0.25);
+      --text-1: #ffffff;
+      --text-2: #a0a0a0;
+      --border: rgba(255,255,255,0.08);
+      --border-hover: rgba(255,255,255,0.15);
     }
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-1);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden}
-    .orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;animation:drift 18s ease-in-out infinite alternate}
-    .orb-1{width:700px;height:700px;background:radial-gradient(circle,rgba(238,79,39,0.12),transparent 70%);top:-250px;left:-150px}
-    .orb-2{width:550px;height:550px;background:radial-gradient(circle,rgba(234,75,113,0.09),transparent 70%);bottom:-180px;right:-120px;animation-delay:-9s}
-    .orb-3{width:350px;height:350px;background:radial-gradient(circle,rgba(253,137,37,0.07),transparent 70%);top:40%;left:55%;animation-duration:26s}
-    @keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(30px,25px) scale(1.04)}}
-    .wrap{position:relative;z-index:1;width:100%;max-width:400px}
-    .logo{display:flex;align-items:center;gap:10px;margin-bottom:32px;justify-content:center}
-    .logo-mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;box-shadow:0 0 20px var(--accent-glow)}
-    .logo-name{font-size:18px;font-weight:700}
-    .logo-name span{color:var(--accent)}
-    .card{background:var(--bg-2);border:1px solid var(--border);border-radius:20px;padding:40px;position:relative;overflow:hidden}
-    .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(238,79,39,0.5),transparent)}
-    .card h2{font-size:22px;font-weight:800;margin-bottom:6px;letter-spacing:-0.5px}
-    .card .sub{font-size:14px;color:var(--text-3);margin-bottom:28px}
-    .field{margin-bottom:18px}
-    label{display:block;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-3);margin-bottom:7px}
-    input[type="email"],input[type="password"]{width:100%;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:11px 14px;font-family:inherit;font-size:14px;color:var(--text-1);outline:none;transition:border-color 0.15s}
-    input:focus{border-color:rgba(238,79,39,0.5)}
-    .btn{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border:none;border-radius:8px;padding:12px;margin-top:8px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:opacity 0.15s,transform 0.1s}
-    .btn:hover{opacity:0.88}
-    .btn:active{transform:scale(0.98)}
-    .btn:disabled{opacity:0.5;cursor:not-allowed}
-    .err{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25);color:var(--danger);border-radius:8px;padding:10px 14px;font-size:13px;margin-top:14px;display:none}
-    .err.show{display:block}
-    .loading-overlay{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center}
-    .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background: var(--bg);
+      color: var(--text-1);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Animated orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+      animation: drift 20s ease-in-out infinite alternate;
+    }
+    .orb-1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(124,255,178,0.12), transparent 70%);
+      top: -200px; left: -150px;
+    }
+    .orb-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(100,220,160,0.08), transparent 70%);
+      bottom: -180px; right: -120px;
+      animation-delay: -10s;
+    }
+    .orb-3 {
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(80,255,180,0.06), transparent 70%);
+      top: 50%; left: 60%;
+      animation-delay: -5s;
+      animation-duration: 25s;
+    }
+    @keyframes drift {
+      0%   { transform: translate(0, 0) scale(1); }
+      33%  { transform: translate(30px, -40px) scale(1.05); }
+      66%  { transform: translate(-20px, 30px) scale(0.97); }
+      100% { transform: translate(10px, -20px) scale(1.03); }
+    }
+
+    /* Main content wrapper */
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+    }
+
+    /* Logo + brand */
+    .brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand img {
+      width: 120px;
+      height: auto;
+      display: block;
+    }
+    .brand-label {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-1);
+      letter-spacing: 0.05em;
+    }
+
+    /* Glass card */
+    .card {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 28px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .card-heading {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 6px;
+    }
+    .card-subtext {
+      font-size: 13px;
+      color: var(--text-2);
+      margin-bottom: 24px;
+    }
+
+    /* Input */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .input-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-2);
+      letter-spacing: 0.04em;
+    }
+    .email-input {
+      width: 100%;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-family: 'Noto Sans TC', sans-serif;
+      color: var(--text-1);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .email-input::placeholder { color: var(--text-2); }
+    .email-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+
+    /* Submit button */
+    .btn-submit {
+      width: 100%;
+      background: var(--accent);
+      color: #000000;
+      border: none;
+      border-radius: 8px;
+      padding: 13px 20px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'Noto Sans TC', sans-serif;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+      margin-top: 8px;
+    }
+    .btn-submit:hover:not(:disabled) {
+      opacity: 0.9;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px var(--accent-glow);
+    }
+    .btn-submit:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Status area */
+    .status {
+      min-height: 36px;
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .status-hidden { display: none; }
+
+    /* Spinner */
+    .spinner {
+      width: 22px; height: 22px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Messages */
+    .msg {
+      font-size: 13px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      width: 100%;
+      text-align: center;
+    }
+    .msg-error {
+      color: #f87171;
+      background: rgba(248,113,113,0.1);
+      border: 1px solid rgba(248,113,113,0.2);
+    }
+    .msg-success {
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid rgba(124,255,178,0.2);
+    }
+
+    /* Footer */
+    .footer {
+      position: fixed;
+      bottom: 24px;
+      left: 0; right: 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-2);
+      z-index: 1;
+    }
+
+    /* Responsive */
+    @media (max-width: 440px) {
+      .card { padding: 24px 20px; }
+      .brand img { width: 90px; }
+      .card-heading { font-size: 20px; }
+    }
   </style>
 </head>
 <body>
 
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="spinner"></div>
-</div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
 
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-<div class="orb orb-3"></div>
-
-<div class="wrap">
-  <div class="logo">
-    <div class="logo-mark">X</div>
-    <span class="logo-name">X <span>Learn</span></span>
-  </div>
-  <div class="card">
-    <h2>歡迎回來</h2>
-    <p class="sub">登入以繼續你的 n8n 自動化學習</p>
-    <div class="field">
-      <label>電子郵件</label>
-      <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
+  <div class="wrapper">
+    <div class="brand">
+      <img src="./assets/aischool-logo.webp" alt="AI School Logo">
+      <span class="brand-label">AI School</span>
     </div>
-    <div class="field">
-      <label>密碼</label>
-      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" />
+
+    <div class="card">
+      <div class="card-heading">歡迎回來</div>
+      <div class="card-subtext">請輸入你的 Email 以繼續</div>
+
+      <div class="input-group">
+        <label class="input-label" for="emailInput">Email</label>
+        <input
+          type="email"
+          id="emailInput"
+          class="email-input"
+          placeholder="your@email.com"
+          autocomplete="email"
+          autofocus
+        >
+      </div>
+
+      <button class="btn-submit" id="submitBtn" onclick="login()">進入課程</button>
+
+      <div class="status status-hidden" id="statusArea"></div>
     </div>
-    <button class="btn" id="loginBtn" onclick="login()">登入</button>
-    <div class="err" id="err"></div>
   </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const SUPABASE_URL  = 'https://hkdmbfpwqfrjylvsexdu.supabase.co';
-  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhrZG1iZnB3cWZyanlsdnNleGR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MDU1NjIsImV4cCI6MjA4OTQ4MTU2Mn0.7BmLMAiStA_OZpnSqgnq8CuXRmp0r7Apg28MJVTURLU';
-  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  <div class="footer">© AI School</div>
 
-  async function redirect(uid) {
-    const { data } = await sb.from('profiles').select('role').eq('id', uid).single();
-    window.location.href = data?.role === 'admin' ? './admin.html' : './';
-  }
+  <script>
+    // Redirect if already logged in
+    (function() {
+      try {
+        const user = JSON.parse(localStorage.getItem('aischool_user') || 'null');
+        if (user && user.email) {
+          window.location.href = './index.html';
+        }
+      } catch(e) {}
+    })();
 
-  sb.auth.getSession().then(({ data: { session } }) => {
-    if (session) {
-      redirect(session.user.id);
-    } else {
-      document.getElementById('loadingOverlay').style.display = 'none';
+    const emailInput = document.getElementById('emailInput');
+    const submitBtn  = document.getElementById('submitBtn');
+    const statusArea = document.getElementById('statusArea');
+
+    // Allow submit on Enter key
+    emailInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') login();
+    });
+
+    function showLoading() {
+      statusArea.className = 'status';
+      statusArea.innerHTML = '<div class="spinner"></div>';
+      submitBtn.disabled = true;
     }
-  });
 
-  async function login() {
-    const email    = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const btn = document.getElementById('loginBtn');
-    if (!email || !password) { showErr('請填寫電子郵件和密碼'); return; }
-    btn.disabled = true; btn.textContent = '登入中...';
-    document.getElementById('err').classList.remove('show');
-
-    const { data, error } = await sb.auth.signInWithPassword({ email, password });
-    if (error) {
-      showErr(error.message === 'Invalid login credentials' ? '電子郵件或密碼錯誤' : error.message);
-      btn.disabled = false; btn.textContent = '登入';
-      return;
+    function showError(msg) {
+      statusArea.className = 'status';
+      statusArea.innerHTML = '<div class="msg msg-error">' + msg + '</div>';
+      submitBtn.disabled = false;
     }
-    await redirect(data.user.id);
-  }
 
-  function showErr(msg) {
-    const el = document.getElementById('err');
-    el.textContent = msg; el.classList.add('show');
-  }
+    function showSuccess(msg) {
+      statusArea.className = 'status';
+      statusArea.innerHTML = '<div class="msg msg-success">' + msg + '</div>';
+    }
 
-  document.addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
-</script>
+    function hideStatus() {
+      statusArea.className = 'status status-hidden';
+      statusArea.innerHTML = '';
+    }
+
+    async function login() {
+      const email = emailInput.value.trim();
+      if (!email || !email.includes('@')) {
+        showError('請輸入有效的 Email');
+        return;
+      }
+
+      showLoading();
+
+      try {
+        const res = await fetch('https://crmnotetool.zeabur.app/api/member/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, brandKey: 'aischool' })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          localStorage.setItem('aischool_user', JSON.stringify({
+            email: data.data.email,
+            name: data.data.name
+          }));
+          showSuccess('驗證成功，正在跳轉...');
+          setTimeout(function() {
+            window.location.href = './index.html';
+          }, 600);
+        } else {
+          showError('此 Email 尚未取得課程授權');
+        }
+      } catch(err) {
+        showError('連線失敗，請稍後再試');
+      }
+    }
+  </script>
 </body>
 </html>
