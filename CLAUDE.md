@@ -83,6 +83,10 @@ Lecture 2: https://jamesatmogroup.github.io/n8ncourse/lecture2/
 - ❌ `本週` / `第 N 週` — use `第 N 階段` or `接下來`
 - ❌ Any specific time units (days, weeks) that tie content to a schedule
 - ❌ `關於講師` tab — do NOT include instructor bio sections
+- ❌ `上一堂：Lecture N` / `下一堂：Lecture N` — no inter-lecture navigation; ← 返回主頁 is the only cross-lecture link
+- ❌ Meta tag 列（`.meta-row` / `.meta-item` dot badges）— 例如「完全免費開始」「不需寫程式」「約 N 分鐘」「含理論與實作框架」「共 N 個段落」，一律不加
+- ❌ 頁尾 callout 導航（「下一堂（Lecture N）：...」）— 不加任何引導至下一講的 callout
+- Hero 區塊只保留：LECTURE N badge、h1 標題、subtitle 描述文字
 
 ### Naming conventions
 - Folders: `lectureN/` not `dayN/`
