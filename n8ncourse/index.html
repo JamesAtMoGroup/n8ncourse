@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>X Learn | n8n 自動化課程</title>
+  <title>AI School | n8n 自動化課程</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -58,15 +58,8 @@
       border-bottom: 1px solid var(--border);
     }
     .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .logo-mark {
-      width: 32px; height: 32px; border-radius: 8px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 15px; font-weight: 800; color: #fff;
-      box-shadow: 0 0 16px var(--accent-glow);
-    }
+    .logo-img { width: 32px; height: 32px; object-fit: contain; }
     .logo-text { font-size: 15px; font-weight: 700; color: var(--text-1); }
-    .logo-text span { color: var(--accent); }
     .nav-right { display: flex; align-items: center; gap: 12px; }
     .nav-badge {
       font-size: 11px; font-weight: 600; letter-spacing: 0.06em; color: var(--text-3);
@@ -188,8 +181,8 @@
 
 <nav>
   <a class="nav-logo" href="#">
-    <div class="logo-mark">X</div>
-    <span class="logo-text">X <span>Learn</span></span>
+    <img class="logo-img" src="../assets/aischool-logo.webp" alt="AI School">
+    <span class="logo-text">AI School</span>
   </a>
   <div class="nav-right">
     <span class="nav-badge">n8n 自動化課程</span>
@@ -234,7 +227,7 @@
   <div class="course-grid" id="courseGrid"></div>
 </div>
 
-<footer>© 2026 X Learn · 課程持續更新中</footer>
+<footer>© 2026 AI School · 課程持續更新中</footer>
 
 <script>
   // Auth check
