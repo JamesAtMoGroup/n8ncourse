@@ -8,5 +8,15 @@
     "lectureOpen": 3,
     "status": "active",
     "url": "./n8ncourse/"
+  },
+  {
+    "id": "vibecoding",
+    "title": "Vibe Coding / AI Coding",
+    "description": "用 AI 工具加速開發，打造真實可用的產品",
+    "thumbnail": null,
+    "lectureTotal": null,
+    "lectureOpen": null,
+    "status": "active",
+    "url": "./vibecoding/"
   }
 ]
