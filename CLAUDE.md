@@ -1,33 +1,52 @@
 # n8ncourse — Project Notes for Claude
 
-## Repo Structure Convention
-
-All lecture pages live inside this repo, **not** in separate repos.
-Folders are named `lectureN/` (not `dayN/`).
+## Repo Structure
 
 ```
-n8ncourse/
-├── index.html            ← main landing page + 每日知識庫
-├── admin.html            ← CMS for 每日知識庫 (GitHub token required)
-├── knowledge.json        ← 每日知識庫 content (managed via admin.html)
-├── courses.json          ← course card data (status: open | wip, url)
-├── lecture1/index.html   ← Lecture 1 course content
-├── lecture2/index.html   ← Lecture 2 course content
-├── lecture3/index.html   ← Lecture 3 (add when ready)
-└── audio/                ← audio files uploaded via admin.html
+root/
+├── login.html              ← platform login (Kolable API, localStorage)
+├── index.html              ← course series portal (auth guard)
+├── courses.json            ← course series list (NOT lecture list)
+├── admin.html              ← CMS
+├── assets/
+│   └── aischool-logo.webp  ← brand logo (used everywhere)
+├── docs/
+│   └── spec.md / rule.md / skill.md / progress.md
+└── n8ncourse/
+    ├── index.html          ← n8n course homepage (lecture grid)
+    ├── courses.json        ← lecture list (day/title/status/url)
+    ├── knowledge.json
+    ├── lecture1/ lecture2/ lecture3/ ...
 ```
 
-**When creating a new lecture page**, always place it at `lectureN/index.html` — never use `dayN/` naming.
+**When creating a new lecture page**, always place it at `n8ncourse/lectureN/index.html`.
 
-Live site: https://jamesatmogroup.github.io/n8ncourse/
-Lecture 1: https://jamesatmogroup.github.io/n8ncourse/lecture1/
-Lecture 2: https://jamesatmogroup.github.io/n8ncourse/lecture2/
+Live site: https://n8ncourse.zeabur.app/
+n8ncourse: https://n8ncourse.zeabur.app/n8ncourse/
 
 ---
 
-## Design System
+## Auth
 
-### Color tokens (dark theme — do NOT use light/Claude.ai CSS variables)
+- Login: `POST https://crmnotetool.zeabur.app/api/member/search { email, brandKey: "aischool" }`
+- Session: `localStorage` key `aischool_user` = `{ email, name }`
+- **NO Supabase anywhere** — lecture pages use localStorage only
+- Login redirects to `./` (portal) after success
+- Lecture pages redirect to `../../login.html` if not logged in
+- n8ncourse/index.html redirects to `../login.html` if not logged in
+
+---
+
+## Brand Tokens
+
+### Platform pages (login.html, root index.html)
+```css
+--bg: #000000
+--accent: #7cffb2
+Font: Noto Sans TC
+```
+
+### n8ncourse pages (n8ncourse/ and all lectureN/) — DO NOT CHANGE
 ```css
 --bg:            #0e0918
 --bg-2:          #1a1624
@@ -43,95 +62,98 @@ Lecture 2: https://jamesatmogroup.github.io/n8ncourse/lecture2/
 --text-1:        #ffffff
 --text-2:        #c8c4b0
 --text-3:        #8a859e
---success:       #34d399
---success-bg:    rgba(52,211,153,0.1)
---success-bdr:   rgba(52,211,153,0.2)
---info:          #60a5fa
---info-bg:       rgba(96,165,250,0.1)
---info-bdr:      rgba(96,165,250,0.25)
+Font: Inter (Google Fonts)
 ```
 
-### Layout
-- Animated background orbs (3 orbs, fixed, blurred)
-- **App shell**: `display: flex; height: 100vh; overflow: hidden`
-- **Left sidebar** (272px): brand tag + section/chapter list + 整體進度 bar at bottom
-- **Right main**: sticky top-bar + scrollable content area
-- Top bar always includes **← 返回主頁** link back to `../`
+---
 
-### Typography & Components
-- Font: Inter (Google Fonts)
-- Logo: "X Learn" — X in gradient box, "Learn" in accent color
-- Glass cards: `background: var(--glass); border: 1px solid var(--border); border-radius: 12px`
-- Top glow line on cards: `linear-gradient(90deg, transparent, rgba(238,79,39,0.4), transparent)`
-- Concept boxes use green top glow: `rgba(52,211,153,0.5)`
-- Active sidebar items: `background: var(--glass-active); border: 1px solid rgba(238,79,39,0.2)`
-- Active item icon: accent color + `box-shadow: 0 0 12px var(--accent-glow)`
-- Visited/done icon: success green
+## Logo Rules (CRITICAL)
 
-### Sidebar progress (整體進度)
-- Track read/viewed sections. Progress = viewed / total.
-- Bar: `height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-2))`
-- Persist in localStorage with key `lectureN-viewed`
+- **NEVER use "X Learn" logo** — it's been replaced with `aischool-logo.webp`
+- **Root `index.html` nav**: `<img src="./assets/aischool-logo.webp">` 44px, no text
+- **`n8ncourse/index.html` nav**: NO logo at all (removing it prevents overlap with "← 返回課程選單")
+- **Lecture pages nav**: `<img class="logo-img" src="../../assets/aischool-logo.webp">` 36px, no text, links to `../`
+- Page titles: `| AI School` suffix (not "X Learn")
+- Footer: `© AI School` (not "X Learn")
 
 ---
 
-## Content & Language Rules
+## Nav Structure
 
-### Forbidden words / phrases
-- ❌ `三週` — use `接下來` or `之後`
-- ❌ `昨天` — use `上一次`
-- ❌ `本週` / `第 N 週` — use `第 N 階段` or `接下來`
-- ❌ Any specific time units (days, weeks) that tie content to a schedule
-- ❌ `關於講師` tab — do NOT include instructor bio sections
-- ❌ `上一堂：Lecture N` / `下一堂：Lecture N` — no inter-lecture navigation; ← 返回主頁 is the only cross-lecture link
-- ❌ Meta tag 列（`.meta-row` / `.meta-item` dot badges）— 例如「完全免費開始」「不需寫程式」「約 N 分鐘」「含理論與實作框架」「共 N 個段落」，一律不加
-- ❌ 頁尾 callout 導航（「下一堂（Lecture N）：...」）— 不加任何引導至下一講的 callout
-- Hero 區塊只保留：LECTURE N badge、h1 標題、subtitle 描述文字
+### `n8ncourse/index.html` nav
+```html
+<nav>
+  <a href="../" class="nav-back">← 返回課程選單</a>
+  <div class="nav-right">
+    <span class="nav-badge">n8n 自動化課程</span>
+    <span class="nav-user" id="navUser"></span>
+    <button class="btn-logout" onclick="logout()">登出</button>
+  </div>
+</nav>
+```
+CSS: `.nav-back { font-size:14px; font-weight:500; color:var(--text-2); }`
+CSS: `.nav-right { display:flex; align-items:center; gap:12px; }` — space-between handles alignment
 
-### Naming conventions
-- Folders: `lectureN/` not `dayN/`
-- Display labels: "Lecture N" not "Day N"
-- Section labels inside pages: "Section 01", "Section 02" etc.
-- Breadcrumb/brand tag: "X Learn · Lecture N"
+### Lecture pages nav (top bar)
+- Logo (36px img, links to `../`) on the left
+- `← 返回課程` back button also on the left
+- No text next to the logo image
 
 ---
 
-## index.html — Main Landing Page
+## courses.json formats
 
-- Card grid loaded from `courses.json`
-- Card badge displays: `Lecture ${c.day}` (using the `day` number field)
-- Two nav tabs: 我的主頁 / 每日知識庫
-- Hero stats: 已開放課程 count, 21天, 0程式碼
-
-### courses.json format
+### Root `courses.json` (course series)
 ```json
-{
-  "day": 1,
-  "title": "課程標題",
-  "status": "open",
-  "url": "./lecture1/"
-}
+[{
+  "id": "n8ncourse",
+  "title": "n8n AI 自動化課程",
+  "description": "從零打造 AI Agent，不需寫程式",
+  "thumbnail": null,
+  "lectureTotal": 29,
+  "lectureOpen": 3,
+  "status": "active",
+  "url": "./n8ncourse/"
+}]
 ```
-Use relative URLs (e.g. `./lecture1/`) for GitHub Pages compatibility.
+`thumbnail`: null = shows first char placeholder. Set to image path/URL to show image.
+
+### `n8ncourse/courses.json` (lecture list)
+```json
+{ "day": 1, "title": "課程標題", "status": "open", "url": "./lecture1/" }
+```
+`status`: `"open"` = clickable card, `"wip"` = locked card. Always use relative URLs.
 
 ---
 
-## Lecture Page Structure (lectureN/index.html)
+## Content Rules (all lectureN/ pages)
 
-Each lecture page is a **full standalone HTML file** with:
-- Inline `<style>` (all CSS tokens above)
-- Background orbs
-- Left sidebar with section list + 整體進度
-- Top bar with hamburger (mobile) + ← 返回主頁 + breadcrumb + progress pill
-- Scrollable content area with panel hero + panel body per section
-- "Next →" button at the bottom of each section (except the last)
-- Responsive: sidebar slides in on mobile (hamburger toggle)
-- localStorage persistence for progress
+### Forbidden
+- ❌ Meta tag badges in hero (`完全免費開始`, `不需寫程式`, `約 N 分鐘`, etc.)
+- ❌ Inter-lecture nav (`上一堂/下一堂`)
+- ❌ Footer callout pointing to next lecture
+- ❌ `關於講師` / instructor bio sections
+- ❌ Timeframe words: `三週`, `昨天`, `本週`, `第 N 週`
+- ❌ "X Learn" branding anywhere
 
-### Lecture 1 specifics
-- 4 chapters with checkboxes (completion tracking)
-- Final celebration screen when all checkboxes done
+### Hero block (only these three)
+1. `LECTURE N` badge
+2. `<h1>` title
+3. subtitle description text
 
-### Lecture 2 specifics
-- 4 sections (pure reading, no checkboxes)
-- Progress tracked by which sections have been visited
+### Naming
+- Folders: `lectureN/` not `dayN/`
+- Labels: "Lecture N" not "Day N"
+- Breadcrumb: "AI School · Lecture N"
+
+---
+
+## Lecture Page Structure
+
+Each `lectureN/index.html` is a full standalone HTML file:
+- Inline `<style>` with all n8ncourse tokens
+- Background orbs (3 orbs, fixed, blurred)
+- Nav bar: logo (36px img) + back button on left
+- Scrollable content with panel hero + panel body per section
+- localStorage auth guard: `if(!JSON.parse(localStorage.getItem('aischool_user')||'null')) window.location.href='../../login.html'`
+- localStorage progress persistence with key `lectureN-viewed`
