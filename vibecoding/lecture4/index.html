@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CH 1-1｜價值與風險：問題值得解決嗎？有無資安風險？</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0a0a;
+      color: #f0f0f0;
+      font-family: 'Noto Sans TC', 'PingFang TC', sans-serif;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    .page-wrap {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    /* Back link */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      color: #888888;
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      margin-bottom: 32px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: #7cffc2; }
+
+    /* Video embed */
+    .video-wrap {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(124,255,194,0.14);
+      margin-bottom: 48px;
+      background: #000;
+      box-shadow: 0 0 40px rgba(124,255,194,0.06);
+    }
+    .video-wrap video { display: block; width: 100%; }
+
+    /* Section */
+    .section { margin-bottom: 40px; }
+
+    /* Section header */
+    .section-header { margin-bottom: 20px; }
+    .section-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: #7cffc2;
+      background: rgba(124,255,194,0.1);
+      border: 1px solid rgba(124,255,194,0.3);
+      padding: 4px 12px;
+      border-radius: 99px;
+      letter-spacing: 0.06em;
+      display: inline-block;
+      margin-bottom: 10px;
+      box-shadow: 0 0 10px rgba(124,255,194,0.1);
+    }
+    .section-title {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #f0f0f0;
+      margin-bottom: 10px;
+    }
+    .accent-line {
+      height: 2px;
+      background: #7cffc2;
+      border-radius: 99px;
+      width: 100%;
+      box-shadow: 0 0 8px rgba(124,255,194,0.4);
+    }
+
+    /* Card */
+    .card {
+      background: #0d0d0d;
+      border: 1px solid rgba(124,255,194,0.14);
+      border-radius: 16px;
+      padding: 22px 28px;
+      margin-bottom: 16px;
+      font-size: 15px;
+      line-height: 1.85;
+      color: #f0f0f0;
+    }
+
+    /* Analogy box */
+    .analogy-box {
+      background: rgba(124,255,194,0.05);
+      border-left: 3px solid #7cffc2;
+      border-radius: 0 12px 12px 0;
+      padding: 18px 24px;
+      margin-bottom: 16px;
+      box-shadow: -2px 0 20px rgba(124,255,194,0.07);
+    }
+    .analogy-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: #7cffc2;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .analogy-dot {
+      width: 5px;
+      height: 5px;
+      background: #7cffc2;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #7cffc2;
+      flex-shrink: 0;
+    }
+    .analogy-box p { font-size: 14px; color: #dafff0; line-height: 1.85; }
+
+    /* Tip box */
+    .tip-box {
+      background: rgba(124,255,194,0.05);
+      border: 1px solid rgba(124,255,194,0.22);
+      border-radius: 12px;
+      padding: 16px 22px;
+      margin-bottom: 16px;
+    }
+    .tip-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: #7cffc2;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .tip-dot {
+      width: 5px;
+      height: 5px;
+      background: #7cffc2;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #7cffc2;
+    }
+    .tip-box p { font-size: 14px; color: #c8ffe0; line-height: 1.8; }
+
+    /* Comparison chart */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0;
+    }
+    @media (max-width: 520px) { .comparison { grid-template-columns: 1fr; } }
+    .comp-card { border-radius: 12px; padding: 16px 18px; }
+    .comp-bad {
+      background: rgba(255,107,107,0.07);
+      border: 1px solid rgba(255,107,107,0.22);
+    }
+    .comp-good {
+      background: rgba(124,255,194,0.07);
+      border: 1px solid rgba(124,255,194,0.22);
+      box-shadow: 0 0 20px rgba(124,255,194,0.08);
+    }
+    .comp-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+    .comp-bad .comp-label { color: #ff6b6b; }
+    .comp-good .comp-label { color: #7cffc2; }
+    .comp-desc { font-size: 14px; color: #f0f0f0; line-height: 1.65; }
+
+    /* Risk item */
+    .risk-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      border-radius: 0 10px 10px 0;
+      border-left: 3px solid rgba(124,255,194,0.4);
+      padding: 12px 16px;
+      margin-bottom: 8px;
+    }
+    .risk-item.risk-safe    { background: rgba(124,255,178,0.06); border-left-color: #7cffb2; border: 1px solid rgba(124,255,178,0.18); border-left: 3px solid #7cffb2; }
+    .risk-item.risk-caution { background: rgba(255,209,102,0.06); border: 1px solid rgba(255,209,102,0.18); border-left: 3px solid #ffd166; }
+    .risk-item.risk-danger  { background: rgba(255,159,67,0.06);  border: 1px solid rgba(255,159,67,0.18);  border-left: 3px solid #ff9f43; }
+    .risk-item.risk-critical{ background: rgba(255,107,107,0.06); border: 1px solid rgba(255,107,107,0.18); border-left: 3px solid #ff6b6b; }
+    .risk-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 5px;
+      padding: 2px 8px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      align-self: center;
+    }
+    .badge-safe     { color: #7cffb2; background: rgba(124,255,178,0.12); border: 1px solid rgba(124,255,178,0.3); }
+    .badge-caution  { color: #ffd166; background: rgba(255,209,102,0.12); border: 1px solid rgba(255,209,102,0.3); }
+    .badge-danger   { color: #ff9f43; background: rgba(255,159,67,0.12);  border: 1px solid rgba(255,159,67,0.3); }
+    .badge-critical { color: #ff6b6b; background: rgba(255,107,107,0.12); border: 1px solid rgba(255,107,107,0.3); }
+    .risk-text { font-size: 14px; color: #f0f0f0; line-height: 1.7; }
+
+    /* Benefit list */
+    .benefit-list { background: #0d0d0d; border: 1px solid rgba(124,255,194,0.14); border-radius: 14px; padding: 20px 24px; margin-bottom: 16px; }
+    .benefit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      border-left: 3px solid rgba(124,255,194,0.4);
+      padding-left: 16px;
+      margin-bottom: 16px;
+    }
+    .benefit-item:last-child { margin-bottom: 0; }
+    .benefit-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #7cffc2;
+      color: #000;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .benefit-text { font-size: 15px; color: #f0f0f0; line-height: 1.8; }
+
+    /* Pillars */
+    .pillars { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin: 20px 0; }
+    @media (max-width: 560px) { .pillars { grid-template-columns: 1fr; } }
+    .pillar {
+      background: #0d0d0d;
+      border: 1px solid rgba(124,255,194,0.14);
+      border-radius: 16px;
+      padding: 24px 18px;
+      text-align: center;
+    }
+    .pillar-icon { font-size: 32px; margin-bottom: 10px; line-height: 1; }
+    .pillar-label { font-size: 18px; font-weight: 800; color: #7cffc2; margin-bottom: 6px; }
+    .pillar-desc { font-size: 13px; color: #888888; line-height: 1.6; }
+
+    /* Result card (quantified value) */
+    .result-card {
+      background: linear-gradient(135deg, rgba(124,255,194,0.1), rgba(0,0,0,0));
+      border: 1px solid rgba(124,255,194,0.3);
+      border-radius: 14px;
+      padding: 20px 28px;
+      margin: 16px 0;
+      text-align: center;
+    }
+    .result-card p { font-size: 16px; color: #f0f0f0; line-height: 1.9; }
+    .big-num { font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700; color: #7cffc2; }
+
+    /* Traffic light summary */
+    .traffic-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      border-radius: 0 12px 12px 0;
+      padding: 14px 20px;
+      margin-bottom: 10px;
+    }
+    .traffic-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+    .traffic-content strong { display: block; font-size: 14px; margin-bottom: 3px; }
+    .traffic-content p { font-size: 14px; color: #f0f0f0; line-height: 1.65; margin: 0; }
+
+    /* Takeaway list */
+    .takeaway-box {
+      background: linear-gradient(135deg, rgba(124,255,194,0.07), rgba(0,0,0,0));
+      border: 1px solid rgba(124,255,194,0.22);
+      border-radius: 16px;
+      padding: 28px 30px;
+      margin-bottom: 20px;
+    }
+    .takeaway-header {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: #7cffc2;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .takeaway-header-dot { width: 5px; height: 5px; background: #7cffc2; border-radius: 50%; box-shadow: 0 0 8px #7cffc2; }
+    .takeaway-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      border-left: 3px solid rgba(124,255,194,0.4);
+      padding-left: 16px;
+      margin-bottom: 14px;
+    }
+    .takeaway-item:last-child { margin-bottom: 0; }
+    .takeaway-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #7cffc2;
+      color: #000;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .takeaway-text { font-size: 14px; color: #f0f0f0; line-height: 1.8; }
+
+    /* Next chapter preview */
+    .next-box {
+      background: rgba(255,209,102,0.05);
+      border: 1px solid rgba(255,209,102,0.2);
+      border-radius: 12px;
+      padding: 16px 22px;
+    }
+    .next-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: #ffd166;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .next-box p { font-size: 14px; color: #f0f0f0; line-height: 1.7; }
+
+    /* Accent text */
+    .accent { color: #7cffc2; font-weight: 700; }
+    .accent-orange { color: #ff9f43; font-weight: 700; }
+    .accent-red { color: #ff6b6b; font-weight: 700; }
+    .accent-yellow { color: #ffd166; font-weight: 700; }
+
+    /* Divider */
+    .divider { height: 1px; background: rgba(255,255,255,0.06); margin: 40px 0; }
+  </style>
+</head>
+<body>
+<script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
+  <div class="page-wrap">
+
+    <!-- Back link -->
+    <a href="#" class="back-link">← 返回主頁</a>
+
+    <!-- Video embed -->
+    <div class="video-wrap">
+      <video src="價值與風險-2026-04-07.mp4" controls width="100%"></video>
+    </div>
+
+    <!-- ───────────────────────────────────────────── -->
+    <!-- SECTION 1 — Hero -->
+    <!-- ───────────────────────────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">CH 1-1</span>
+        <h1 class="section-title">價值與風險</h1>
+        <p style="font-size:15px; color:#7cffc2; font-weight:700; margin-bottom:12px;">問題值得解決嗎？有無資安風險？</p>
+        <div class="accent-line"></div>
+      </div>
+      <div class="card">
+        動手寫程式之前，先花 5 分鐘冷靜評估三件事。不是要你認真寫一份計劃書，而是快速確認這個專案的<span class="accent">投入時間、價值、風險</span>三個面向都在可接受範圍內。
+      </div>
+      <div class="pillars">
+        <div class="pillar">
+          <div class="pillar-icon">⏱</div>
+          <div class="pillar-label">投入時間</div>
+          <div class="pillar-desc">先決定代價，在範圍內盡力</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">💎</div>
+          <div class="pillar-label">價值</div>
+          <div class="pillar-desc">量化成時間或金錢更有感覺</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">🛡</div>
+          <div class="pillar-label">風險</div>
+          <div class="pillar-desc">帳單、隱私、營運三個維度</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ───────────────────────────────────────────── -->
+    <!-- SECTION 2 — 投入時間：時間箱法 -->
+    <!-- ───────────────────────────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2 class="section-title">投入時間：時間箱法</h2>
+        <div class="accent-line"></div>
+      </div>
+      <div class="card">
+        估時間是出了名的困難，就算經驗豐富的工程師也常常估錯。比較好執行的做法是：<span class="accent">先決定你願意投入多少時間，再在那個範圍內盡力推進。</span>
+      </div>
+      <div class="card" style="border-color: rgba(124,255,194,0.22); background:#111111;">
+        <div style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; color:#7cffc2; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:8px;">推薦方法</div>
+        <div style="font-size:22px; font-weight:900; color:#7cffc2; margin-bottom:12px; font-family:'Noto Sans TC',sans-serif;">時間箱法（Timeboxing）</div>
+        <p style="font-size:14px; color:#888888; line-height:1.85;">
+          與其問自己「這要花多久」，不如直接決定：<br />
+          <span style="color:#f0f0f0; font-weight:700;">「這個週六下午兩點到五點，我來試試看能做到哪裡」</span><br /><br />
+          時間到就停。你已經在開始前決定好代價了。
+        </p>
+      </div>
+      <div class="comparison">
+        <div class="comp-card comp-bad">
+          <div class="comp-label">❌ 這個專案要做多久？</div>
+          <div class="comp-desc">估算不準確，容易焦慮，遲遲無法開始</div>
+        </div>
+        <div class="comp-card comp-good">
+          <div class="comp-label">✅ 禮拜天 2–5pm 盡力推進</div>
+          <div class="comp-desc">事先決定代價，在框內全力推進</div>
+        </div>
+      </div>
+      <div class="analogy-box">
+        <div class="analogy-label"><div class="analogy-dot"></div>為什麼不要精確估時</div>
+        <p>
+          很多人花大量時間想「這件事要多久」，結果什麼都還沒開始。<br /><br />
+          <span style="color:#f0f0f0; font-weight:700;">先開始，再調整。</span>一個下午能到哪裡就到哪裡，比一直評估更有效率。
+        </p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ───────────────────────────────────────────── -->
+    <!-- SECTION 3 — 價值評估 -->
+    <!-- ───────────────────────────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2 class="section-title">價值：這個問題值得解決嗎？</h2>
+        <div class="accent-line"></div>
+      </div>
+      <div class="card">
+        想清楚一個專案的價值，有<span class="accent">兩個好處</span>：
+      </div>
+      <div class="benefit-list">
+        <div class="benefit-item">
+          <div class="benefit-num">1</div>
+          <div class="benefit-text">
+            做到一半想放棄時，清楚知道價值在哪裡是<span class="accent">讓你撐下去的最好理由</span>。
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-num">2</div>
+          <div class="benefit-text">
+            思考價值的過程本身就是一種<span class="accent">需求釐清</span>——你會更清楚自己到底想要什麼。
+          </div>
+        </div>
+      </div>
+      <div class="analogy-box">
+        <div class="analogy-label"><div class="analogy-dot"></div>量化讓你更有感覺</div>
+        <p>
+          價值可以只是一句話，有打動到你就行。<br /><br />
+          但如果你能把它<span style="color:#f0f0f0; font-weight:700;">量化成時間或金錢</span>，會更有說服力。
+        </p>
+      </div>
+      <div class="comparison">
+        <div class="comp-card comp-bad">
+          <div class="comp-label">只是一句話（✓）</div>
+          <div class="comp-desc">「省去手動整理的麻煩」</div>
+        </div>
+        <div class="comp-card comp-good">
+          <div class="comp-label">量化成時間 / 金錢（更有感 ⭐）</div>
+          <div class="comp-desc">「一年省 75 小時 = 9.4 個工作天」</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ───────────────────────────────────────────── -->
+    <!-- SECTION 4 — 具體例子：量化價值 -->
+    <!-- ───────────────────────────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">03 — 例子</span>
+        <h2 class="section-title">具體例子：量化價值</h2>
+        <div class="accent-line"></div>
+      </div>
+      <div class="card">
+        假設你每週都要手動整理跨部門的進度匯報，拼湊各個試算表、對欄位格式、修整排版，<span class="accent">每次要花一個半小時。</span>
+      </div>
+      <div class="card" style="background:#111111; border-color:rgba(124,255,194,0.1);">
+        <p style="font-size:13px; color:#888888; margin-bottom:14px; font-family:'Space Mono',monospace; text-transform:uppercase; letter-spacing:0.06em;">部門 A + 部門 B + 部門 C + 部門 D → 跨部門彙整</p>
+        <p style="font-size:14px; color:#888888; line-height:1.8;">
+          每週手動整理 4 份試算表，對格式、修排版，每次耗費 1.5 小時。
+        </p>
+      </div>
+      <div class="result-card">
+        <p>
+          自動化後 → 每週省 <span class="big-num">1.5 小時</span><br />
+          一年省下 <span class="big-num" style="font-size:36px;">75 小時</span><br />
+          <span style="color:#888888; font-size:13px;">≈ 9.4 個工作天</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ───────────────────────────────────────────── -->
+    <!-- SECTION 5 — 動手前先搜尋 -->
+    <!-- ───────────────────────────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">03 — 搜尋</span>
+        <h2 class="section-title">動手前先搜尋一下</h2>
+        <div class="accent-line"></div>
+      </div>
+      <div class="card">
+        在開始動手之前，建議先搜尋看看有沒有<span class="accent">現成工具</span>可以使用。
+      </div>
+      <div class="comparison">
+        <div class="comp-card comp-good">
+          <div class="comp-label">✅ 找到現成方案</div>
+          <div class="comp-desc">直接用，省時間，不需要自己寫程式</div>
+        </div>
+        <div class="comp-card comp-bad">
+          <div class="comp-label">沒有現成方案</div>
+          <div class="comp-desc">搜尋過程幫助釐清需求，再開始寫程式</div>
+        </div>
+      </div>
+      <div class="tip-box">
+        <div class="tip-label"><div class="tip-dot"></div>現成方案</div>
+        <p>如果你要做的東西已經有現成方案，也許根本不需要自己寫程式，直接用就好。</p>
+      </div>
+      <div class="tip-box">
+        <div class="tip-label"><div class="tip-dot"></div>找不到也沒關係</div>
+        <p>
+          就算找到後發現不符合需求，這個過程也很有幫助——你會更清楚自己真正想要的是什麼，對後續<span class="accent">需求分析</span>也有很大的幫助。
+        </p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ───────────────────────────────────────────── -->
+    <!-- SECTION 6 — 風險概覽 -->
+    <!-- ───────────────────────────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2 class="section-title">風險：三個維度的評估</h2>
+        <div class="accent-line"></div>
+      </div>
+      <div class="card">
+        常見的風險有三種，我們一個一個來看。每種風險都有從<span class="accent">安全</span>到<span class="accent-red">暫停</span>的等級評估。
+      </div>
+      <div class="pillars">
+        <div class="pillar">
+          <div class="pillar-icon">💳</div>
+          <div class="pillar-label" style="color:#ff9f43;">帳單風險</div>
+          <div class="pillar-desc">信用卡綁定、費用上限、收費機制</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">🔒</div>
+          <div class="pillar-label" style="color:#ff6b9d;">隱私風險</div>
+          <div class="pillar-desc">個資蒐集、資料外流、法律責任</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">⚙</div>
+          <div class="pillar-label">營運風險</div>
+          <div class="pillar-desc">使用範圍、人數規模、服務中斷</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ───────────────────────────────────────────── -->
+    <!-- SECTION 7 — 帳單風險 -->
+    <!-- ───────────────────────────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">04-A</span>
+        <h2 class="section-title">帳單風險</h2>
+        <div class="accent-line"></div>
+      </div>
+      <div class="card">
+        從最安全的情境往下看，找到你的專案落在哪個位置。帳單出問題是很多人踩到最痛的雷。
+      </div>
+      <div class="risk-item risk-safe">
+        <span class="risk-badge badge-safe">安全</span>
+        <span class="risk-text">只使用 Google Apps Script，帳單風險為零，完全免費。</span>
+      </div>
+      <div class="risk-item risk-caution">
+        <span class="risk-badge badge-caution">留意</span>
+        <span class="risk-text">有需要綁信用卡的服務，但月費制或提供儲值上限，費用可以預先掌握。</span>
+      </div>
+      <div class="risk-item risk-caution">
+        <span class="risk-badge badge-caution">留意</span>
+        <span class="risk-text">依用量計費，但有提供儲值或硬上限機制，費用有上限可控。</span>
+      </div>
+      <div class="risk-item risk-danger">
+        <span class="risk-badge badge-danger">謹慎</span>
+        <span class="risk-text">有服務依用量計費，且沒有硬上限——用多少扣多少，建議先試算最壞情況的花費。</span>
+      </div>
+      <div class="risk-item risk-critical">
+        <span class="risk-badge badge-critical">暫停</span>
+        <span class="risk-text">有服務的收費機制你<span class="accent-red">看不懂</span>，或無法向他人說清楚最多會花多少——先找人確認再繼續。看不懂收費機制，先別刷卡。</span>
+      </div>
+      <div class="tip-box" style="margin-top:16px;">
+        <div class="tip-label"><div class="tip-dot"></div>懶人法</div>
+        <p>
+          如果不想逐項判斷，最簡單的做法就是：<span style="color:#f0f0f0; font-weight:700;">只用不需要綁信用卡的服務</span>。<span class="accent">不綁信用卡</span>，服務就沒辦法跟你收費，帳單風險自動歸零。
+        </p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ───────────────────────────────────────────── -->
+    <!-- SECTION 8 — 隱私風險 -->
+    <!-- ───────────────────────────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">04-B</span>
+        <h2 class="section-title">隱私風險</h2>
+        <div class="accent-line"></div>
+      </div>
+      <div class="card">
+        先列出你的程式<span class="accent">會蒐集或存取哪些資料</span>（如姓名、信箱、電話、身份證字號），再針對每份資料對照以下情境：
+      </div>
+      <div class="risk-item risk-safe">
+        <span class="risk-badge badge-safe">安全</span>
+        <span class="risk-text">程式不蒐集任何個人資料，只處理非識別性的數據，隱私風險為零。</span>
+      </div>
+      <div class="risk-item risk-caution">
+        <span class="risk-badge badge-caution">留意</span>
+        <span class="risk-text">有蒐集個人資料，但外流頂多讓對方感到不滿，不會有更嚴重的後果。</span>
+      </div>
+      <div class="risk-item risk-danger">
+        <span class="risk-badge badge-danger">謹慎</span>
+        <span class="risk-text">用到公司內部資料但沒有明確取得使用授權，或資料外流會造成難以收拾的後果。</span>
+      </div>
+      <div class="risk-item risk-critical">
+        <span class="risk-badge badge-critical">暫停</span>
+        <span class="risk-text">資料外流可能面臨法律責任（如個資法、合約義務、商業機密），建議找專業人士。涉及法律責任，先諮詢再動手。</span>
+      </div>
+      <div class="card" style="background:#0d0d0d; border-color:rgba(255,159,67,0.15); margin-top:8px;">
+        <p style="font-size:14px; color:#888888; line-height:1.8;">💡 建議請 AI 幫你檢查程式碼，確認有無潛在<span class="accent-orange">資安漏洞</span>。</p>
+      </div>
+      <div class="tip-box">
+        <div class="tip-label"><div class="tip-dot"></div>降低隱私風險</div>
+        <p>
+          如果原始資料含個資，可以考慮<span style="color:#f0f0f0; font-weight:700;">只讓程式讀取統計資料或匿名化後的資料</span>，而非直接碰原始個資。這樣即使程式出問題，外流的也只是無法識別個人的數據。
+        </p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ───────────────────────────────────────────── -->
+    <!-- SECTION 9 — 營運風險 -->
+    <!-- ───────────────────────────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">04-C</span>
+        <h2 class="section-title">營運風險</h2>
+        <div class="accent-line"></div>
+      </div>
+      <div class="card">
+        程式要給多少人用、在什麼範圍內使用，決定了營運風險的高低。<span class="accent">使用者越多、範圍越廣，風險越高。</span>
+      </div>
+      <div class="risk-item risk-safe">
+        <span class="risk-badge badge-safe">安全</span>
+        <span class="risk-text">只有你自己或你叫得出名字的少數幾個人使用，營運風險為零。</span>
+      </div>
+      <div class="risk-item risk-caution">
+        <span class="risk-badge badge-caution">留意</span>
+        <span class="risk-text">限制在組織或團隊內部使用，不對外公開，風險很低。</span>
+      </div>
+      <div class="risk-item risk-danger">
+        <span class="risk-badge badge-danger">謹慎</span>
+        <span class="risk-text">公開讓不特定的人使用：要想清楚各種回饋、服務中斷、費用超出預期的情境。</span>
+      </div>
+      <div class="risk-item risk-critical">
+        <span class="risk-badge badge-critical">暫停</span>
+        <span class="risk-text">預計同時有超過 <span class="accent-orange">100 人</span>使用：架構考量完全不同，建議先找有經驗的人討論，動手之前先諮詢。</span>
+      </div>
+      <div class="tip-box" style="margin-top:16px;">
+        <div class="tip-label"><div class="tip-dot"></div>想做大？先從小的練起</div>
+        <p>
+          如果目標是打造很多人用的服務，建議先從低風險版本累積實戰經驗，有能力處理更複雜的狀況後再往規模化前進。<br /><br />
+          <span class="accent">新手村</span>不要直接跳級挑戰<span class="accent-orange">大 Boss</span>。
+        </p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ───────────────────────────────────────────── -->
+    <!-- SECTION 10 — 風險判讀總結 -->
+    <!-- ───────────────────────────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <h2 class="section-title">風險判讀總結</h2>
+        <div class="accent-line"></div>
+      </div>
+      <div class="card">
+        把三個維度的評估結果，用顏色來判讀。對帳單、隱私、營運三個面向各自給一個顏色，再看整體的燈號。
+      </div>
+      <div class="traffic-item" style="background:rgba(124,255,178,0.06); border-left:3px solid #7cffb2;">
+        <div class="traffic-dot" style="background:#7cffb2; box-shadow:0 0 10px #7cffb2;"></div>
+        <div class="traffic-content">
+          <strong style="color:#7cffb2;">只看到綠色</strong>
+          <p>放心做，享受 Vibe Coding 的樂趣</p>
+        </div>
+      </div>
+      <div class="traffic-item" style="background:rgba(255,209,102,0.06); border-left:3px solid #ffd166;">
+        <div class="traffic-dot" style="background:#ffd166; box-shadow:0 0 10px #ffd166;"></div>
+        <div class="traffic-content">
+          <strong style="color:#ffd166;">有看到黃色</strong>
+          <p>要帶腦做，注意細節，讓 AI 幫你檢查程式碼</p>
+        </div>
+      </div>
+      <div class="traffic-item" style="background:rgba(255,159,67,0.06); border-left:3px solid #ff9f43;">
+        <div class="traffic-dot" style="background:#ff9f43; box-shadow:0 0 10px #ff9f43;"></div>
+        <div class="traffic-content">
+          <strong style="color:#ff9f43;">有看到橘色</strong>
+          <p>需要謹慎處理，仔細規劃後再動手</p>
+        </div>
+      </div>
+      <div class="traffic-item" style="background:rgba(255,107,107,0.06); border-left:3px solid #ff6b6b;">
+        <div class="traffic-dot" style="background:#ff6b6b; box-shadow:0 0 10px #ff6b6b;"></div>
+        <div class="traffic-content">
+          <strong style="color:#ff6b6b;">有看到紅色</strong>
+          <p>可能超出個人與 AI 的能力範圍，建議諮詢專家</p>
+        </div>
+      </div>
+      <div class="card" style="text-align:center; margin-top:16px;">
+        三燈全綠？盡情享受 <span class="accent">Vibe Coding</span>！
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ───────────────────────────────────────────── -->
+    <!-- SECTION 11 — 本章重點整理 -->
+    <!-- ───────────────────────────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <h2 class="section-title">本章重點整理</h2>
+        <div class="accent-line"></div>
+      </div>
+      <div class="takeaway-box">
+        <div class="takeaway-header">
+          <div class="takeaway-header-dot"></div>
+          重點整理
+        </div>
+        <div class="takeaway-item">
+          <div class="takeaway-num">1</div>
+          <div class="takeaway-text">計劃階段評估三件事：<span class="accent">投入時間、價值、風險</span></div>
+        </div>
+        <div class="takeaway-item">
+          <div class="takeaway-num">2</div>
+          <div class="takeaway-text"><span class="accent">時間箱法</span>：先決定願意投入多少時間，在那個範圍內盡力推進</div>
+        </div>
+        <div class="takeaway-item">
+          <div class="takeaway-num">3</div>
+          <div class="takeaway-text">想清楚<span class="accent">價值</span>：量化成時間或金錢更有感，動手前也先搜尋有沒有現成方案</div>
+        </div>
+        <div class="takeaway-item">
+          <div class="takeaway-num">4</div>
+          <div class="takeaway-text">三大風險：<span class="accent-orange">帳單</span>（不把卡號交出去最安全）、<span style="color:#ff6b9d; font-weight:700;">隱私</span>（去敏感化降低風險）、<span class="accent">營運</span>（先從小範圍開始）</div>
+        </div>
+        <div class="takeaway-item">
+          <div class="takeaway-num">5</div>
+          <div class="takeaway-text">不管哪種風險，最簡單的原則就是<span class="accent">從小開始做</span>，確認安全後再慢慢往更大規模前進</div>
+        </div>
+        <div style="text-align:center; margin-top:20px; font-size:14px; color:#888888;">
+          核心：<span class="accent" style="font-size:16px;">從小的開始做</span>
+        </div>
+      </div>
+
+      <div class="next-box">
+        <div class="next-label">NEXT</div>
+        <p>需求分析：把腦中模糊的想法，轉換成 AI 能夠精準執行的需求描述</p>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
