@@ -39,16 +39,30 @@
     }
     .back-link:hover { color: #7cffc2; }
 
-    /* Video embed */
-    .video-wrap {
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid rgba(124,255,194,0.14);
-      margin-bottom: 48px;
-      background: #000;
-      box-shadow: 0 0 40px rgba(124,255,194,0.06);
+    /* Progress navbar */
+    .progress-bar-wrap {
+      position: sticky;
+      top: 0;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 100;
+      padding: 14px 24px;
+      border-bottom: 1px solid rgba(124,255,194,0.14);
     }
-    .video-wrap video { display: block; width: 100%; }
+    .progress-track {
+      height: 3px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 25%;
+      background: #7cffc2;
+      border-radius: 99px;
+      box-shadow: 0 0 8px rgba(124,255,194,0.5);
+    }
 
     /* Section */
     .section { margin-bottom: 40px; }
@@ -356,15 +370,18 @@
 </head>
 <body>
 <script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
+
+<!-- Sticky Progress Bar -->
+<div class="progress-bar-wrap">
+  <div class="progress-track">
+    <div class="progress-fill"></div>
+  </div>
+</div>
+
   <div class="page-wrap">
 
     <!-- Back link -->
     <a href="#" class="back-link">← 返回主頁</a>
-
-    <!-- Video embed -->
-    <div class="video-wrap">
-      <iframe src="https://drive.google.com/file/d/1B8VyM5EOvKJGdoRPSO2eoyKHSsE2Dxfs/preview" width="100%" style="aspect-ratio:16/9;border:none;border-radius:8px;" allow="autoplay" allowfullscreen></iframe>
-    </div>
 
     <!-- ───────────────────────────────────────────── -->
     <!-- SECTION 1 — Hero -->
@@ -793,6 +810,35 @@
         <div style="text-align:center; margin-top:20px; font-size:14px; color:#888888;">
           核心：<span class="accent" style="font-size:16px;">從小的開始做</span>
         </div>
+      </div>
+
+      <!-- 課程素材 -->
+      <div style="margin: 40px 0;">
+        <div style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; color:#7cffc2; background:rgba(124,255,194,0.1); border:1px solid rgba(124,255,194,0.3); padding:4px 12px; border-radius:99px; letter-spacing:0.06em; display:inline-block; margin-bottom:16px; box-shadow:0 0 10px rgba(124,255,194,0.1);">課程素材</div>
+        <h3 style="font-size:20px; font-weight:900; color:#f0f0f0; margin-bottom:8px; letter-spacing:-0.02em;">課程截圖參考</h3>
+        <p style="font-size:14px; color:#888888; margin-bottom:20px;">課程中展示的部門進度匯報實際畫面，點擊可開啟原始尺寸。</p>
+        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:20px;">
+          <a href="./assets/部門進度匯報A.png" target="_blank" style="display:block;">
+            <img src="./assets/部門進度匯報A.png" alt="部門進度匯報A" style="width:100%; border-radius:10px; border:1px solid rgba(124,255,194,0.14); display:block;" />
+          </a>
+          <a href="./assets/部門進度匯報B.png" target="_blank" style="display:block;">
+            <img src="./assets/部門進度匯報B.png" alt="部門進度匯報B" style="width:100%; border-radius:10px; border:1px solid rgba(124,255,194,0.14); display:block;" />
+          </a>
+          <a href="./assets/部門進度匯報C.png" target="_blank" style="display:block;">
+            <img src="./assets/部門進度匯報C.png" alt="部門進度匯報C" style="width:100%; border-radius:10px; border:1px solid rgba(124,255,194,0.14); display:block;" />
+          </a>
+          <a href="./assets/部門進度匯報D.png" target="_blank" style="display:block;">
+            <img src="./assets/部門進度匯報D.png" alt="部門進度匯報D" style="width:100%; border-radius:10px; border:1px solid rgba(124,255,194,0.14); display:block;" />
+          </a>
+        </div>
+        <a href="./assets/跨部門彙整.png" target="_blank" style="display:block; margin-bottom:20px;">
+          <img src="./assets/跨部門彙整.png" alt="跨部門彙整（自動化結果）" style="width:100%; border-radius:10px; border:1px solid rgba(124,255,194,0.14); display:block;" />
+        </a>
+        <p style="font-size:13px; color:#7cffc2; font-family:'Space Mono',monospace; margin-bottom:10px; letter-spacing:0.04em;">自動化示範影片</p>
+        <video controls style="width:100%; border-radius:12px; border:1px solid rgba(124,255,194,0.14); background:#000; display:block;">
+          <source src="./assets/跨部門彙整.mov" type="video/quicktime">
+          <source src="./assets/跨部門彙整.mov" type="video/mp4">
+        </video>
       </div>
 
       <div class="next-box">

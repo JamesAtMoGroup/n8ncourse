@@ -27,7 +27,7 @@ credentials = google.oauth2.credentials.Credentials(
     token_uri="https://oauth2.googleapis.com/token",
     client_id=os.environ["GOOGLE_CLIENT_ID"],
     client_secret=os.environ["GOOGLE_CLIENT_SECRET"],
-    scopes=["https://www.googleapis.com/auth/drive.readonly"],
+    scopes=["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/youtube.upload"],
 )
 credentials.refresh(google.auth.transport.requests.Request())
 service = build("drive", "v3", credentials=credentials, cache_discovery=False)
@@ -167,6 +167,19 @@ for idx, folder in enumerate(folders, start=1):
         with open(f"{out_dir}/subtitles.vtt", "wb") as fh:
             fh.write(vtt_bytes)
         video_note += " + vtt"
+
+    # ── Assets subfolder ──
+    assets_folder = next((f for f in files if f["mimeType"] == "application/vnd.google-apps.folder"
+                          and f["name"] == "assets"), None)
+    if assets_folder:
+        assets_dir = f"{out_dir}/assets"
+        os.makedirs(assets_dir, exist_ok=True)
+        asset_files = list_files(assets_folder["id"])
+        for af in asset_files:
+            asset_bytes = download_bytes(af["id"])
+            with open(f"{assets_dir}/{af['name']}", "wb") as fh:
+                fh.write(asset_bytes)
+        video_note += f" + {len(asset_files)} assets"
 
     print(f"  [{idx}] {folder['name'][:40]} → lecture{idx}/ ({video_note})")
 
