@@ -70,11 +70,54 @@ def download_bytes(file_id):
     return buf.getvalue()
 
 
+NAV_CSS = (
+    "<style id='vc-nav-css'>"
+    "#vc-nav{position:sticky;top:0;z-index:200;height:52px;display:flex;align-items:center;"
+    "justify-content:space-between;padding:0 24px;"
+    "background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);"
+    "border-bottom:1px solid rgba(124,255,178,0.14);}"
+    "#vc-nav a{font-size:14px;font-weight:500;color:#888;text-decoration:none;transition:color .15s;}"
+    "#vc-nav a:hover{color:#fff;}"
+    "#vc-nav-right{display:flex;align-items:center;gap:10px;}"
+    "#vc-nav-user{font-size:13px;color:#888;}"
+    "#vc-logout{font-size:13px;font-weight:600;color:#666;background:rgba(255,255,255,0.04);"
+    "border:1px solid rgba(124,255,178,0.14);border-radius:8px;padding:4px 12px;"
+    "cursor:pointer;font-family:inherit;}"
+    "</style>"
+)
+
+NAV_HTML = (
+    "<nav id='vc-nav'>"
+    "<a href='../'>← 返回課程選單</a>"
+    "<div id='vc-nav-right'>"
+    "<span id='vc-nav-user'></span>"
+    "<button id='vc-logout' onclick=\"localStorage.removeItem('aischool_user');"
+    "window.location.href='../../login.html';\">登出</button>"
+    "</div></nav>"
+    "<script>(function(){var u=JSON.parse(localStorage.getItem('aischool_user')||'null');"
+    "if(u&&u.name)document.getElementById('vc-nav-user').textContent=u.name;})();</script>"
+)
+
+
 def inject_auth(html):
     if "aischool_user" in html:
         return html
     patched = re.sub(r"(<body[^>]*>)", r"\1\n" + AUTH_GUARD, html, count=1, flags=re.IGNORECASE)
     return patched if patched != html else AUTH_GUARD + "\n" + html
+
+
+def inject_nav(html):
+    """Inject sticky nav bar (← 返回課程選單 + logout) into each lecture page."""
+    if "vc-nav" in html:
+        return html  # already injected
+    # Inject CSS into <head>
+    html = re.sub(r"(</head>)", NAV_CSS + r"\1", html, count=1, flags=re.IGNORECASE)
+    # Inject nav HTML right after <body> (after auth guard if present)
+    html = re.sub(r"(</script>\n?)(<div|<header|<main|<section|<div)", r"\1" + NAV_HTML + r"\2", html, count=1)
+    if "vc-nav" not in html:
+        # fallback: inject after <body>
+        html = re.sub(r"(<body[^>]*>)", r"\1\n" + NAV_HTML, html, count=1, flags=re.IGNORECASE)
+    return html
 
 
 def replace_video_with_iframe(html, mp4_file_id, vtt_filename=None):
@@ -132,6 +175,7 @@ for idx, folder in enumerate(folders, start=1):
     # ── HTML ──
     html = download_bytes(html_file["id"]).decode("utf-8")
     html = inject_auth(html)
+    html = inject_nav(html)
 
     if youtube_file:
         # Prefer YouTube embed over Drive mp4
