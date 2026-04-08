@@ -233,3 +233,16 @@ for idx, folder in enumerate(folders, start=1):
 with open("vibecoding/courses.json", "w", encoding="utf-8") as fh:
     json.dump(courses, fh, ensure_ascii=False, indent=2)
 print(f"\nWritten vibecoding/courses.json ({len(courses)} entries)")
+
+# ── Update root courses.json vibecoding lecture count ─────────────────────────
+root_courses_path = "courses.json"
+if os.path.exists(root_courses_path):
+    with open(root_courses_path, encoding="utf-8") as fh:
+        root_courses = json.load(fh)
+    for c in root_courses:
+        if c.get("id") == "vibecoding":
+            c["lectureTotal"] = len(courses)
+            c["lectureOpen"] = len(courses)
+    with open(root_courses_path, "w", encoding="utf-8") as fh:
+        json.dump(root_courses, fh, ensure_ascii=False, indent=2)
+    print(f"Updated courses.json: vibecoding lectureTotal={len(courses)}")

@@ -14,8 +14,8 @@
     "title": "Vibe Coding / AI Coding",
     "description": "用 AI 工具加速開發，打造真實可用的產品",
     "thumbnail": null,
-    "lectureTotal": null,
-    "lectureOpen": null,
+    "lectureTotal": 4,
+    "lectureOpen": 4,
     "status": "active",
     "url": "./vibecoding/"
   }
