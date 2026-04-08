@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>章節 0-3｜寫程式的 7 大流程與 AI 溝通技巧</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* ── Design system — exact match to FullVideo03.tsx C constants ── */
+  :root {
+    --primary: #7cffb2;          /* C.primary (green) */
+    --primary-light: rgba(124,255,178,0.07); /* C.primaryLight */
+    --yellow: #ffd166;
+    --bg: #000000;               /* C.bg */
+    --surface: #0d0d0d;          /* C.surface */
+    --surface2: #111111;         /* C.surface2 */
+    --text: #ffffff;             /* C.text */
+    --text-muted: #888888;       /* C.muted */
+    --border: rgba(124,255,178,0.14); /* C.border */
+    --radius: 22px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+    min-height: 100vh;
+  }
+
+  /* Background orbs */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(124,255,178,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -200px; left: -200px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(124,255,178,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Progress bar */
+  .progress-bar-wrap {
+    position: sticky;
+    top: 0;
+    background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 100;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .progress-track {
+    height: 3px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 75%;
+    background: var(--primary);
+    border-radius: 99px;
+    box-shadow: 0 0 8px rgba(124,255,178,0.5);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Hero */
+  .hero {
+    padding: 64px 0 48px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 56px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+  }
+  .chapter-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    padding: 5px 14px;
+    border-radius: 99px;
+    letter-spacing: 0.05em;
+    box-shadow: 0 0 10px rgba(124,255,178,0.2);
+  }
+  .tag {
+    font-size: 13px;
+    padding: 5px 14px;
+    border-radius: 99px;
+    font-weight: 500;
+  }
+  .tag-beginner { background: rgba(124,255,178,0.1); color: var(--primary); }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 900;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  h1 .primary { color: var(--primary); }
+
+  .hero-sub {
+    font-size: 17px;
+    color: var(--text-muted);
+    max-width: 520px;
+    line-height: 1.75;
+  }
+
+  /* Section header */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.5s ease both;
+  }
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--primary);
+    background: rgba(124,255,178,0.08);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 99px;
+    white-space: nowrap;
+  }
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+
+  /* Step header — for SDLC steps */
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.5s ease both;
+  }
+  .step-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--primary);
+    background: rgba(124,255,178,0.1);
+    border: 1px solid rgba(124,255,178,0.3);
+    padding: 6px 14px;
+    border-radius: 99px;
+    white-space: nowrap;
+    box-shadow: 0 0 14px rgba(124,255,178,0.12);
+  }
+  .step-title {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .step-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-left: 10px;
+    letter-spacing: 0.04em;
+  }
+
+  /* Section wrapper */
+  .section { margin-bottom: 56px; }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 36px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.5s ease both;
+  }
+  .card p { color: var(--text-muted); margin-bottom: 0; line-height: 1.8; }
+  .card strong { color: var(--text); }
+  .card-body { color: var(--text); font-size: 15px; line-height: 1.8; }
+
+  /* Analogy box */
+  .analogy {
+    background: rgba(124,255,178,0.05);
+    border-left: 4px solid var(--primary);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.5s ease both;
+    box-shadow: -2px 0 30px rgba(124,255,178,0.08);
+  }
+  .analogy .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .analogy .label-dot {
+    width: 6px; height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--primary);
+    flex-shrink: 0;
+  }
+  .analogy p { color: #dafff0; font-size: 15px; line-height: 1.8; }
+  .analogy strong { color: #ffffff; }
+
+  /* TipBox — 實戰範例 */
+  .tipbox {
+    background: rgba(124,255,178,0.05);
+    border: 1px solid rgba(124,255,178,0.22);
+    border-radius: 16px;
+    padding: 22px 28px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.5s ease both;
+  }
+  .tipbox .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tipbox .label-dot {
+    width: 6px; height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 10px #7cffb2;
+    flex-shrink: 0;
+  }
+  .tipbox p { color: #c8ffe0; font-size: 15px; line-height: 1.75; }
+
+  /* Quiz box */
+  .quiz-box {
+    border: 2px dashed rgba(255,209,102,0.3);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    background: rgba(255,209,102,0.03);
+    animation: fadeUp 0.5s ease both;
+  }
+  .quiz-box .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--yellow);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .quiz-box .label-dot {
+    width: 6px; height: 6px;
+    background: var(--yellow);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--yellow);
+    flex-shrink: 0;
+  }
+  .quiz-box p { color: var(--text-muted); font-size: 15px; line-height: 1.7; }
+
+  /* Key quote block */
+  .key-quote {
+    background: rgba(124,255,178,0.07);
+    border: 2px solid rgba(124,255,178,0.7);
+    border-radius: 20px;
+    padding: 36px 48px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 0 60px rgba(124,255,178,0.15), inset 0 1px 0 rgba(124,255,178,0.12);
+    animation: fadeUp 0.5s ease both;
+  }
+  .key-quote p {
+    font-size: clamp(18px, 3vw, 26px);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .key-quote .highlight { color: var(--primary); text-shadow: 0 0 30px rgba(124,255,178,0.4); }
+
+  /* Gap row (現況/落差/期待) */
+  .gap-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 20px;
+    animation: fadeUp 0.5s ease both;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .gap-box {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 14px;
+    padding: 18px 28px;
+    font-size: 15px;
+    text-align: center;
+  }
+  .gap-box .box-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 6px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .gap-box .box-value { font-weight: 600; color: var(--text); }
+  .gap-box-mid {
+    background: rgba(124,255,178,0.08);
+    border: 1px solid rgba(124,255,178,0.22);
+    border-radius: 14px;
+    padding: 18px 28px;
+    flex: 1;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(124,255,178,0.06);
+    min-width: 160px;
+  }
+  .gap-box-mid .box-label { color: var(--primary); font-size: 11px; font-family: 'Space Mono', monospace; margin-bottom: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .gap-box-mid .box-value { color: var(--text); font-weight: 600; font-size: 15px; }
+  .gap-box-end {
+    background: rgba(124,255,178,0.12);
+    border: 1px solid rgba(124,255,178,0.3);
+    border-radius: 14px;
+    padding: 18px 28px;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(124,255,178,0.12);
+  }
+  .gap-box-end .box-label { color: var(--primary); font-size: 11px; font-family: 'Space Mono', monospace; margin-bottom: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .gap-box-end .box-value { color: var(--primary); font-weight: 700; font-size: 15px; }
+  .gap-arrow {
+    color: rgba(124,255,178,0.6);
+    font-size: 20px;
+    padding: 0 4px;
+    flex-shrink: 0;
+  }
+
+  /* Progress items */
+  .progress-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 16px 22px;
+    margin-bottom: 12px;
+    animation: fadeUp 0.5s ease both;
+  }
+  .progress-item-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(124,255,178,0.08);
+    border: 1px solid rgba(124,255,178,0.15);
+  }
+  .progress-item-body { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+  .progress-item-body strong { color: var(--text); font-weight: 600; }
+
+  /* Method cards (A/B) */
+  .method-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .method-pro {
+    flex: 1;
+    background: rgba(124,255,178,0.06);
+    border: 1px solid rgba(124,255,178,0.2);
+    border-radius: 10px;
+    padding: 14px 18px;
+  }
+  .method-pro-label {
+    font-size: 12px;
+    color: var(--primary);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 8px;
+  }
+  .method-pro p { font-size: 13px; color: var(--text); line-height: 1.7; margin: 0; }
+  .method-con {
+    flex: 1;
+    background: rgba(255,209,102,0.05);
+    border: 1px solid rgba(255,209,102,0.2);
+    border-radius: 10px;
+    padding: 14px 18px;
+  }
+  .method-con-label {
+    font-size: 12px;
+    color: var(--yellow);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 8px;
+  }
+  .method-con p { font-size: 13px; color: var(--text); line-height: 1.7; margin: 0; }
+
+  /* Method badge */
+  .method-badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: #000;
+    background: var(--primary);
+    padding: 5px 12px;
+    border-radius: 99px;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+  .method-name { font-size: 18px; font-weight: 700; color: var(--text); vertical-align: middle; }
+
+  /* Taxi analogy grid */
+  .taxi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .taxi-col { }
+  .taxi-col:first-child { border-right: 1px solid rgba(124,255,178,0.15); padding-right: 20px; }
+  .taxi-col:last-child { padding-left: 4px; }
+  .taxi-method-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .taxi-col p { font-size: 14px; color: #c8ffe0; line-height: 1.75; margin: 0; }
+
+  /* Ability pills */
+  .ability-row {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .ability-item { }
+  .ability-item + .ability-item { border-top: 1px solid var(--border); padding-top: 20px; }
+  .ability-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--primary);
+    margin-bottom: 8px;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ability-num-badge {
+    background: rgba(124,255,178,0.15);
+    border: 1px solid rgba(124,255,178,0.3);
+    border-radius: 6px;
+    padding: 2px 8px;
+  }
+  .ability-item p { font-size: 15px; color: var(--text); line-height: 1.8; margin: 0; }
+
+  /* Takeaway */
+  .takeaway {
+    background: rgba(124,255,178,0.04);
+    border: 1px solid rgba(124,255,178,0.2);
+    border-radius: var(--radius);
+    padding: 32px 36px;
+    margin-top: 48px;
+    animation: fadeUp 0.5s ease both;
+  }
+  .takeaway-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .takeaway-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    counter-reset: li;
+  }
+  .takeaway-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.6;
+    counter-increment: li;
+  }
+  .takeaway-list li::before {
+    content: counter(li);
+    background: var(--primary);
+    color: #000000;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* Chapter complete badge */
+  .chapter-done {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+  }
+  .chapter-done-inner {
+    background: rgba(124,255,178,0.1);
+    border: 1px solid rgba(124,255,178,0.35);
+    border-radius: 16px;
+    padding: 16px 40px;
+    box-shadow: 0 0 40px rgba(124,255,178,0.18);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .done-dot {
+    width: 8px; height: 8px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 16px rgba(124,255,178,0.6);
+    flex-shrink: 0;
+  }
+  .done-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.06em;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 48px 0;
+  }
+
+  /* Highlight */
+  .highlight { color: var(--primary); font-weight: 700; }
+  code {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85em;
+    background: rgba(124,255,178,0.1);
+    color: var(--primary);
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  /* Chips inside cards */
+  .chip-row { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+  .chip {
+    background: var(--primary-light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .chip .chip-label { color: var(--primary); font-family: 'Space Mono', monospace; font-size: 11px; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .card, .quiz-box, .takeaway, .tipbox { padding: 20px; }
+    .taxi-grid { grid-template-columns: 1fr; }
+    .taxi-col:first-child { border-right: none; border-bottom: 1px solid rgba(124,255,178,0.15); padding-right: 0; padding-bottom: 16px; }
+    .taxi-col:last-child { padding-left: 0; }
+    .method-row { flex-direction: column; }
+    .gap-row { flex-direction: column; }
+    .gap-box-mid { min-width: unset; }
+  }
+</style>
+</head>
+<body>
+<script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
+
+<!-- Progress bar -->
+<div class="progress-bar-wrap">
+  <div class="progress-track"><div class="progress-fill"></div></div>
+</div>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-meta">
+      <span class="chapter-badge">CH 0-3</span>
+      <span class="tag tag-beginner">✦ 完全零基礎</span>
+    </div>
+    <h1>寫程式的 7 大流程<br><span class="primary">與 AI 溝通技巧</span></h1>
+    <p class="hero-sub">AI 寫程式不只是「叫 AI 寫就好」。搞懂開發的完整框架，你才能在對的時機說對的話，讓 AI 真正幫上你的忙。</p>
+  </div>
+
+  <!-- ─── Section 01: 寫程式的最大框架 ─── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>寫程式的最大框架</h2>
+    </div>
+
+    <div class="card">
+      <p class="card-body">
+        寫程式的過程，本質上就是找出「<strong>現況</strong>」與「<strong>期待</strong>」之間的落差，然後設計最好的方案去填補它。
+      </p>
+      <div class="chip-row">
+        <div class="chip"><span class="chip-label">前半段</span><br>需求分析</div>
+        <div class="chip"><span class="chip-label">後半段</span><br>解法設計</div>
+      </div>
+    </div>
+
+    <div class="gap-row">
+      <div class="gap-box">
+        <div class="box-label">現況</div>
+        <div class="box-value">現在的狀態</div>
+      </div>
+      <div class="gap-arrow">→</div>
+      <div class="gap-box-mid">
+        <div class="box-label">落差</div>
+        <div class="box-value">需求分析 + 解法設計</div>
+      </div>
+      <div class="gap-arrow">→</div>
+      <div class="gap-box-end">
+        <div class="box-label">期待</div>
+        <div class="box-value">理想的狀態</div>
+      </div>
+    </div>
+
+    <div class="analogy">
+      <div class="label"><span class="label-dot"></span>💡 醫美比喻</div>
+      <p>
+        就像去做醫美：醫生先問你「對哪些地方不滿意」（現況），再問你「希望達到什麼樣的效果」（期待），最後才推薦適合的醫美項目（解法）。
+        <strong>如果你連自己想要什麼都說不清楚，醫生只能依自己的判斷推薦，結果不一定是你預期的樣子。AI 也是完全一樣的道理。</strong>
+      </p>
+    </div>
+
+    <div class="card">
+      <p class="card-body">如果你對程式設計完全沒有概念，你能做的最重要的事，就是把現況和期待描述得越清楚越好，剩下的讓 AI 去思考怎麼填補落差。</p>
+    </div>
+  </div>
+
+  <!-- ─── Section 01b: 描述現況 ─── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>怎麼描述現況？</h2>
+    </div>
+
+    <div class="card">
+      <p class="card-body" style="margin-bottom: 14px;">描述現況時，盡量說明以下幾件事：</p>
+      <div class="progress-item">
+        <div class="progress-item-icon">👤</div>
+        <div class="progress-item-body"><strong>你的角色</strong>　你是什麼角色、在做什麼任務</div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-item-icon">🔧</div>
+        <div class="progress-item-body"><strong>用什麼工具或流程</strong>　目前在用什麼工具或流程</div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-item-icon">⚠️</div>
+        <div class="progress-item-body"><strong>哪個環節最困擾</strong>　哪個環節最讓你困擾或最花時間</div>
+      </div>
+    </div>
+
+    <div class="tipbox">
+      <div class="label"><span class="label-dot"></span>實戰範例</div>
+      <p>
+        「我是活動企劃，每次辦活動結束後，都要手動把很多份報名表的資料，一筆一筆複製到總整理的試算表裡面，這個過程大概要花兩個小時左右的時間，而且過程中很容易打錯資料。」<br><br>
+        像這樣把角色、情境、還有痛點的描述都講得很清楚，AI 才會更具體知道你目前的現況是什麼。
+      </p>
+    </div>
+  </div>
+
+  <!-- ─── Section 01c: 描述期待 ─── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>怎麼描述期待？</h2>
+    </div>
+
+    <div class="card">
+      <p class="card-body" style="margin-bottom: 14px;">描述期待時，先靜下來想清楚三件事：</p>
+      <div class="progress-item">
+        <div class="progress-item-icon">🎯</div>
+        <div class="progress-item-body"><strong>理想中的畫面是什麼</strong>　你希望最終的成果長什麼樣子</div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-item-icon">✨</div>
+        <div class="progress-item-body"><strong>希望達成什麼樣的效果</strong>　這件事解決後會帶來什麼改變</div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-item-icon">🔒</div>
+        <div class="progress-item-body"><strong>有沒有特別的限制條件</strong>　例如免費方案、特定工具、特定平台等</div>
+      </div>
+    </div>
+
+    <div class="tipbox">
+      <div class="label"><span class="label-dot"></span>實戰範例</div>
+      <p>
+        📝 期待這樣描述：<br><br>
+        「我希望只要整理好一份主要試算表，就可以自動把所有報名資料彙整進去，最好還能在完成後自動寄一封確認信給報名者。」<br><br>
+        像這樣現況跟期待都說清楚之後，剩下的就交給 AI——這就是跟 AI 合作最重要的起點。
+      </p>
+    </div>
+
+    <div class="quiz-box">
+      <div class="label"><span class="label-dot"></span>想一想</div>
+      <p>
+        試著用「現況 ／ 期待」的框架，描述一件你想自動化的任務。<br><br>
+        <strong>現況：</strong>你現在怎麼做這件事？最花時間、最容易出錯的是哪個步驟？<br>
+        <strong>期待：</strong>如果這件事被解決了，你希望它是什麼樣子？
+      </p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ─── Section 02: 兩種協作方式 ─── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>兩種與 AI 協作的方式</h2>
+    </div>
+
+    <div class="card">
+      <p class="card-body">搞清楚現況和期待之後，設計解法這個階段，有兩種不同的協作方式——差別在於你介入的程度。</p>
+    </div>
+
+    <!-- 方法 A -->
+    <div class="card">
+      <div style="margin-bottom: 14px;">
+        <span class="method-badge">方法 A</span>
+        <span class="method-name">AI 引導法</span>
+      </div>
+      <p class="card-body" style="margin-bottom: 14px;">把現況和期待告訴 AI，讓 AI 來設計解決方案，你跟著它的步驟走。甚至可以請 AI 提出兩到三種方案，選一個你最看得懂的執行。</p>
+      <div class="method-row">
+        <div class="method-pro">
+          <div class="method-pro-label">✓ 優點</div>
+          <p>上手快、零門檻，不需要任何技術概念</p>
+        </div>
+        <div class="method-con">
+          <div class="method-con-label">⚠ 限制</div>
+          <p>AI 可能有盲點，有時會把你帶往效率較差的方向，而且因為你不懂技術，可能察覺不到問題在哪裡。甚至有時候 AI 會說「這件事做不到」，但其實只是它沒有想到其他解法而已。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 方法 B -->
+    <div class="card">
+      <div style="margin-bottom: 14px;">
+        <span class="method-badge">方法 B</span>
+        <span class="method-name">工程法</span>
+      </div>
+      <p class="card-body" style="margin-bottom: 14px;">你帶著一些技術概念主動介入，指定方向或方案給 AI 執行。從「AI 引導你」變成「你引導 AI」。</p>
+      <div class="method-row">
+        <div class="method-pro">
+          <div class="method-pro-label">✓ 優點</div>
+          <p>掌控感更強、成功率更高，能挑戰更複雜的任務</p>
+        </div>
+        <div class="method-con">
+          <div class="method-con-label">⚠ 限制</div>
+          <p>需要一點技術背景知識作為前提</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tipbox">
+      <div class="label"><span class="label-dot"></span>實戰範例</div>
+      <p>
+        舉個例子：你告訴 AI「我想自動化每月寄送帳單的工作」，如果什麼都不指定，AI 可能用一種你看不懂、用不上的方式解決。<br><br>
+        但如果你知道 Google Apps Script 很擅長串聯 Google 服務，你就可以主動說「請用 Apps Script 來寫」——這就是工程法，你在引導 AI 往你看得懂、用得上的方向走。<br><br>
+        你依然只是「動動嘴」，只是說的內容更有方向感。
+      </p>
+    </div>
+
+    <div class="analogy">
+      <div class="label"><span class="label-dot"></span>💡 計程車比喻</div>
+      <div class="taxi-grid">
+        <div class="taxi-col">
+          <div class="taxi-method-label">方法 A — AI 引導法</div>
+          <p>「我要去台北信義區」—— 完全交給司機決定走哪條路。<br>司機會到目的地，但有沒有繞路，你不會知道。</p>
+        </div>
+        <div class="taxi-col">
+          <div class="taxi-method-label">方法 B — 工程法</div>
+          <p>「走快速道路，避開忠孝東路」—— 你不用自己開車，但你知道怎麼給出更有效的指令。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-body">使用工程法的好處是：你在整個開發過程中會更有掌握感、更有自信，成功率相對更高，也更有機會挑戰規模更大的任務。</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ─── Section 03: SDLC ─── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>寫程式的 7 大流程（SDLC）</h2>
+    </div>
+
+    <div class="card">
+      <p class="card-body">
+        軟體工程師圈有一個重要框架，叫做 <span class="highlight">SDLC（軟體開發生命週期）</span>，把一個程式從零到上線的完整過程拆成七個階段。<br><br>
+        這個框架不是叫你循規蹈矩一步一步做，而是幫你建立更高的視野——知道每個階段在幹嘛、哪些事沒做到位會造成問題。
+      </p>
+    </div>
+
+    <div class="tipbox">
+      <div class="label"><span class="label-dot"></span>💬 與 AI 溝通的關鍵提醒</div>
+      <p>
+        OpenAI AI 策略師 Jessica Shieh 提出一個比喻：「房間裡的天才」。<br><br>
+        想像一個天才被關在房間裡，你只能把問題寫在紙上從門縫塞進去。他非常聰明，但對你一無所知——看不到你的畫面，也不了解你的背景。<strong>你塞進去的那張紙，就是你的 prompt。</strong><br><br>
+        看到什麼就跟 AI 說什麼。文字說不清楚，也可以用圖片輔助。
+      </p>
+    </div>
+
+    <div class="card">
+      <p class="card-body">了解完跟 AI 溝通的核心概念之後，現在我們就來一步一步，一起看這七個階段——以「做個人網站」這個需求為例來走一遍完整流程。</p>
+    </div>
+  </div>
+
+  <!-- SDLC Step 01 -->
+  <div class="section">
+    <div class="step-header">
+      <span class="step-num">01</span>
+      <span class="step-title">計劃<span class="step-sub">PLANNING</span></span>
+    </div>
+
+    <div class="card">
+      <p class="card-body">計劃是整個專案的起點。在動手開始之前，先評估這件事情的可行性，從三個面向思考：</p>
+    </div>
+
+    <div class="progress-item">
+      <div class="progress-item-icon">💎</div>
+      <div class="progress-item-body"><strong>價值</strong>　做這件事有什麼效益？（哪怕只是做開心也算）</div>
+    </div>
+    <div class="progress-item">
+      <div class="progress-item-icon">⚡</div>
+      <div class="progress-item-body"><strong>風險</strong>　會不會用到付費服務？有沒有隱私疑慮？</div>
+    </div>
+    <div class="progress-item">
+      <div class="progress-item-icon">⏰</div>
+      <div class="progress-item-body"><strong>時間</strong>　給自己一個「試試看」的時間框，先動手再說</div>
+    </div>
+
+    <div class="card">
+      <p class="card-body">不需要精確估算時間——建議直接給自己一個「試試看」的時間框，例如「這個週末下午兩小時」，先動手再說。很多人在開始前反而花了半天想來想去，什麼都還沒開始。</p>
+    </div>
+  </div>
+
+  <!-- SDLC Step 02 -->
+  <div class="section">
+    <div class="step-header">
+      <span class="step-num">02</span>
+      <span class="step-title">需求分析<span class="step-sub">REQUIREMENTS</span></span>
+    </div>
+
+    <div class="card">
+      <p class="card-body">
+        這個階段非常關鍵——把腦中模糊的想法，變成有結構的需求描述。<br><br>
+        AI 做出來的東西不如預期，八成是因為需求沒有想清楚或說清楚。這個步驟千萬不能跳過。
+      </p>
+    </div>
+
+    <div class="card">
+      <p class="card-body">
+        正因為 AI 執行的速度很快，所以如果一開始的需求不清楚，AI 就會很快幫你做出一個看起來很完整的東西——但不一定是你想要的。AI 做得越完整，你反而越難察覺哪裡不對勁。
+      </p>
+    </div>
+
+    <div class="card">
+      <p class="card-body">
+        在 AI 寫程式的時代，需求分析的能力反而變得更重要。<br><br>
+        AI 幫你省的是執行的時間，但「你到底想要什麼」這個問題，是 AI 沒有辦法代替你的。
+      </p>
+    </div>
+
+    <!-- 需求的價值 -->
+    <div class="card">
+      <p class="card-body" style="margin-bottom: 14px;">
+        需求不是說出來就算數——還要問問自己，這個需求真的值得花時間做嗎？<br><br>
+        有價值的需求通常有這些特徵：解決真實存在的痛點，做完之後你或使用者真的會去用，而且解決的頻率夠高或影響範圍夠大。
+      </p>
+      <div class="progress-item">
+        <div class="progress-item-icon">🎲</div>
+        <div class="progress-item-body"><strong>午餐選擇工具</strong>　明確的需求，但價值只有五分鐘的娛樂性</div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-item-icon">📊</div>
+        <div class="progress-item-body"><strong>自動整理報表</strong>　節省每天一小時，做完後每天都能用到 — 更有價值</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-body">做好玩的完全沒問題！只是重要的是在開始之前就想清楚：目前這件事值得我投入多少時間？想清楚了，後面的每一步才會更有方向。</p>
+    </div>
+
+    <!-- 如何精準描述需求 -->
+    <div class="card">
+      <p class="card-body">需求描述非常重要，有很多具體的方法和技巧——後面的單元會專門帶你一步一步練習。現在先記住一件事：</p>
+    </div>
+
+    <div class="key-quote">
+      <p>
+        你自己沒有想清楚的事情，<br>
+        <span class="highlight">AI 當然也不可能幫你通靈出來</span>
+      </p>
+    </div>
+
+    <div class="tipbox">
+      <div class="label"><span class="label-dot"></span>實戰範例</div>
+      <p>
+        以個人網站為例，需求可以這樣描述：<br><br>
+        <em>「我目前沒有個人網站，在找工作或接案時，很難讓對方快速了解我的背景和作品。我想要一個可以展示自己作品集、有簡短自我介紹和聯絡方式的網站。」</em><br><br>
+        像這樣清楚的描述，AI 才能往你真正想要做的方向走。
+      </p>
+    </div>
+  </div>
+
+  <!-- SDLC Step 03 -->
+  <div class="section">
+    <div class="step-header">
+      <span class="step-num">03</span>
+      <span class="step-title">解法設計<span class="step-sub">DESIGN</span></span>
+    </div>
+
+    <div class="card">
+      <p class="card-body">
+        有了現況和期待之後，這個階段要決定用什麼方式來實現。填補落差的方法通常有很多種，選一個最可行的，把這個結論清楚傳達給 AI。<br><br>
+        這個階段的決策，會直接影響後面 AI 幫你寫出來的東西——需要謹慎一點。
+      </p>
+    </div>
+
+    <div class="tipbox">
+      <div class="label"><span class="label-dot"></span>實戰範例</div>
+      <p>
+        以個人網站為例，這個階段需要想清楚的事：<br><br>
+        • 只做電腦版，還是手機版也要支援？<br>
+        • 作品資料直接寫在頁面裡，還是從別的地方傳入？<br>
+        • 網站要部署在哪裡？有沒有免費方案？<br><br>
+        這些決定越早想清楚，後面實作的方向就越準確。
+      </p>
+    </div>
+  </div>
+
+  <!-- SDLC Step 04 -->
+  <div class="section">
+    <div class="step-header">
+      <span class="step-num">04</span>
+      <span class="step-title">實作<span class="step-sub">IMPLEMENTATION</span></span>
+    </div>
+
+    <div class="card">
+      <p class="card-body">前面三步驟都準備好了，現在終於要來開始寫程式——但當然，這不是你自己寫，是交給 AI 來寫。有了充足的準備，這個階段會聚焦很多，AI 也能夠更準確地產出你想要的東西。</p>
+    </div>
+
+    <div class="card">
+      <p class="card-body">實作過程中難免還是會出現一些錯誤，這是很正常的。這個時候你的任務是：<strong>把完整的錯誤訊息提供給 AI</strong>，並且在 AI 走偏方向時，用除錯技巧引導它回到正軌。（除錯技巧在後面章節詳細介紹）</p>
+    </div>
+  </div>
+
+  <!-- SDLC Step 05 -->
+  <div class="section">
+    <div class="step-header">
+      <span class="step-num">05</span>
+      <span class="step-title">測試<span class="step-sub">TESTING</span></span>
+    </div>
+
+    <div class="card">
+      <p class="card-body">程式做出來了，要自己實際操作確認每個功能都正常運作。點這裡、點那裡，看看有沒有什麼異常。</p>
+    </div>
+
+    <div class="progress-item">
+      <div class="progress-item-icon">📊</div>
+      <div class="progress-item-body"><strong>測試資料至少 5–10 筆</strong>　確保不同情境下都能正常運作</div>
+    </div>
+    <div class="progress-item">
+      <div class="progress-item-icon">🔒</div>
+      <div class="progress-item-body"><strong>請 AI 做程式碼審查</strong>　排除常見資安風險，如資料外洩或不安全的輸入處理</div>
+    </div>
+  </div>
+
+  <!-- SDLC Step 06 -->
+  <div class="section">
+    <div class="step-header">
+      <span class="step-num">06</span>
+      <span class="step-title">部署<span class="step-sub">DEPLOYMENT</span></span>
+    </div>
+
+    <div class="card">
+      <p class="card-body">部署，就是把成果正式釋出到對應的環境當中。你不會希望電腦一關掉別人就看不到你的網站——部署就是把成果放到可以讓其他人使用的地方。</p>
+    </div>
+
+    <div class="card">
+      <p class="card-body">
+        以個人網站為例，部署就是把網站放到雲端，只要有連結，任何人都可以隨時開啟。<br><br>
+        現在有很多免費的靜態網站託管服務可以使用，而且可以透過 AI 一步一步教你完成這個流程。
+      </p>
+    </div>
+  </div>
+
+  <!-- SDLC Step 07 -->
+  <div class="section">
+    <div class="step-header">
+      <span class="step-num">07</span>
+      <span class="step-title">維護<span class="step-sub">MAINTENANCE</span></span>
+    </div>
+
+    <div class="card">
+      <p class="card-body">網站上線後，要不定時確保程式正常運作。遇到小問題修一修，想加小功能就補一補。只要不是需要重新思考整體架構的改動，都屬於維護的範疇。</p>
+    </div>
+
+    <div class="card">
+      <p class="card-body">
+        如果遇到的問題太嚴重，或想追加的功能太複雜，就要回到第一步「計劃」，重新跑一輪開發流程。<br><br>
+        <strong>SDLC 是一個循環，不是線性的。</strong>
+      </p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ─── Section 04: 框架怎麼用 ─── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>這個框架怎麼用？</h2>
+    </div>
+
+    <div class="card">
+      <p class="card-body">
+        SDLC 是一個參考框架，不是硬規定。小任務可以跳過幾個階段，完全沒問題。<br><br>
+        但如果開發過程總是卡關，這個框架能幫你快速找到問題出在哪個環節。
+      </p>
+    </div>
+
+    <div class="analogy">
+      <div class="label"><span class="label-dot"></span>🔍 具體例子</div>
+      <p>在 AI 寫程式的時代，我們不用像以前一樣那麼嚴謹。但如果你能擁有一些程式相關的知識，就像是點了更厲害的技能點——開發更順利、成功率更高，也能有效避免很多不必要的風險。</p>
+    </div>
+  </div>
+
+  <!-- ─── Section 05: AI 時代最重要的能力 ─── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>AI 時代最重要的能力</h2>
+    </div>
+
+    <div class="card">
+      <p class="card-body">在 AI 蓬勃發展的時代，很多人以為最重要的是要會用很多不同的工具。但使用工具只是最基本的——<strong>真正能和其他人拉開差距的，是你跟 AI 的溝通能力。</strong></p>
+    </div>
+
+    <div class="card">
+      <div class="ability-row">
+        <div class="ability-item">
+          <div class="ability-num"><span class="ability-num-badge">01</span> 整理想法的能力</div>
+          <p>有沒有辦法把腦袋裡模糊的需求，整理成清楚、有邏輯的描述</p>
+        </div>
+        <div class="ability-item">
+          <div class="ability-num"><span class="ability-num-badge">02</span> 文字表達的能力</div>
+          <p>能不能用精準的語言，把描述傳達給 AI，讓他真正理解你的想法</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-body">你有沒有遇過這種情況：你跟同事用了同一個 AI 工具、甚至同一個模型，但問出來的結果差很多？這不是 AI 對你同事特別好，而是他說得更清楚、更知道怎麼把想法整理好，也知道怎麼把它說出來。</p>
+    </div>
+
+    <div class="card">
+      <p class="card-body">這也就是為什麼我們在這個單元花了很多時間，在談需求、在談描述、在談溝通——因為這兩件事情，在 AI 的時代已經成為能決定你能不能有效使用 AI 的核心門檻。</p>
+    </div>
+  </div>
+
+  <!-- ─── Takeaway ─── -->
+  <div class="takeaway">
+    <div class="takeaway-title">✦ 本章重點整理</div>
+    <ul class="takeaway-list">
+      <li>寫程式的本質，就是找出現況與期待之間的落差，然後設計方案去填補它。</li>
+      <li>跟 AI 協作有兩種方式：AI 引導法讓 AI 設計解法；工程法由你主導方向、AI 負責執行。</li>
+      <li>在 AI 時代，探索需求的能力變得更重要——AI 執行速度快，但「你到底想要什麼」是 AI 無法代替你的。</li>
+      <li>動手之前，先問問自己這個需求的價值在哪裡——解決真實的痛點，才是最值得投入的需求。</li>
+      <li>SDLC 七個步驟是參考框架，可以幫你找到開發卡關的原因。很多時候是需求沒說清楚，不是 AI 不夠聰明。</li>
+      <li>AI 時代最重要的能力，不是使用工具，而是整理想法的能力和文字表達的能力。</li>
+    </ul>
+  </div>
+
+  <div class="chapter-done">
+    <div class="chapter-done-inner">
+      <div class="done-dot"></div>
+      <span class="done-text">本章完成</span>
+      <div class="done-dot"></div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

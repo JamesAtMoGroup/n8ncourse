@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>章節 0-2｜工具這麼多，用這 3 個就夠了</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #7cffb2;
+  --primary-light: rgba(124,255,178,0.07);
+  --accent: #7cffb2;
+  --green: #7cffb2;
+  --yellow: #ffd166;
+  --bg: #000000;
+  --surface: #0d0d0d;
+  --surface2: #111111;
+  --text: #ffffff;
+  --text-muted: #888888;
+  --border: rgba(124,255,178,0.14);
+  --radius: 16px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  min-height: 100vh;
+  padding-top: 0;
+}
+
+.container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Progress Bar ── */
+.progress-bar-wrap {
+  position: sticky; top: 48px;
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(12px);
+  z-index: 100;
+  height: 48px;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.progress-track {
+  flex: 1; max-width: 400px;
+  height: 3px; background: rgba(255,255,255,0.08);
+  border-radius: 999px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; width: 66.6%;
+  background: var(--primary);
+  border-radius: 999px;
+  box-shadow: 0 0 8px rgba(124,255,178,0.5);
+}
+.progress-step {
+  font-size: 12px; color: var(--text-muted);
+  font-family: 'Space Mono', monospace; white-space: nowrap;
+}
+.progress-label-text {
+  font-size: 12px; color: var(--text-muted);
+  font-family: 'Space Mono', monospace; white-space: nowrap;
+}
+
+/* ── Hero ── */
+.hero {
+  padding: 64px 0 48px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 56px;
+  animation: fadeUp 0.6s ease both;
+}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+.hero-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.chapter-badge {
+  font-family: 'Space Mono', monospace; font-size: 12px;
+  color: var(--primary); border: 1px solid var(--primary);
+  padding: 4px 14px; border-radius: 99px; letter-spacing: 0.05em;
+  text-shadow: 0 0 10px rgba(124,255,178,0.4);
+}
+.tag { font-size: 12px; padding: 4px 12px; border-radius: 99px; font-weight: 500; }
+.tag-beginner { background: rgba(124,255,178,0.1); color: var(--green); }
+.tag-time { background: rgba(255,209,102,0.1); color: var(--yellow); }
+h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 16px; }
+h1 em { font-style: normal; color: var(--primary); }
+.hero-sub { font-size: 17px; color: var(--text-muted); max-width: 540px; line-height: 1.7; }
+
+/* ── Section ── */
+.section { margin-bottom: 56px; animation: fadeUp 0.5s ease both; }
+.section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+.section-num {
+  font-family: 'Space Mono', monospace; font-size: 13px;
+  color: var(--primary); background: rgba(124,255,178,0.08);
+  border: 1px solid var(--border); padding: 5px 14px;
+  border-radius: 99px; white-space: nowrap; letter-spacing: 0.05em;
+}
+h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+
+/* ── Card ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px;
+  animation: fadeUp 0.5s ease both;
+}
+.card p { color: var(--text-muted); }
+.card p + p { margin-top: 12px; }
+.card strong { color: var(--text); }
+.highlight { color: var(--primary); font-weight: 700; }
+.highlight-green { color: var(--green); font-weight: 700; }
+
+/* ── Analogy ── */
+.analogy {
+  background: var(--primary-light); border-left: 4px solid var(--primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 24px 28px; margin-bottom: 20px;
+  animation: fadeUp 0.5s ease both;
+}
+.analogy .label {
+  font-size: 12px; font-weight: 700; color: var(--primary);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+}
+.label-dot {
+  display: inline-block; width: 6px; height: 6px;
+  background: var(--primary); border-radius: 1px;
+  box-shadow: 0 0 6px var(--primary); flex-shrink: 0;
+}
+.analogy p { color: #c8ffe0; font-size: 15px; line-height: 1.75; }
+.analogy strong { color: #fff; }
+
+/* ── Tool Card ── */
+.tool-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 32px; margin-bottom: 24px;
+  animation: fadeUp 0.5s ease both; position: relative; overflow: hidden;
+}
+.tool-card::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 4px; height: 100%; border-radius: 4px 0 0 4px;
+}
+.tool-card.color-purple::before { background: var(--primary); }
+.tool-card.color-green::before { background: var(--green); }
+.tool-card.color-yellow::before { background: var(--yellow); }
+.tool-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+.tool-icon { font-size: 36px; line-height: 1; flex-shrink: 0; }
+.tool-label {
+  font-family: 'Space Mono', monospace; font-size: 11px;
+  color: var(--text-muted); letter-spacing: 0.1em;
+  text-transform: uppercase; margin-bottom: 4px;
+}
+.tool-name { font-size: 20px; font-weight: 900; letter-spacing: -0.01em; color: var(--text); }
+.tool-name.purple { color: var(--primary); }
+.tool-name.green { color: var(--green); }
+.tool-name.yellow { color: var(--yellow); }
+.tool-desc { font-size: 15px; color: var(--text-muted); line-height: 1.75; margin-bottom: 20px; }
+.tool-desc strong { color: var(--text); }
+.tool-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tool-tag {
+  font-size: 12px; padding: 4px 12px; border-radius: 99px; font-weight: 500;
+  background: rgba(255,255,255,0.05); color: var(--text-muted);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.tool-tag.highlight-purple { background: rgba(124,255,178,0.1); color: var(--primary); border-color: rgba(124,255,178,0.25); }
+.tool-tag.highlight-green { background: rgba(124,255,178,0.1); color: var(--green); border-color: rgba(124,255,178,0.25); }
+.tool-tag.highlight-yellow { background: rgba(255,209,102,0.1); color: var(--yellow); border-color: rgba(255,209,102,0.25); }
+
+/* ── Flow Diagram ── */
+.flow {
+  display: flex; align-items: center; gap: 0;
+  margin-bottom: 24px; flex-wrap: wrap;
+  animation: fadeUp 0.5s ease both;
+}
+.flow-step {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 22px;
+  flex: 1; min-width: 140px; text-align: center;
+}
+.flow-step-icon { font-size: 24px; margin-bottom: 8px; }
+.flow-step-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
+.flow-step-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.flow-arrow { font-size: 20px; color: var(--primary); padding: 0 8px; flex-shrink: 0; }
+
+/* ── Compare Table ── */
+.compare {
+  width: 100%; border-collapse: collapse; margin-bottom: 20px;
+  animation: fadeUp 0.5s ease both;
+}
+.compare thead tr { border-bottom: 2px solid var(--border); }
+.compare th {
+  padding: 14px 20px; font-size: 13px; font-weight: 700;
+  letter-spacing: 0.04em; text-align: left;
+}
+.compare th:first-child { color: var(--text-muted); }
+.compare th.col-a { color: var(--primary); }
+.compare th.col-b { color: var(--green); }
+.compare td {
+  padding: 14px 20px; font-size: 14px; color: var(--text-muted);
+  border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: top;
+}
+.compare td:first-child { font-weight: 600; color: var(--text); font-size: 13px; }
+.compare td.val-a { color: #c8ffe0; }
+.compare td.val-b { color: var(--green); }
+.compare tr:last-child td { border-bottom: none; }
+
+/* ── Quiz Box ── */
+.quiz-box {
+  border: 2px dashed rgba(255,209,102,0.35); border-radius: var(--radius);
+  padding: 28px 32px; margin-bottom: 20px;
+  background: rgba(255,209,102,0.03);
+  animation: fadeUp 0.5s ease both;
+}
+.quiz-box .label {
+  font-size: 12px; font-weight: 700; color: var(--yellow);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 14px; display: flex; align-items: center; gap: 6px;
+}
+.quiz-box p { color: var(--text-muted); font-size: 15px; line-height: 1.7; }
+
+/* ── Takeaway ── */
+.takeaway {
+  background: linear-gradient(135deg, rgba(124,255,178,0.08), rgba(0,0,0,0));
+  border: 1px solid rgba(124,255,178,0.25);
+  border-radius: var(--radius); padding: 36px; margin-top: 48px;
+  animation: fadeUp 0.5s ease both;
+}
+.takeaway-title {
+  font-size: 13px; font-weight: 700; color: var(--primary);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+}
+.takeaway-list {
+  list-style: none; display: flex; flex-direction: column; gap: 12px;
+  counter-reset: li;
+}
+.takeaway-list li {
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: 15px; color: var(--text); line-height: 1.6;
+  counter-increment: li;
+}
+.takeaway-list li::before {
+  content: counter(li);
+  background: var(--primary); color: #000;
+  font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700;
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+
+/* ── Usecase List ── */
+.usecase-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.usecase-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px 20px;
+  animation: fadeUp 0.5s ease both;
+  transition: border-color 0.2s;
+}
+.usecase-item:hover { border-color: var(--primary); }
+.usecase-item-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+.usecase-item-text { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+.usecase-item-text strong { color: var(--text); }
+
+.divider { height: 1px; background: var(--border); margin: 48px 0; }
+
+@media (max-width: 600px) {
+  .progress-bar-wrap { padding: 0 16px; }
+  .card, .quiz-box, .takeaway, .tool-card, .analogy { padding: 20px; }
+  .container { padding-left: 16px; padding-right: 16px; }
+  .flow { flex-direction: column; align-items: stretch; }
+  .flow-arrow { transform: rotate(90deg); text-align: center; }
+  .compare th, .compare td { padding: 10px 12px; }
+}
+</style>
+</head>
+<body>
+<script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
+
+<!-- Sticky Progress Bar -->
+<div class="progress-bar-wrap">
+  <div class="progress-track">
+    <div class="progress-fill"></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-meta">
+      <span class="chapter-badge">CH 0-2</span>
+      <span class="tag tag-beginner">✦ 完全零基礎</span>
+      <span class="tag tag-time">⏱ 約 8 分鐘</span>
+    </div>
+    <h1>工具這麼多，<br><em>用這 3 個就夠了</em></h1>
+    <p class="hero-sub">AI 寫程式不需要裝一堆工具。搞清楚這 3 個的定位，你就知道什麼情況用什麼，從此不再選擇困難。</p>
+  </div>
+
+  <!-- Section 1: 為什麼只需要 3 個工具 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>為什麼只需要 3 個工具？</h2>
+    </div>
+
+    <div class="card">
+      <p>
+        剛開始接觸 AI 寫程式，最容易踩的坑就是<strong>在工具上面花太多時間</strong>——每個工具都想試、每個比較文章都想看，結果反而遲遲沒有動手。<br><br>
+        其實你不需要掌握所有工具，只要搞清楚 <span class="highlight">3 個工具的定位</span>，就能搞定你大部分的需求。
+      </p>
+    </div>
+
+    <div class="card">
+      <p>
+        其實你真正需要做的，就只是根據<strong>「你想做什麼事情」</strong>，去挑一個適合的工具就好了。不需要每一個都摸過一遍。
+      </p>
+    </div>
+
+    <div class="analogy">
+      <div class="label"><span class="label-dot"></span>一句話理解</div>
+      <p>
+        就像廚師不需要擁有一整間廚具店的設備——<strong>一把好刀、一口好鍋、一個計時器，就能做出大多數的料理。</strong>
+      </p>
+    </div>
+
+    <div class="card">
+      <p>
+        知道自己想要做的事情是什麼，並且找到相對應適合的工具去熟悉使用方法，<strong>會比全部工具都摸一遍但都一知半解來的好。</strong>
+      </p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 2: 工具一 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>工具一：聊天式 AI ＋ Google Apps Script</h2>
+    </div>
+
+    <div class="card">
+      <p>
+        如果你想做的是<strong>工作上的自動化、辦公效率提升</strong>，這個組合幾乎能搞定你需要的一切。<br><br>
+        這個組合的邏輯很簡單：<span class="highlight">聊天式 AI 負責「生成程式碼」</span>，<span class="highlight-green">Google Apps Script 負責「讓程式跑起來」</span>。
+      </p>
+    </div>
+
+    <!-- Flow -->
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-step-icon">💬</div>
+        <div class="flow-step-title">聊天式 AI</div>
+        <div class="flow-step-desc">用自然語言描述需求，AI 生成程式碼</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-icon">📋</div>
+        <div class="flow-step-title">複製程式碼</div>
+        <div class="flow-step-desc">把 AI 產出的程式碼複製起來</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-icon">▶️</div>
+        <div class="flow-step-title">Apps Script 執行</div>
+        <div class="flow-step-desc">貼入後直接執行，任務完成</div>
+      </div>
+    </div>
+
+    <div class="tool-card color-purple">
+      <div class="tool-header">
+        <div class="tool-icon">💬</div>
+        <div class="tool-title-wrap">
+          <div class="tool-label">工具 1a</div>
+          <div class="tool-name purple">聊天式 AI</div>
+        </div>
+      </div>
+      <p class="tool-desc">
+        各種以對話介面為主的 AI 助理都算在這個類型。你用自然語言描述你的需求，AI 就能幫你生成對應的程式碼。<br><br>
+        不過，<strong>程式碼本身只是一串文字，放在對話框裡什麼事都做不了</strong>——它需要一個「執行環境」，才能真正跑起來、幫你完成任務。
+      </p>
+      <div class="tool-tags">
+        <span class="tool-tag highlight-purple">免費額度可用</span>
+        <span class="tool-tag">對話式操作</span>
+        <span class="tool-tag">生成程式碼</span>
+      </div>
+    </div>
+
+    <div class="tool-card color-green">
+      <div class="tool-header">
+        <div class="tool-icon">⚙️</div>
+        <div class="tool-title-wrap">
+          <div class="tool-label">工具 1b</div>
+          <div class="tool-name green">Google Apps Script</div>
+        </div>
+      </div>
+      <p class="tool-desc">
+        Google Apps Script 同時具備兩個身份：它是一種<strong>程式語言</strong>，也是一個<strong>線上執行平台</strong>。<br><br>
+        如果你的日常工作有用到 Google 文件、試算表、Gmail 或雲端硬碟，Apps Script 就是你的最佳執行環境。把 AI 生成的程式碼貼進去，按下執行，事情就完成了。<br><br>
+        最重要的是——<strong>完全免費、不用下載任何東西</strong>，只要有 Google 帳號就能用，而且它一直都在你的雲端硬碟裡，只是你還沒發現它。
+      </p>
+      <div class="tool-tags">
+        <span class="tool-tag highlight-green">完全免費</span>
+        <span class="tool-tag">無需安裝</span>
+        <span class="tool-tag">Google 帳號即可用</span>
+        <span class="tool-tag">串接 Google 服務</span>
+      </div>
+    </div>
+
+    <div class="usecase-list">
+      <div class="usecase-item">
+        <div class="usecase-item-icon">📨</div>
+        <div class="usecase-item-text"><strong>批次寄信</strong>　從試算表讀取名單，自動寄送個人化信件，不用一封一封手動填寫</div>
+      </div>
+      <div class="usecase-item">
+        <div class="usecase-item-icon">📊</div>
+        <div class="usecase-item-text"><strong>報表多合一</strong>　把多份分散的試算表自動合併成一份，省去每週重複的複製貼上</div>
+      </div>
+      <div class="usecase-item">
+        <div class="usecase-item-icon">📄</div>
+        <div class="usecase-item-text"><strong>批次轉檔</strong>　一次把幾十份 Google 文件轉成 PDF，不用一個一個手動操作</div>
+      </div>
+      <div class="usecase-item">
+        <div class="usecase-item-icon">🌐</div>
+        <div class="usecase-item-text"><strong>簡單網頁 ／ 爬蟲</strong>　做基本的表單頁面，或定期抓取特定網站的公開資訊</div>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="label">🤔 想一想</div>
+      <p>
+        你目前工作中有用到 Google 試算表、Gmail 或 Google 文件嗎？<br>
+        如果有，想想看你最常在這些工具上做的<strong>重複性操作</strong>是什麼——那很可能就是你第一個可以自動化的任務。
+      </p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 3: 工具二 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>工具二：AI 整合式程式編輯器</h2>
+    </div>
+
+    <div class="card">
+      <p>
+        當你想做的事情已經<strong>超出 Google 服務的範圍</strong>，例如開發獨立的桌面小工具、功能完整的網頁應用程式、瀏覽器外掛，或是需要更強大的資料處理能力，這時候就需要升級到專業的開發工具。
+      </p>
+    </div>
+
+    <div class="tool-card color-yellow">
+      <div class="tool-header">
+        <div class="tool-icon">🖥️</div>
+        <div class="tool-title-wrap">
+          <div class="tool-label">工具 2</div>
+          <div class="tool-name yellow">AI 整合式程式編輯器</div>
+        </div>
+      </div>
+      <p class="tool-desc">
+        這類工具的專業術語叫做 <strong>IDE（整合式開發環境）</strong>，可以把它想成是一套給工程師用的「全功能創作軟體」——就像影片剪輯師有專業的剪輯軟體，程式設計師有專業的程式編輯器。<br><br>
+        現在這類工具已經把 AI 對話功能直接內建進去了。<strong>你可以在裡面用自然語言描述需求，AI 會直接在專案資料夾裡幫你建立所有檔案、自動修改程式碼</strong>，整個開發流程一氣呵成。<br><br>
+        這類工具通常有免費版可以使用，但 AI 功能的使用次數有額度限制，進階需求可以考慮付費訂閱。
+      </p>
+      <div class="tool-tags">
+        <span class="tool-tag highlight-yellow">免費版可用</span>
+        <span class="tool-tag">內建 AI 對話</span>
+        <span class="tool-tag">專業開發環境</span>
+        <span class="tool-tag">需要下載安裝</span>
+      </div>
+    </div>
+
+    <div class="analogy">
+      <div class="label"><span class="label-dot"></span>具體例子</div>
+      <p>
+        適合用 AI 整合式編輯器來做的事情包括：<br><br>
+        <strong>把影片批次轉成 GIF</strong>——需要讀取本機檔案並做格式轉換，超出雲端服務的處理範圍。<br>
+        <strong>功能完整的網頁應用</strong>——有帳號登入、資料儲存、複雜互動的網頁，不是 Apps Script 能輕鬆應付的。<br>
+        <strong>瀏覽器外掛</strong>——需要安裝在瀏覽器上、修改網頁行為的小工具。<br>
+        <strong>自動化爬蟲腳本</strong>——需要模擬登入、繞過動態載入等複雜情境的資料蒐集程式。
+      </p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 4: 選哪個？ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>怎麼決定用哪個工具？</h2>
+    </div>
+
+    <div class="card">
+      <p>
+        選工具的邏輯很簡單，就問自己一個問題：<strong>「這件事，跟 Google 服務有關嗎？」</strong><br><br>
+        如果有關，就用聊天式 AI 加上 Apps Script——免費、免安裝、上手快。<br>
+        如果沒有關係，或 Apps Script 做不到，那就升級到 AI 整合式編輯器。
+      </p>
+    </div>
+
+    <div class="analogy">
+      <div class="label">✦ 選工具最重要的原則</div>
+      <p>
+        <strong>Simple is the best.</strong><br>
+        能用簡單的方法解決，就不要用複雜的。這是選工具最重要的原則。
+      </p>
+    </div>
+
+    <table class="compare">
+      <thead>
+        <tr>
+          <th></th>
+          <th class="col-a">聊天式 AI ＋ Apps Script</th>
+          <th class="col-b">AI 整合式編輯器</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>適合情境</td>
+          <td class="val-a">Google 服務相關的自動化、辦公效率提升</td>
+          <td class="val-b">獨立應用程式、複雜網頁、瀏覽器外掛</td>
+        </tr>
+        <tr>
+          <td>安裝需求</td>
+          <td class="val-a">無需安裝，瀏覽器直接使用</td>
+          <td class="val-b">需要下載安裝軟體</td>
+        </tr>
+        <tr>
+          <td>費用</td>
+          <td class="val-a">Apps Script 完全免費；AI 工具有免費額度</td>
+          <td class="val-b">編輯器免費；AI 功能有額度，進階需付費</td>
+        </tr>
+        <tr>
+          <td>上手難度</td>
+          <td class="val-a">較低，適合完全零基礎的入門</td>
+          <td class="val-b">稍高，但 AI 已大幅降低門檻</td>
+        </tr>
+        <tr>
+          <td>建議順序</td>
+          <td class="val-a">⭐ 先學這個</td>
+          <td class="val-b">進階後再接觸</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="quiz-box">
+      <div class="label">🤔 想一想</div>
+      <p>
+        回想一下你上一章想到的那個「想自動化的任務」——<br>
+        它跟 Google 文件、試算表或 Gmail 有關嗎？<br>
+        還是它需要做一些 Google 服務做不到的事？<br><br>
+        試著用這個問題，幫自己決定從哪個工具開始入手。
+      </p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 5: 費用說明 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>費用怎麼算？</h2>
+    </div>
+
+    <div class="usecase-list">
+      <div class="usecase-item">
+        <div class="usecase-item-icon">💬</div>
+        <div class="usecase-item-text"><strong>聊天式 AI</strong>　通常都有免費額度，免費版就已經足夠入門使用了。如果在意回覆品質，也可以選擇付費升級。</div>
+      </div>
+      <div class="usecase-item">
+        <div class="usecase-item-icon">⚙️</div>
+        <div class="usecase-item-text"><strong>Google Apps Script</strong>　完全免費，不用花任何錢。</div>
+      </div>
+      <div class="usecase-item">
+        <div class="usecase-item-icon">🖥️</div>
+        <div class="usecase-item-text"><strong>AI 整合式編輯器</strong>　本體大部分免費，只是 AI 功能會有使用額度限制。如果有進階需求，再考慮付費訂閱就好。</div>
+      </div>
+    </div>
+
+    <div class="analogy">
+      <div class="label"><span class="label-dot"></span>入門成本</div>
+      <p>
+        整體來說，在你剛入門的這個階段，<strong>完全可以不花任何一毛錢，就開始學習了。</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- Takeaway -->
+  <div class="takeaway">
+    <div class="takeaway-title">✦ 本章重點整理</div>
+    <ul class="takeaway-list">
+      <li>不需要學會所有工具，3 個工具就能搞定八成需求。</li>
+      <li>聊天式 AI 負責生成程式碼，Apps Script 負責讓它跑起來。</li>
+      <li>Apps Script 免費、免安裝，是辦公自動化最快的入門路徑。</li>
+      <li>需要做更複雜應用時，才升級到 AI 整合式程式編輯器。</li>
+      <li>選工具的原則：能用簡單的解決，就不用複雜的。</li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -54,24 +54,31 @@ AUTH_GUARD = (
 )
 
 
+SHARED_DRIVE_KWARGS = dict(supportsAllDrives=True, includeItemsFromAllDrives=True)
+
+
 def list_folders(parent_id):
     q = (
         f"'{parent_id}' in parents"
         " and mimeType='application/vnd.google-apps.folder'"
         " and trashed=false"
     )
-    resp = service.files().list(q=q, fields="files(id,name)", orderBy="name").execute()
+    resp = service.files().list(
+        q=q, fields="files(id,name)", orderBy="name", **SHARED_DRIVE_KWARGS
+    ).execute()
     return resp.get("files", [])
 
 
 def list_html_files(parent_id):
     q = f"'{parent_id}' in parents and mimeType='text/html' and trashed=false"
-    resp = service.files().list(q=q, fields="files(id,name)").execute()
+    resp = service.files().list(
+        q=q, fields="files(id,name)", **SHARED_DRIVE_KWARGS
+    ).execute()
     return resp.get("files", [])
 
 
 def download_file(file_id):
-    request = service.files().get_media(fileId=file_id)
+    request = service.files().get_media(fileId=file_id, supportsAllDrives=True)
     buf = io.BytesIO()
     dl = MediaIoBaseDownload(buf, request)
     done = False

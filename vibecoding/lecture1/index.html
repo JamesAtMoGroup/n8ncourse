@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>章節 0-1｜AI 寫程式是什麼？</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* ── Design system — exact match to FullVideo.tsx C constants ── */
+  :root {
+    --primary: #7cffb2;          /* C.primary (green) */
+    --primary-light: rgba(124,255,178,0.07); /* C.primaryLight */
+    --yellow: #ffd166;
+    --bg: #000000;               /* C.bg */
+    --surface: #0d0d0d;          /* C.surface */
+    --surface2: #111111;         /* C.surface2 */
+    --text: #ffffff;             /* C.text */
+    --text-muted: #888888;       /* C.muted */
+    --border: rgba(124,255,178,0.14); /* C.border */
+    --radius: 22px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+    min-height: 100vh;
+  }
+
+  /* Background orbs — matches BgOrbs in TSX */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(124,255,178,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -200px; left: -200px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(124,255,178,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Progress bar — no text labels, just the bar */
+  .progress-bar-wrap {
+    position: sticky;
+    top: 0;
+    background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 100;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .progress-track {
+    height: 3px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 8%;
+    background: var(--primary);
+    border-radius: 99px;
+    box-shadow: 0 0 8px rgba(124,255,178,0.5);
+  }
+
+  /* Hero */
+  .hero {
+    padding: 64px 0 48px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 56px;
+    animation: fadeUp 0.6s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+  }
+  .chapter-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    padding: 5px 14px;
+    border-radius: 99px;
+    letter-spacing: 0.05em;
+    box-shadow: 0 0 10px rgba(124,255,178,0.2);
+  }
+  .tag {
+    font-size: 13px;
+    padding: 5px 14px;
+    border-radius: 99px;
+    font-weight: 500;
+  }
+  .tag-beginner { background: rgba(124,255,178,0.1); color: var(--primary); }
+  .tag-time { background: rgba(255,209,102,0.1); color: var(--yellow); }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 900;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    color: var(--text-muted);
+    max-width: 520px;
+    line-height: 1.75;
+  }
+
+  /* Section header — matches SectionHeader component in TSX */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.5s ease both;
+  }
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--primary);
+    background: rgba(124,255,178,0.08);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 99px;
+    white-space: nowrap;
+  }
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+
+  /* Section wrapper */
+  .section { margin-bottom: 56px; }
+
+  /* Card — matches Card component in TSX */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 36px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.5s ease both;
+  }
+  .card p { color: var(--text-muted); margin-bottom: 0; line-height: 1.8; }
+  .card strong { color: var(--text); }
+
+  /* Analogy box — matches AnalogyBox component in TSX */
+  .analogy {
+    background: var(--primary-light);
+    border-left: 4px solid var(--primary);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.5s ease both;
+  }
+  .analogy .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .analogy .label-dot {
+    width: 6px; height: 6px;
+    background: var(--primary);
+    border-radius: 1px;
+    box-shadow: 0 0 6px var(--primary);
+    flex-shrink: 0;
+  }
+  .analogy p { color: #c8ffe0; font-size: 15px; line-height: 1.75; }
+  .analogy strong { color: #ffffff; }
+
+  /* Use case grid */
+  .usecase-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .usecase {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    animation: fadeUp 0.5s ease both;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .usecase:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+  .usecase-icon { font-size: 28px; margin-bottom: 12px; }
+  .usecase h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+  .usecase p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  /* Compare table */
+  .compare {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    animation: fadeUp 0.5s ease both;
+  }
+  .compare thead tr { border-bottom: 2px solid var(--border); }
+  .compare th {
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: left;
+  }
+  .compare th:first-child { color: var(--text-muted); }
+  .compare th.vibe { color: var(--primary); }
+  .compare th.ai { color: var(--text-muted); }
+  .compare td {
+    padding: 14px 20px;
+    font-size: 14px;
+    color: var(--text-muted);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    vertical-align: top;
+  }
+  .compare td:first-child { font-weight: 600; color: var(--text); font-size: 13px; }
+  .compare td.vibe-val { color: var(--primary); }
+  .compare td.ai-val { color: var(--text-muted); }
+  .compare tr:last-child td { border-bottom: none; }
+
+  /* Quiz box */
+  .quiz-box {
+    border: 2px dashed rgba(255,209,102,0.3);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    background: rgba(255,209,102,0.03);
+    animation: fadeUp 0.5s ease both;
+  }
+  .quiz-box .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--yellow);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .quiz-box .label-dot {
+    width: 6px; height: 6px;
+    background: var(--yellow);
+    border-radius: 1px;
+    box-shadow: 0 0 6px var(--yellow);
+    flex-shrink: 0;
+  }
+  .quiz-box p { color: var(--text-muted); font-size: 15px; line-height: 1.7; }
+
+  /* Takeaway — matches SceneTakeaway in TSX */
+  .takeaway {
+    background: rgba(124,255,178,0.04);
+    border: 1px solid rgba(124,255,178,0.2);
+    border-radius: var(--radius);
+    padding: 32px 36px;
+    margin-top: 48px;
+    animation: fadeUp 0.5s ease both;
+  }
+  .takeaway-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .takeaway-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    counter-reset: li;
+  }
+  .takeaway-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.6;
+    counter-increment: li;
+  }
+  .takeaway-list li::before {
+    content: counter(li);
+    background: var(--primary);
+    color: #000000;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 48px 0;
+  }
+
+  /* Highlight */
+  .highlight { color: var(--primary); font-weight: 700; }
+  .highlight-accent { color: var(--primary); font-weight: 700; }
+
+  /* Inline code */
+  code {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85em;
+    background: rgba(124,255,178,0.1);
+    color: var(--primary);
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  /* Path / steps — matches SceneSection04Path */
+  .path {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 20px;
+  }
+  .path-step {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    animation: fadeUp 0.5s ease both;
+  }
+  .path-step:not(:last-child) .path-line-wrap::after {
+    content: '';
+    display: block;
+    width: 2px;
+    flex: 1;
+    background: var(--border);
+    margin: 4px auto 0;
+    min-height: 32px;
+  }
+  .path-line-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 48px;
+    flex-shrink: 0;
+  }
+  .path-dot {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: #000000;
+    flex-shrink: 0;
+  }
+  .path-content {
+    padding-bottom: 28px;
+    flex: 1;
+  }
+  .path-content h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
+  .path-content p { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .card, .quiz-box, .takeaway { padding: 20px; }
+    .usecase-grid { grid-template-columns: 1fr; }
+    .compare th, .compare td { padding: 10px 12px; }
+  }
+</style>
+</head>
+<body>
+<script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
+
+<!-- Progress bar -->
+<div class="progress-bar-wrap">
+  <div class="progress-track"><div class="progress-fill"></div></div>
+</div>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-meta">
+      <span class="chapter-badge">CH 0-1</span>
+      <span class="tag tag-beginner">✦ 完全零基礎</span>
+      <span class="tag tag-time">⏱ 約 10 分鐘</span>
+    </div>
+    <h1>AI 寫程式是什麼？<br><span>Vibe Coding 入門</span></h1>
+    <p class="hero-sub">從「寫程式」的本質出發，理解為什麼現在是人人都能寫程式的時代，以及 Vibe Coding 與 AI Coding 有什麼不同。</p>
+  </div>
+
+  <!-- Section 1: 什麼是寫程式 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>寫程式，究竟是什麼？</h2>
+    </div>
+
+    <div class="card">
+      <p>
+        <strong>寫程式的本質，就是把「人要做的事」轉交給電腦去執行。</strong><br>
+        這件事有個更正式的名字，叫做 <span class="highlight">自動化</span>。只要一件工作有固定的步驟、電腦能一一代勞，它就可以被自動化。
+      </p>
+    </div>
+
+    <div class="analogy">
+      <div class="label"><span class="label-dot"></span>一句話理解</div>
+      <p>
+        想像你每天上班前都要手動把一疊文件依日期排好、蓋上編號。
+        <strong>寫程式，就像是訓練一個永遠不會出錯、也不需要午休的助手，讓它幫你把這件事自動完成。</strong>
+        你只需要說清楚規則，剩下的交給它。
+      </p>
+    </div>
+
+    <div class="card">
+      <p style="font-family: 'Space Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.06em; font-weight: 700; margin-bottom: 10px;">廣義</p>
+      <p>試算表裡的公式也算是一種「寫程式」——每一條公式就是給電腦的一道指令，告訴它「用這個規則算出結果」。</p>
+    </div>
+    <div class="card">
+      <p style="font-family: 'Space Mono', monospace; font-size: 12px; color: var(--text-muted); letter-spacing: 0.06em; font-weight: 700; margin-bottom: 10px;">狹義</p>
+      <p>正規的程式語言，用來建出我們日常生活中用到的各種軟體：<span class="highlight">網頁、App、智慧家電的控制系統</span>……背後都是程式在運作。</p>
+    </div>
+  </div>
+
+  <!-- Section 2: 非工程師能幹嘛 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>非工程師，可以用寫程式做什麼？</h2>
+    </div>
+
+    <div class="card">
+      <p>不需要成為軟體工程師，<strong>只要你手上有下面這三種麻煩</strong>，寫程式就能幫上你的忙：</p>
+    </div>
+
+    <div class="usecase-grid">
+      <div class="usecase">
+        <div class="usecase-icon">🔁</div>
+        <h3>重複性工作</h3>
+        <p>每天或每週都要手動執行同樣操作，步驟固定但耗時費力。</p>
+      </div>
+      <div class="usecase">
+        <div class="usecase-icon">⚠️</div>
+        <h3>人工容易出錯</h3>
+        <p>靠人工一筆一筆輸入，難免遺漏或打錯，影響資料品質。</p>
+      </div>
+      <div class="usecase">
+        <div class="usecase-icon">🔍</div>
+        <h3>資訊蒐集整理</h3>
+        <p>需要定期從多個來源收集資料，整合起來又要花大量時間。</p>
+      </div>
+    </div>
+
+    <div class="analogy">
+      <div class="label"><span class="label-dot"></span>具體例子</div>
+      <p>
+        <strong>場景一：</strong>你負責活動行銷，每次寄邀請信都要開 Excel、一行一行複製姓名改稱謂、一封一封手動寄出。
+        寫一個自動寄信程式，就能讓電腦替你把 200 封個人化的信件，在指定時間一次送出。<br><br>
+        <strong>場景二：</strong>你每個月要從四、五個不同的系統下載 CSV 報表、手動合併再計算業績。
+        一個自動合併報表的小程式，能讓這件事從兩小時縮短到幾秒鐘。<br><br>
+        <strong>場景三：</strong>你想追蹤某個電商平台上特定商品的價格變化。
+        寫一個定時抓取資料的程式，每天早上自動通知你，不用手動一次次重新整理頁面。
+      </p>
+    </div>
+
+    <div class="card">
+      <p>除了工作效率，<strong>寫程式也可以是一種生活樂趣。</strong>只要有有趣的 idea，懂得跟 AI 有效溝通，通通都可以透過 AI 幫你實現！</p>
+    </div>
+
+    <div class="usecase-grid" style="grid-template-columns: 1fr;">
+      <div class="usecase">
+        <div class="usecase-icon">✈️</div>
+        <h3>讓朋友投票旅遊偏好的頁面</h3>
+      </div>
+      <div class="usecase">
+        <div class="usecase-icon">🎲</div>
+        <h3>隨機決定今天晚餐吃什麼的小工具</h3>
+      </div>
+      <div class="usecase">
+        <div class="usecase-icon">📖</div>
+        <h3>收集你喜歡食譜的個人頁面</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 3: Vibe Coding 是什麼 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Vibe Coding 是什麼？</h2>
+    </div>
+
+    <div class="card">
+      <p>
+        AI 就像是<strong>神燈精靈</strong>，可以幫助我們實現很多曾經覺得很困難、甚至辦不到的事情。在 AI 寫程式的領域中，有兩種不同的方式：<br><br>
+        <span class="highlight">AI Coding（AI 輔助程式設計）</span>，指的是在寫程式的過程中，讓 AI 幫你產生部分或全部的程式碼。
+        無論 AI 生成的比例高低，只要有用到 AI 來協助產出程式碼，都算在這個範疇內。<br><br>
+        而 <span class="highlight-accent">Vibe Coding</span> 是近年出現的新詞，「Vibe」有「跟著感覺走、輕鬆隨興」的意思。
+        <strong>Vibe Coding 指的是：完全靠描述和對話來驅動 AI 產出程式，自己完全不碰程式碼的開發方式。</strong>
+      </p>
+    </div>
+
+    <div class="analogy">
+      <div class="label"><span class="label-dot"></span>一句話理解</div>
+      <p>
+        Vibe Coding 就像是你扮演<strong>甲方（需求提出者）</strong>，AI 是<strong>工程師（執行者）</strong>。
+        你只要說「我要一個可以讓朋友填寫旅遊偏好的表單頁面」，AI 就去把整個東西做出來。
+        你不需要懂它是怎麼建的，也不用看程式碼長什麼樣子。
+      </p>
+    </div>
+
+    <div class="card">
+      <p>
+        實際體驗 Vibe Coding 的感覺是這樣的：你用自然語言（中文就行）描述你想要什麼，
+        例如「我想要一個可以讓朋友填寫旅遊偏好的表單頁面，整體設計是可愛風格，提交之後要顯示一個『謝謝填寫』的畫面」，AI 工具就會直接產出一個可以用的成品。
+        如果不滿意某個地方，繼續在對話框說「把背景換成藍色」、「把按鈕的文字改得更可愛一點」，AI 就會幫你修改。
+        <strong>全程不需要手打任何一行程式碼。</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- Section 4: Vibe vs AI Coding -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Vibe Coding vs AI Coding：有什麼差別？</h2>
+    </div>
+
+    <div class="card">
+      <p>這兩種方式都是 AI 輔助開發，但<strong>人工介入的程度</strong>不同，適合的使用情境也有所差異。</p>
+    </div>
+
+    <table class="compare">
+      <thead>
+        <tr>
+          <th></th>
+          <th class="vibe">Vibe Coding</th>
+          <th class="ai">AI Coding</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>操作方式</td>
+          <td class="vibe-val">完全用自然語言描述，全程不碰程式碼</td>
+          <td class="ai-val">主要靠 AI，必要時用一點技術知識介入引導</td>
+        </tr>
+        <tr>
+          <td>門檻</td>
+          <td class="vibe-val">零基礎即可，會說話就能用</td>
+          <td class="ai-val">需要一些基礎概念，但不需要成為工程師</td>
+        </tr>
+        <tr>
+          <td>優勢</td>
+          <td class="vibe-val">上手快、容易有成就感、適合簡單的小工具</td>
+          <td class="ai-val">成果更精準、遇到問題有能力排除</td>
+        </tr>
+        <tr>
+          <td>限制</td>
+          <td class="vibe-val">複雜需求難以精準達成，卡關時不容易解決</td>
+          <td class="ai-val">需要投入一點學習時間</td>
+        </tr>
+        <tr>
+          <td>適合誰</td>
+          <td class="vibe-val">初學者、想快速驗證創意的人</td>
+          <td class="ai-val">想穩定產出可用作品的人</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="path">
+      <div class="path-step">
+        <div class="path-line-wrap">
+          <div class="path-dot">1</div>
+        </div>
+        <div class="path-content">
+          <h3>從 Vibe Coding 開始</h3>
+          <p>先體驗「用說的就能做出東西」的成就感，不用擔心技術細節，選一個你真的想解決的小需求開始玩。</p>
+        </div>
+      </div>
+      <div class="path-step">
+        <div class="path-line-wrap">
+          <div class="path-dot">2</div>
+        </div>
+        <div class="path-content">
+          <h3>累積 AI Coding 的基礎知識</h3>
+          <p>學習如何更精準地和 AI 溝通、排查錯誤、理解常用技術關鍵字，讓你的作品從「堪用」進化到「真的好用」。</p>
+        </div>
+      </div>
+      <div class="path-step">
+        <div class="path-line-wrap">
+          <div class="path-dot">3</div>
+        </div>
+        <div class="path-content">
+          <h3>用 AI Coding 做更複雜的事</h3>
+          <p>結合技術判斷和 AI 的生產力，做出能真正解決工作痛點、或是讓自己驕傲的作品。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="label"><span class="label-dot"></span>想一想</div>
+      <p>
+        如果你現在可以立刻用自然語言「描述出」一個小工具，你會描述什麼？<br>
+        試著用一、兩句話說說看——不用管技術可不可行，先想想你<strong>真的想要</strong>什麼。
+      </p>
+    </div>
+  </div>
+
+  <!-- Takeaway -->
+  <div class="takeaway">
+    <div class="takeaway-title">✦ 本章重點整理</div>
+    <ul class="takeaway-list">
+      <li>寫程式的本質是自動化：把有固定步驟的事外包給電腦執行。</li>
+      <li>重複性工作、容易出錯的流程、定期蒐集資訊，都是寫程式最能發揮的場景。</li>
+      <li>AI Coding 泛指任何借助 AI 產生程式碼的開發方式。</li>
+      <li>Vibe Coding 是完全用自然語言驅動 AI，不碰程式碼的極致入門體驗。</li>
+      <li>建議路徑：先 Vibe Coding 建立信心，再學習核心關鍵知識，進入 AI Coding。</li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>
