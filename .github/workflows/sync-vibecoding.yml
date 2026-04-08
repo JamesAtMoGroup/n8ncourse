@@ -1,9 +1,9 @@
-name: Sync Vibe Coding from Google Drive
+name: Sync courses from Google Drive
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:   # manual trigger
   schedule:
-    - cron: '0 2 * * *'  # Daily 02:00 UTC
+    - cron: '0 2 * * *'  # Daily 02:00 UTC = 10:00 Taiwan time
 
 jobs:
   sync:
@@ -25,16 +25,19 @@ jobs:
 
       - name: Sync from Google Drive
         env:
-          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
           VIBECODING_FOLDER_ID: ${{ secrets.VIBECODING_FOLDER_ID }}
+          N8NCOURSE_FOLDER_ID: ${{ secrets.N8NCOURSE_FOLDER_ID }}
         run: python .github/scripts/sync_drive.py
 
       - name: Commit and push if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add vibecoding/
+          git add vibecoding/ n8ncourse/ courses.json sync_manifest.json
           git diff --staged --quiet && echo "No changes" || (
-            git commit -m "sync: update vibecoding content from Google Drive [skip ci]"
+            git commit -m "sync: auto-update from Google Drive [skip ci]"
             git push
           )
