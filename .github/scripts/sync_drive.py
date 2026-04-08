@@ -116,10 +116,11 @@ for idx, folder in enumerate(folders, start=1):
         print(f"  [{folder['name']}] Empty — skipping")
         continue
 
-    html_file = next((f for f in files if f["mimeType"] == "text/html"), None)
-    mp4_file  = next((f for f in files if f["mimeType"] == "video/mp4"), None)
-    vtt_file  = next((f for f in files if f["mimeType"] == "text/vtt"
-                      or f["name"].endswith(".vtt")), None)
+    html_file    = next((f for f in files if f["mimeType"] == "text/html"), None)
+    mp4_file     = next((f for f in files if f["mimeType"] == "video/mp4"), None)
+    vtt_file     = next((f for f in files if f["mimeType"] == "text/vtt"
+                         or f["name"].endswith(".vtt")), None)
+    youtube_file = next((f for f in files if f["name"] == "youtube.txt"), None)
 
     if not html_file:
         print(f"  [{folder['name']}] No HTML — skipping")
@@ -131,9 +132,32 @@ for idx, folder in enumerate(folders, start=1):
     # ── HTML ──
     html = download_bytes(html_file["id"]).decode("utf-8")
     html = inject_auth(html)
-    if mp4_file:
-        vtt_name = "subtitles.vtt" if vtt_file else None
-        html = replace_video_with_iframe(html, mp4_file["id"], vtt_name)
+
+    if youtube_file:
+        # Prefer YouTube embed over Drive mp4
+        yt_id = download_bytes(youtube_file["id"]).decode("utf-8").strip()
+        yt_iframe = (
+            f'<iframe src="https://www.youtube.com/embed/{yt_id}" '
+            f'width="100%" style="aspect-ratio:16/9;border:none;border-radius:8px;" '
+            f'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" '
+            f'allowfullscreen></iframe>'
+        )
+        # Replace <video src="*.mp4"> block with YouTube iframe
+        html = re.sub(
+            r'<video[^>]*src="[^"]*\.mp4"[^>]*>.*?</video>',
+            yt_iframe, html, flags=re.IGNORECASE | re.DOTALL,
+        )
+        html = re.sub(
+            r'<video[^>]*src="[^"]*\.mp4"[^>]*/?>',
+            yt_iframe, html, flags=re.IGNORECASE,
+        )
+        video_note = f"youtube:{yt_id}"
+    elif mp4_file:
+        html = replace_video_with_iframe(html, mp4_file["id"])
+        video_note = "drive iframe"
+    else:
+        video_note = "no video"
+
     with open(f"{out_dir}/index.html", "w", encoding="utf-8") as fh:
         fh.write(html)
 
@@ -142,9 +166,9 @@ for idx, folder in enumerate(folders, start=1):
         vtt_bytes = download_bytes(vtt_file["id"])
         with open(f"{out_dir}/subtitles.vtt", "wb") as fh:
             fh.write(vtt_bytes)
-        print(f"  [{idx}] {folder['name'][:45]} → lecture{idx}/ (html + vtt + drive iframe)")
-    else:
-        print(f"  [{idx}] {folder['name'][:45]} → lecture{idx}/ (html + drive iframe)")
+        video_note += " + vtt"
+
+    print(f"  [{idx}] {folder['name'][:40]} → lecture{idx}/ ({video_note})")
 
     display_title = re.sub(r"^\w+-\w+-", "", folder["name"]).strip()
     courses.append({"day": idx, "title": display_title, "status": "open", "url": f"./lecture{idx}/"})
