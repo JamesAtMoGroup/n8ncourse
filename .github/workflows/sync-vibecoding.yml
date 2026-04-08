@@ -28,8 +28,7 @@ jobs:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
-          VIBECODING_FOLDER_ID: ${{ secrets.VIBECODING_FOLDER_ID }}
-          N8NCOURSE_FOLDER_ID: ${{ secrets.N8NCOURSE_FOLDER_ID }}
+          COURSES_ROOT_FOLDER_ID: ${{ secrets.COURSES_ROOT_FOLDER_ID }}
         run: python .github/scripts/sync_drive.py
 
       - name: Commit and push if changed
