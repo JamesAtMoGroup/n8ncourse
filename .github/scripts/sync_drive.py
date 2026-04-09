@@ -297,8 +297,10 @@ for course_folder in course_folders:
     lecture_folders = [f for f in lecture_folders if f["name"] not in IGNORE_FOLDERS]
 
     for idx, folder in enumerate(lecture_folders, start=1):
-        display_title = re.sub(r"^\w+-\w+-", "", folder["name"]).strip()
-        courses_list.append({"day": idx, "title": display_title, "status": "open", "url": f"./lecture{idx}/"})
+        chapter_match = re.match(r"^(CH\d+-\d+)-", folder["name"])
+        chapter = chapter_match.group(1) if chapter_match else f"LECTURE {idx}"
+        display_title = re.sub(r"^CH\d+-\d+-", "", folder["name"]).strip()
+        courses_list.append({"day": idx, "chapter": chapter, "title": display_title, "status": "open", "url": f"./lecture{idx}/"})
 
         if folder["id"] in lecture_manifest:
             print(f"  [{idx}] {folder['name'][:40]} — already synced, skipping")

@@ -221,8 +221,8 @@
       return `<${tag} class="course-card${isOpen ? '' : ' wip'}" ${href}>
         <div class="card-banner">
           <div class="card-banner-bg"></div>
-          <span class="day-badge">Lecture ${c.day}</span>
-          <span class="day-number">${c.day}</span>
+          <span class="day-badge">${c.chapter || 'Lecture ' + c.day}</span>
+          <span class="day-number">${c.chapter || c.day}</span>
         </div>
         <div class="card-body">
           <div class="card-title">${c.title}</div>
