@@ -213,12 +213,12 @@ def inject_auth(html):
 
 
 def inject_nav(html):
-    if "vc-nav" in html:
+    if "id='vc-nav'" in html or 'id="vc-nav"' in html:
         return html
     # Always insert before </head> — never replace </style></head> as a pair
     html = re.sub(r"(</head>)", NAV_CSS + r"\1", html, count=1, flags=re.IGNORECASE)
     html = re.sub(r"(</script>\n?)(<div|<header|<main|<section)", r"\1" + NAV_HTML + r"\2", html, count=1)
-    if "vc-nav" not in html:
+    if "id='vc-nav'" not in html and 'id="vc-nav"' not in html:
         html = re.sub(r"(<body[^>]*>)", r"\1\n" + NAV_HTML, html, count=1, flags=re.IGNORECASE)
     return html
 
