@@ -3,7 +3,7 @@ name: Sync courses from Google Drive
 on:
   workflow_dispatch:   # manual trigger
   schedule:
-    - cron: '0 2 * * *'  # Daily 02:00 UTC = 10:00 Taiwan time
+    - cron: '0 * * * *'  # Every hour
 
 jobs:
   sync:
