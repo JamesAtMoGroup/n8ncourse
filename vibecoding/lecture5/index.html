@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>章節 1-2｜萬用句型：跟 AI 講到累，用這招一次過</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #7cffb2;
+  --primary-light: rgba(124,255,178,0.07);
+  --accent: #7cffb2;
+  --green: #7cffb2;
+  --yellow: #ffd166;
+  --bg: #000000;
+  --surface: #0d0d0d;
+  --surface2: #111111;
+  --text: #ffffff;
+  --text-muted: #888888;
+  --border: rgba(124,255,178,0.14);
+  --radius: 16px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 16px; line-height: 1.8; min-height: 100vh;
+}
+
+/* ── Sticky Progress Bar (pipeline spec) ── */
+.progress-bar-wrap {
+  position: sticky; top: 0;
+  background: rgba(10,10,10,0.92);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  z-index: 100; padding: 14px 24px;
+  border-bottom: 1px solid rgba(124,255,194,0.14);
+}
+.progress-track { height: 3px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; }
+.progress-fill  { height: 100%; width: 50%; background: #7cffc2; border-radius: 99px; box-shadow: 0 0 8px rgba(124,255,194,0.5); }
+
+.container { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
+
+/* ── Hero ── */
+.hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); margin-bottom: 56px; animation: fadeUp 0.6s ease both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+.hero-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.chapter-badge { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--primary); border: 1px solid var(--primary); padding: 4px 14px; border-radius: 99px; letter-spacing: 0.05em; text-shadow: 0 0 10px rgba(124,255,178,0.4); }
+.tag { font-size: 12px; padding: 4px 12px; border-radius: 99px; font-weight: 500; }
+.tag-beginner { background: rgba(124,255,178,0.1); color: var(--green); }
+.tag-time { background: rgba(255,209,102,0.1); color: var(--yellow); }
+h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 16px; }
+h1 em { font-style: normal; color: var(--primary); }
+.hero-sub { font-size: 17px; color: var(--text-muted); max-width: 540px; line-height: 1.7; }
+
+/* ── Section ── */
+.section { margin-bottom: 56px; animation: fadeUp 0.5s ease both; }
+.section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+.section-num { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--primary); background: rgba(124,255,178,0.08); border: 1px solid var(--border); padding: 5px 14px; border-radius: 99px; white-space: nowrap; letter-spacing: 0.05em; }
+h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+
+/* ── Card / Analogy / Tip / Quiz ── */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.card p { color: var(--text-muted); } .card p + p { margin-top: 12px; } .card strong { color: var(--text); }
+.analogy { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 var(--radius) var(--radius) 0; padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.analogy .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.analogy p { color: #c8ffe0; font-size: 15px; line-height: 1.75; } .analogy strong { color: #fff; }
+.tip-box { background: rgba(124,255,178,0.04); border: 1px solid rgba(124,255,178,0.2); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.tip-box .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.tip-box p { color: var(--text-muted); font-size: 15px; line-height: 1.75; } .tip-box strong { color: var(--text); }
+.quiz-box { border: 2px dashed rgba(255,209,102,0.35); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; background: rgba(255,209,102,0.03); animation: fadeUp 0.5s ease both; }
+.quiz-box .label { font-size: 12px; font-weight: 700; color: var(--yellow); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+.quiz-box p { color: var(--text-muted); font-size: 15px; line-height: 1.7; }
+
+/* ── Prompt compare ── */
+.compare-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.compare-box { border-radius: var(--radius); padding: 22px 24px; }
+.compare-box.bad { background: rgba(255,107,107,0.06); border: 1px solid rgba(255,107,107,0.2); }
+.compare-box.good { background: rgba(124,255,178,0.05); border: 1px solid rgba(124,255,178,0.2); }
+.compare-label { font-size: 11px; font-weight: 700; font-family: 'Space Mono', monospace; letter-spacing: 0.08em; margin-bottom: 12px; }
+.compare-box.bad .compare-label { color: #ff6b6b; }
+.compare-box.good .compare-label { color: var(--green); }
+.compare-content { font-size: 13px; color: var(--text-muted); line-height: 1.75; font-family: 'Space Mono', monospace; }
+.compare-content strong { color: var(--text); font-family: 'Noto Sans TC', sans-serif; }
+
+/* ── Six elements ── */
+.elements-grid { display: flex; flex-direction: column; gap: 16px; margin-bottom: 20px; }
+.element-card { border-radius: var(--radius); padding: 24px 28px; animation: fadeUp 0.5s ease both; border: 1px solid transparent; }
+.element-card.core { background: rgba(124,255,178,0.05); border-color: rgba(124,255,178,0.2); }
+.element-card.plus { background: rgba(255,209,102,0.04); border-color: rgba(255,209,102,0.2); }
+.element-header { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+.element-badge { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 99px; white-space: nowrap; }
+.core .element-badge { background: rgba(124,255,178,0.15); color: var(--primary); }
+.plus .element-badge { background: rgba(255,209,102,0.15); color: var(--yellow); }
+.element-name { font-size: 17px; font-weight: 900; }
+.core .element-name { color: var(--primary); }
+.plus .element-name { color: var(--yellow); }
+.element-desc { font-size: 14px; color: var(--text-muted); line-height: 1.75; margin-bottom: 10px; }
+.element-desc strong { color: var(--text); }
+.element-example { font-size: 13px; font-family: 'Space Mono', monospace; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 12px 14px; color: var(--text-muted); line-height: 1.7; }
+.element-example .ex-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+.core .element-example .ex-label { color: var(--primary); }
+.plus .element-example .ex-label { color: var(--yellow); }
+
+/* ── Full Prompt Block ── */
+.full-prompt {
+  background: #0a0a0a;
+  border: 1px solid rgba(124,255,178,0.25);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  animation: fadeUp 0.5s ease both;
+  position: relative;
+}
+.full-prompt-label {
+  font-size: 12px; font-weight: 700; color: var(--primary);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 6px;
+}
+.full-prompt-content {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 14px; color: var(--text-muted);
+  line-height: 2; white-space: pre-wrap;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+.fp-tag { color: var(--primary); font-weight: 700; }
+.fp-copy-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700;
+  color: #000; background: var(--primary);
+  border: none; border-radius: 99px;
+  padding: 7px 18px; cursor: pointer;
+  transition: opacity 0.2s;
+  letter-spacing: 0.04em;
+}
+.fp-copy-btn:hover { opacity: 0.85; }
+
+/* ── Assets Section ── */
+.assets-section { margin-bottom: 56px; animation: fadeUp 0.5s ease both; }
+.assets-label { font-size: 12px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.assets-label::before { content: ''; display: inline-block; width: 24px; height: 1px; background: rgba(255,255,255,0.2); }
+
+/* 2+1 image layout */
+.img-grid-3 { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.img-grid-3-top { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.img-grid-3-bottom { display: flex; justify-content: center; }
+.img-grid-3-bottom a { width: 50%; display: block; }
+
+/* 2-image layout */
+.img-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+
+.asset-img-link { display: block; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); transition: border-color 0.2s; }
+.asset-img-link:hover { border-color: rgba(124,255,178,0.4); }
+.asset-img-link img { width: 100%; height: auto; display: block; }
+
+/* Video player */
+.asset-video-wrap { margin-bottom: 20px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); background: #000; }
+.asset-video-wrap video { width: 100%; display: block; max-height: 480px; }
+
+/* ── Takeaway ── */
+.takeaway { background: linear-gradient(135deg, rgba(124,255,178,0.08), rgba(0,0,0,0)); border: 1px solid rgba(124,255,178,0.25); border-radius: var(--radius); padding: 36px; margin-top: 48px; animation: fadeUp 0.5s ease both; }
+.takeaway-title { font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.takeaway-list { list-style: none; display: flex; flex-direction: column; gap: 12px; counter-reset: li; }
+.takeaway-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; color: var(--text); line-height: 1.6; counter-increment: li; }
+.takeaway-list li::before { content: counter(li); background: var(--primary); color: #000; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+
+.highlight { color: var(--primary); font-weight: 700; }
+.divider { height: 1px; background: var(--border); margin: 48px 0; }
+
+@media (max-width: 600px) {
+  .progress-bar-wrap { padding: 12px 16px; }
+  .compare-wrap { grid-template-columns: 1fr; }
+  .card, .quiz-box, .takeaway, .tip-box, .analogy { padding: 20px; }
+  .container { padding-left: 16px; padding-right: 16px; }
+  .img-grid-2 { grid-template-columns: 1fr; }
+  .img-grid-3-top { grid-template-columns: 1fr; }
+  .img-grid-3-bottom a { width: 100%; }
+}
+</style>
+<style id='vc-nav-css'>#vc-nav{position:sticky;top:0;z-index:200;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border,rgba(255,255,255,0.1));}#vc-nav a{font-size:14px;font-weight:500;color:#888;text-decoration:none;transition:color .15s;}#vc-nav a:hover{color:#fff;}#vc-nav-right{display:flex;align-items:center;gap:10px;}#vc-nav-user{font-size:13px;color:#888;}#vc-logout{font-size:13px;font-weight:600;color:#666;background:rgba(255,255,255,0.04);border:1px solid var(--border,rgba(255,255,255,0.1));border-radius:8px;padding:4px 12px;cursor:pointer;font-family:inherit;}</style></head>
+<body>
+<script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
+
+<!-- Sticky Progress Bar -->
+<div class="progress-bar-wrap">
+  <div class="progress-track"><div class="progress-fill"></div></div>
+</div>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-meta">
+      <span class="chapter-badge">CH 1-2</span>
+      <span class="tag tag-beginner">✦ SDLC 第二步</span>
+      <span class="tag tag-time">⏱ 約 8 分鐘</span>
+    </div>
+    <h1>萬用句型：<br><em>跟 AI 講到累，用這招一次過</em></h1>
+    <p class="hero-sub">跟 AI 來回十幾次卻還是錯，往往不是 AI 的問題，是指令沒說清楚。這章教你一個結構，讓你的第一次指令就能打中。</p>
+  </div>
+
+  <!-- Section 1: 為什麼要學這個 -->
+  <div id="section-opening" class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>為什麼精準下指令這麼難？</h2>
+    </div>
+
+    <div class="card">
+      <p>
+        需求分析階段最重要的任務，就是把你腦中模糊的想法，<strong>變成 AI 看得懂的指令</strong>。<br><br>
+        這比想像中困難——因為人跟人溝通時，有表情、語氣、肢體語言輔助，語言只佔了溝通的一小部分。
+        但你跟 AI 溝通，<strong>100% 只靠文字</strong>。你沒說的，它完全不知道。
+      </p>
+    </div>
+
+    <div class="analogy">
+      <div class="label">💡 一句話理解</div>
+      <p>
+        還記得「房間裡的天才」嗎？AI 就是那位天才——能力極強，但被關在房間裡，和你唯一的溝通方式就是從門縫塞紙條。<br><br>
+        <strong>你塞進去的那張紙，就決定了它能幫你做到什麼。寫得越清楚，它幫你做得越準。</strong>
+      </p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 2: 兩大重點 -->
+  <div id="section-two-points" class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>精準下指令的兩大重點</h2>
+    </div>
+
+    <div class="card">
+      <p>
+        要做到精準下指令，有兩大重點：<br><br>
+        <strong>一、整理自己的想法</strong>——你真正想要的是什麼？邊界在哪裡？<br>
+        <strong>二、用文字清楚表達想法</strong>——把想法翻譯成 AI 能理解的語言<br><br>
+        這兩件事，可以用同一個結構一起解決。這章教你的，就是這個結構——一個簡單好用的萬用句型。
+      </p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 3: 模糊 vs 清楚 -->
+  <div id="section-fuzzy-vs-clear" class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>模糊指令 vs 清楚指令，差別有多大？</h2>
+    </div>
+
+    <div class="card">
+      <p>先看一個例子，感受一下差距。假設你想做一個自動整合多份報名表的程式：</p>
+    </div>
+
+    <div class="compare-wrap">
+      <div class="compare-box bad">
+        <div class="compare-label">❌ 模糊指令</div>
+        <div class="compare-content">
+          我要把幾份報名表合併，怎麼做？
+        </div>
+      </div>
+      <div class="compare-box good">
+        <div class="compare-label">✅ 清楚指令</div>
+        <div class="compare-content">
+          <strong>【現況】</strong>活動結束後，我收到三個報名管道各自匯出的 Google 試算表，欄位名稱略有不同。<br><br>
+          <strong>【痛點】</strong>有些人透過多個管道報名，造成重複名單，手動去重很費時又容易漏。<br><br>
+          <strong>【期待】</strong>一鍵執行，自動去除重複並合併成一份完整名單，以 Email 作為判斷重複的依據。<br><br>
+          <strong>【指定解法】</strong>請用 Google Apps Script 實作。
+        </div>
+      </div>
+    </div>
+
+    <div id="section-clear-cmd" class="card">
+      <p>
+        左邊的指令，AI 面對的問題是：報名表是什麼格式？重複怎麼定義？要以哪個欄位判斷？<strong>AI 猜不到，就只能亂猜。</strong><br><br>
+        右邊的指令，每一個問號都被你提前回答了。AI 收到的是完整的任務說明，不需要猜，直接產出。
+      </p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 4: 六個元素 -->
+  <div id="section-element-status" class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>萬用句型：六個元素</h2>
+    </div>
+
+    <div class="card">
+      <p>
+        這個萬用句型由六個元素組成。前三個是<span class="highlight">核心必填</span>，每次都應該包含；後三個是<span style="color:var(--green);font-weight:700;">進階加分</span>，視需求選用，能大幅提升精準度。
+      </p>
+    </div>
+
+    <div class="elements-grid">
+
+      <!-- 現況 -->
+      <div class="element-card core">
+        <div class="element-header">
+          <span class="element-badge">核心 01</span>
+          <span class="element-name">現況</span>
+        </div>
+        <div class="element-desc">
+          描述你目前的狀況：<strong>你是什麼角色、在做什麼任務、用什麼工具</strong>。AI 對你的背景一無所知，這是它認識你的起點。
+        </div>
+        <div class="element-example">
+          <div class="ex-label">範例</div>
+          活動結束後，我收到三個不同報名管道各自匯出的 Google 試算表，欄位名稱略有不同。
+        </div>
+      </div>
+
+      <!-- 痛點 -->
+      <div id="section-element-pain" class="element-card core">
+        <div class="element-header">
+          <span class="element-badge">核心 02</span>
+          <span class="element-name">痛點</span>
+        </div>
+        <div class="element-desc">
+          說出現況裡<strong>最讓你困擾的那個環節</strong>。痛點幫助 AI 聚焦，知道你要解決的重點在哪裡，而不是面對一個模糊的大問題。
+        </div>
+        <div class="element-example">
+          <div class="ex-label">範例</div>
+          有些人透過多個管道報名，造成重複名單。手動去重費時，稍一不注意就會漏掉或誤刪。
+        </div>
+      </div>
+
+      <!-- 期待 -->
+      <div id="section-element-expect" class="element-card core">
+        <div class="element-header">
+          <span class="element-badge">核心 03</span>
+          <span class="element-name">期待</span>
+        </div>
+        <div class="element-desc">
+          描述你理想中的解決結果：<strong>執行完程式之後，畫面上應該出現什麼？</strong>越具體越好，想清楚才能說清楚。
+        </div>
+        <div class="element-example">
+          <div class="ex-label">範例</div>
+          執行後自動去除重複並合併成一份完整名單，以 Email 欄位作為判斷重複的依據，產出一份新的 Google 試算表。
+        </div>
+      </div>
+
+      <!-- 驗收清單 -->
+      <div id="section-element-checklist" class="element-card plus">
+        <div class="element-header">
+          <span class="element-badge">進階 04</span>
+          <span class="element-name">驗收清單</span>
+        </div>
+        <div class="element-desc">
+          列出你會用哪些標準來判斷「程式做好了」。<strong>這個步驟幫你和 AI 同時想得更仔細</strong>——寫驗收清單的過程，往往會讓你發現之前沒想到的需求細節。
+        </div>
+        <div class="element-example">
+          <div class="ex-label">範例</div>
+          ✓ 執行後產出一份新的 Google 試算表<br>
+          ✓ 同一個 Email 只保留一筆，不重複出現<br>
+          ✓「姓名」和「報名者姓名」這類同義欄位，被識別為同一欄合併
+        </div>
+      </div>
+
+      <!-- 指定解法 -->
+      <div id="section-element-solution" class="element-card plus">
+        <div class="element-header">
+          <span class="element-badge">進階 05</span>
+          <span class="element-name">指定解法</span>
+        </div>
+        <div class="element-desc">
+          如果不指定，AI 可能提出你完全不熟悉的解法——例如讓你安裝某個你沒聽過的工具、用你不會用的程式語言。<strong>指定你能用的工具，AI 就往那個方向走。</strong>
+        </div>
+        <div class="element-example">
+          <div class="ex-label">範例</div>
+          請使用 Google Apps Script 來實作，並一步一步說明操作方式。
+        </div>
+      </div>
+
+      <!-- 資料範例 -->
+      <div id="section-element-data" class="element-card plus">
+        <div class="element-header">
+          <span class="element-badge">進階 06</span>
+          <span class="element-name">資料範例</span>
+        </div>
+        <div class="element-desc">
+          AI 看不到你的試算表，但你可以<strong>直接把資料貼給它看</strong>。不用貼全部，標題列加一兩列資料就夠了。貼上後視覺上雖然沒對齊，但對 AI 來說是非常易讀的格式。也可以用截圖，但欄位多時建議直接貼資料。
+        </div>
+        <div class="element-example">
+          <div class="ex-label">範例（標題列 + 一列資料）</div>
+          報名者姓名&nbsp;&nbsp;&nbsp;Email&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;電話&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;報名管道<br>
+          王小明&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;example@email.com&nbsp;&nbsp;&nbsp;0912-345-678&nbsp;&nbsp;&nbsp;官網
+        </div>
+      </div>
+
+    </div>
+
+    <div class="full-prompt">
+      <div class="full-prompt-label">📋 完整提示詞範例</div>
+      <div class="full-prompt-content">
+<span class="fp-tag">## 現況</span>
+我是一個策劃講座的人，我準備要辦一個活動，在活動開始之前，我會讓大家透過填表單的方式來報名，而名單會用 Google 試算表來記錄。
+
+<span class="fp-tag">## 痛點</span>
+有些人會透過不同的管道重複報名，所以需要一個一個手動篩選，非常花時間，而且也很容易出現人工的失誤。
+
+<span class="fp-tag">## 期待</span>
+我們希望可以以 email 當作判斷重複的依據，並且自動篩選重複的名單；同時，在篩選完成之後，可以把多個報名表合併成一份最完整的名單，並且產生一份新的 Google 試算表。
+
+<span class="fp-tag">## 驗收清單</span>
+- 執行後產出一份新的 Google 試算表
+- 同一個 email 只保留一筆
+- 原本在不同表單上面的欄位名稱，像是「姓名」和「報名者姓名」，在最終的表單當中會被視為同一個欄位
+
+<span class="fp-tag">## 指定解法</span>
+請使用 Google Apps Script 來實作，並一步一步說明操作方式。
+
+<span class="fp-tag">## 資料範例</span>
+報名者姓名	Email	電話	報名管道
+王小明	example@email.com	0912-345-678	官網
+      </div>
+      <button class="fp-copy-btn" id="copyBtn">複製提示詞</button>
+    </div>
+
+    <script>
+    document.getElementById('copyBtn').addEventListener('click', function() {
+      var btn = this;
+      var text = "## 現況\n我是一個策劃講座的人，我準備要辦一個活動，在活動開始之前，我會讓大家透過填表單的方式來報名，而名單會用 Google 試算表來記錄。\n\n## 痛點\n有些人會透過不同的管道重複報名，所以需要一個一個手動篩選，非常花時間，而且也很容易出現人工的失誤。\n\n## 期待\n我們希望可以以 email 當作判斷重複的依據，並且自動篩選重複的名單；同時，在篩選完成之後，可以把多個報名表合併成一份最完整的名單，並且產生一份新的 Google 試算表。\n\n## 驗收清單\n- 執行後產出一份新的 Google 試算表\n- 同一個 email 只保留一筆\n- 原本在不同表單上面的欄位名稱，像是「姓名」和「報名者姓名」，在最終的表單當中會被視為同一個欄位\n\n## 指定解法\n請使用 Google Apps Script 來實作，並一步一步說明操作方式。\n\n## 資料範例\n報名者姓名\tEmail\t電話\t報名管道\n王小明\texample@email.com\t0912-345-678\t官網";
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+          btn.textContent = '✓ 已複製';
+          setTimeout(function() { btn.textContent = '複製提示詞'; }, 1500);
+        }).catch(function() { fallbackCopy(text, btn); });
+      } else {
+        fallbackCopy(text, btn);
+      }
+      function fallbackCopy(t, b) {
+        var el = document.createElement('textarea');
+        el.value = t;
+        el.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+        document.body.appendChild(el);
+        el.select(); el.setSelectionRange(0, 99999);
+        try { document.execCommand('copy'); b.textContent = '✓ 已複製'; setTimeout(function() { b.textContent = '複製提示詞'; }, 1500); }
+        catch(e) { b.textContent = '請手動複製'; }
+        document.body.removeChild(el);
+      }
+    });
+    </script>
+
+    <div id="section-summary" class="tip-box">
+      <div class="label">🔑 核心原則</div>
+      <p>
+        你塞給房間裡天才的那張紙條，就是你的提示詞。<strong>不怕說多，只怕說少。</strong><br><br>
+        紙條寫得越詳細，天才能給你的答案就越精準。這個萬用句型，就是幫你把那張紙條寫好的框架——雖然一開始要打的字變多了，但能大幅減少後續來回修正的次數。最理想的情況是：一張紙條，直接得到你想要的結果。
+      </p>
+    </div>
+
+    <div class="quiz-box">
+      <div class="label">🤔 想一想</div>
+      <p>
+        把你想解決的那個問題，試著用這六個元素寫一遍。<br>
+        特別注意「驗收清單」這一欄——寫的時候，有沒有發現什麼之前沒想到的細節？
+      </p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Assets Section -->
+  <div class="assets-section">
+    <div class="assets-label">課程素材</div>
+
+    <!-- 3.2: 三份報名表（2+1 layout） -->
+    <div class="img-grid-3">
+      <div class="img-grid-3-top">
+        <a class="asset-img-link" href="./assets/活動報名表A.png" target="_blank">
+          <img src="./assets/活動報名表A.png" alt="活動報名表A">
+        </a>
+        <a class="asset-img-link" href="./assets/活動報名表B.png" target="_blank">
+          <img src="./assets/活動報名表B.png" alt="活動報名表B">
+        </a>
+      </div>
+      <div class="img-grid-3-bottom">
+        <a class="asset-img-link" href="./assets/活動報名表C.png" target="_blank">
+          <img src="./assets/活動報名表C.png" alt="活動報名表C">
+        </a>
+      </div>
+    </div>
+
+    <!-- 3.2: 合併後結果（2 images side by side） -->
+    <div class="img-grid-2">
+      <a class="asset-img-link" href="./assets/合併報名表.png" target="_blank">
+        <img src="./assets/合併報名表.png" alt="合併報名表">
+      </a>
+      <a class="asset-img-link" href="./assets/重複報名紀錄.png" target="_blank">
+        <img src="./assets/重複報名紀錄.png" alt="重複報名紀錄">
+      </a>
+    </div>
+
+    <!-- 5.1: GPT 生成程式碼示範影片 -->
+    <div class="asset-video-wrap">
+      <video controls preload="metadata">
+        <source src="./assets/GPT 生成程式碼.mov" type="video/quicktime">
+        <source src="./assets/GPT 生成程式碼.mov" type="video/mp4">
+        您的瀏覽器不支援影片播放。
+      </video>
+    </div>
+  </div>
+
+  <!-- Takeaway -->
+  <div id="section-closing" class="takeaway">
+    <div class="takeaway-title">✦ 本章重點整理</div>
+    <ul class="takeaway-list">
+      <li>與 AI 溝通 100% 靠文字，你沒說的它完全不知道，說清楚是成功的前提。</li>
+      <li>核心三元素：現況、痛點、期待——每次下指令都應該包含。</li>
+      <li>進階三元素：驗收清單、指定解法、資料範例——讓指令從「大概對」變「精準對」。</li>
+      <li>驗收清單不只是給 AI 看的，也是幫你自己把需求想得更仔細的工具。</li>
+      <li>資料範例直接從試算表複製貼上即可，不需要整理格式。</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>
