@@ -1,18 +1,21 @@
 [
   {
     "day": 1,
+    "chapter": "LECTURE 1",
     "title": "Lecture 1",
     "status": "open",
     "url": "./lecture1/"
   },
   {
     "day": 2,
+    "chapter": "LECTURE 2",
     "title": "Lecture 2",
     "status": "open",
     "url": "./lecture2/"
   },
   {
     "day": 3,
+    "chapter": "LECTURE 3",
     "title": "Lecture 3",
     "status": "open",
     "url": "./lecture3/"

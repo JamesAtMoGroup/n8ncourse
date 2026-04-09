@@ -1,24 +1,28 @@
 [
   {
     "day": 1,
+    "chapter": "CH0-1",
     "title": "AI 寫程式、Vibe Coding 是什麼",
     "status": "open",
     "url": "./lecture1/"
   },
   {
     "day": 2,
+    "chapter": "CH0-2",
     "title": "工具這麼多，用這 3 個就夠了",
     "status": "open",
     "url": "./lecture2/"
   },
   {
     "day": 3,
+    "chapter": "CH0-3",
     "title": "寫程式的 7 大流程與 AI 溝通技巧",
     "status": "open",
     "url": "./lecture3/"
   },
   {
     "day": 4,
+    "chapter": "CH1-1",
     "title": "價值與風險：問題值得解決嗎？有無資安風險？",
     "status": "open",
     "url": "./lecture4/"
