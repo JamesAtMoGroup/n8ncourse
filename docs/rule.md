@@ -13,6 +13,11 @@
 - Lecture 頁面命名：lectureN/index.html，顯示：Lecture N
 - Hero 區塊只保留：badge、h1 標題、subtitle
 
+## Sync 強制清除規則（每章上傳時自動執行）
+- ❌ 強制移除 `.progress-bar-wrap` 及其 CSS（章節進度條不屬於標準版型）
+- ❌ 強制移除 `<body>` 後孤立的 `</div>`
+- ✅ 所有章節 navbar 統一使用注入的 `vc-nav`，不保留原始 navbar 樣式
+
 ## Repo 規則
 - 所有 lecture 頁面在 n8ncourse/ 子目錄
 - 根目錄 courses.json = 課程系列清單
