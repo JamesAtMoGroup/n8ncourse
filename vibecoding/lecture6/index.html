@@ -28,13 +28,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', s
 
 .container { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
 
-/* ── Progress Bar ── */
-.progress-bar-wrap { position: sticky; top: 52px; background: rgba(0,0,0,0.92); backdrop-filter: blur(12px); z-index: 100; height: 48px; padding: 0 32px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.progress-track { flex: 1; max-width: 400px; height: 3px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; }
-.progress-fill { height: 100%; width: 75%; background: var(--primary); border-radius: 999px; box-shadow: 0 0 8px rgba(124,255,178,0.5); }
-.progress-step { font-size: 12px; color: var(--text-muted); font-family: 'Space Mono', monospace; white-space: nowrap; }
-.progress-label-text { font-size: 12px; color: var(--text-muted); font-family: 'Space Mono', monospace; white-space: nowrap; }
-
 /* ── Hero ── */
 .hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); margin-bottom: 56px; animation: fadeUp 0.6s ease both; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
@@ -123,7 +116,6 @@ code { font-family: 'Space Mono', monospace; font-size: 0.85em; background: rgba
 
 @media (max-width: 600px) {
   
-  .progress-bar-wrap { padding: 0 16px; }
   .code-demo { grid-template-columns: 1fr; }
   .card, .quiz-box, .takeaway, .tip-box, .analogy { padding: 20px; }
   .symbol-card { padding: 20px; }
@@ -136,11 +128,7 @@ code { font-family: 'Space Mono', monospace; font-size: 0.85em; background: rgba
 <script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
 
 <!-- Sticky Progress Bar -->
-<div class="progress-bar-wrap">
-  <span class="progress-label-text">AI 寫程式入門課程</span>
-  <div class="progress-track">
-    <div class="progress-fill" style="width: 75%"></div>
-  </div>
+</div>
   <div class="progress-step">章節 1-3 / 4</div>
 </div>
 
