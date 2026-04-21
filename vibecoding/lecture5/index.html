@@ -28,17 +28,6 @@ body {
   font-size: 16px; line-height: 1.8; min-height: 100vh;
 }
 
-/* ── Sticky Progress Bar (pipeline spec) ── */
-.progress-bar-wrap {
-  position: sticky; top: 0;
-  background: rgba(10,10,10,0.92);
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  z-index: 100; padding: 14px 24px;
-  border-bottom: 1px solid rgba(124,255,194,0.14);
-}
-.progress-track { height: 3px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; }
-.progress-fill  { height: 100%; width: 50%; background: #7cffc2; border-radius: 99px; box-shadow: 0 0 8px rgba(124,255,194,0.5); }
-
 .container { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
 
 /* ── Hero ── */
@@ -172,7 +161,6 @@ h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
 .divider { height: 1px; background: var(--border); margin: 48px 0; }
 
 @media (max-width: 600px) {
-  .progress-bar-wrap { padding: 12px 16px; }
   .compare-wrap { grid-template-columns: 1fr; }
   .card, .quiz-box, .takeaway, .tip-box, .analogy { padding: 20px; }
   .container { padding-left: 16px; padding-right: 16px; }
@@ -187,8 +175,7 @@ h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
 <nav id='vc-nav'><a href='../'>← 返回課程選單</a><div id='vc-nav-right'><span id='vc-nav-user'></span><button id='vc-logout' onclick="localStorage.removeItem('aischool_user');window.location.href='../../login.html';">登出</button></div></nav><script>(function(){var u=JSON.parse(localStorage.getItem('aischool_user')||'null');if(u&&u.name)document.getElementById('vc-nav-user').textContent=u.name;})();</script>
 
 <!-- Sticky Progress Bar -->
-<div class="progress-bar-wrap">
-  <div class="progress-track"><div class="progress-fill"></div></div>
+</div>
 </div>
 
 <div class="container">
