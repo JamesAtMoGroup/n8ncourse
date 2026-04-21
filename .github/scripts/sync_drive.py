@@ -220,6 +220,10 @@ def inject_nav(html):
     html = re.sub(r"(</script>\n?)(<div|<header|<main|<section)", r"\1" + NAV_HTML + r"\2", html, count=1)
     if "id='vc-nav'" not in html and 'id="vc-nav"' not in html:
         html = re.sub(r"(<body[^>]*>)", r"\1\n" + NAV_HTML, html, count=1, flags=re.IGNORECASE)
+    # Remove orphaned </div> immediately after injected nav block
+    html = re.sub(r"(id='vc-nav'[^<]*(?:<[^>]+>[^<]*)*</nav>[^<]*<script>[^<]*</script>)\s*</div>", r"\1", html, count=1)
+    # Any sticky element with top:0 conflicts with vc-nav (52px tall) — push it below
+    html = re.sub(r"(position\s*:\s*sticky\s*;[^}]*top\s*:\s*)0(px)?(\s*;[^}]*z-index\s*:\s*(?!2\d\d))", r"\g<1>52px\3", html)
     return html
 
 
