@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>章節 1-3｜Markdown：AI 看得懂的特殊符號</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #7cffb2;
+  --primary-light: rgba(124,255,178,0.07);
+  --accent: #7cffb2;
+  --green: #7cffb2;
+  --yellow: #ffd166;
+  --bg: #000000;
+  --surface: #0d0d0d;
+  --surface2: #111111;
+  --text: #ffffff;
+  --text-muted: #888888;
+  --border: rgba(124,255,178,0.14);
+  --radius: 16px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', sans-serif; font-size: 16px; line-height: 1.8; min-height: 100vh; padding-top: 48px; }
+
+
+
+.container { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
+
+/* ── Progress Bar ── */
+.progress-bar-wrap { position: sticky; top: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(12px); z-index: 100; height: 48px; padding: 0 32px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.progress-track { flex: 1; max-width: 400px; height: 3px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; }
+.progress-fill { height: 100%; width: 75%; background: var(--primary); border-radius: 999px; box-shadow: 0 0 8px rgba(124,255,178,0.5); }
+.progress-step { font-size: 12px; color: var(--text-muted); font-family: 'Space Mono', monospace; white-space: nowrap; }
+.progress-label-text { font-size: 12px; color: var(--text-muted); font-family: 'Space Mono', monospace; white-space: nowrap; }
+
+/* ── Hero ── */
+.hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); margin-bottom: 56px; animation: fadeUp 0.6s ease both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+.hero-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.chapter-badge { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--primary); border: 1px solid var(--primary); padding: 4px 14px; border-radius: 99px; letter-spacing: 0.05em; text-shadow: 0 0 10px rgba(124,255,178,0.4); }
+.tag { font-size: 12px; padding: 4px 12px; border-radius: 99px; font-weight: 500; }
+.tag-beginner { background: rgba(124,255,178,0.1); color: var(--green); }
+.tag-time { background: rgba(255,209,102,0.1); color: var(--yellow); }
+h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 16px; }
+h1 em { font-style: normal; color: var(--primary); }
+.hero-sub { font-size: 17px; color: var(--text-muted); max-width: 540px; line-height: 1.7; }
+
+/* ── Section ── */
+.section { margin-bottom: 56px; animation: fadeUp 0.5s ease both; }
+.section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+.section-num { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--primary); background: rgba(124,255,178,0.08); border: 1px solid var(--border); padding: 5px 14px; border-radius: 99px; white-space: nowrap; letter-spacing: 0.05em; }
+h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+
+/* ── Card / Analogy / Tip / Quiz ── */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.card p { color: var(--text-muted); } .card p + p { margin-top: 12px; } .card strong { color: var(--text); }
+.analogy { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 var(--radius) var(--radius) 0; padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.analogy .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.analogy p { color: #c8ffe0; font-size: 15px; line-height: 1.75; } .analogy strong { color: #fff; }
+.tip-box { background: rgba(124,255,178,0.04); border: 1px solid rgba(124,255,178,0.2); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.tip-box .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.tip-box p { color: var(--text-muted); font-size: 15px; line-height: 1.75; } .tip-box strong { color: var(--text); }
+.quiz-box { border: 2px dashed rgba(255,209,102,0.35); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; background: rgba(255,209,102,0.03); animation: fadeUp 0.5s ease both; }
+.quiz-box .label { font-size: 12px; font-weight: 700; color: var(--yellow); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+.quiz-box p { color: var(--text-muted); font-size: 15px; line-height: 1.7; }
+
+/* ── Symbol cards ── */
+.symbol-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 20px; }
+.symbol-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 28px; animation: fadeUp 0.5s ease both; transition: border-color 0.2s; }
+.symbol-card:hover { border-color: rgba(124,255,178,0.35); }
+.symbol-header { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+.symbol-badge { font-family: 'Space Mono', monospace; font-size: 15px; font-weight: 700; color: var(--primary); background: rgba(124,255,178,0.1); border: 1px solid rgba(124,255,178,0.25); padding: 4px 14px; border-radius: 8px; white-space: nowrap; letter-spacing: 0.02em; }
+.symbol-name { font-size: 16px; font-weight: 700; color: var(--text); }
+.symbol-desc { font-size: 14px; color: var(--text-muted); line-height: 1.75; margin-bottom: 14px; }
+.symbol-desc strong { color: var(--text); }
+
+/* ── Code demo ── */
+.code-demo { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.code-pane { border-radius: 10px; overflow: hidden; }
+.code-pane-label { font-size: 10px; font-family: 'Space Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 14px; font-weight: 700; }
+.code-pane.input .code-pane-label { background: rgba(124,255,178,0.1); color: var(--primary); }
+.code-pane.output .code-pane-label { background: rgba(255,209,102,0.1); color: var(--yellow); }
+.code-pane-body { padding: 12px 14px; font-family: 'Space Mono', monospace; font-size: 12px; line-height: 1.8; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-top: none; }
+.code-pane.input .code-pane-body { color: var(--primary); }
+.code-pane.output .code-pane-body { color: var(--text-muted); }
+.code-pane.output .code-pane-body h-demo { display: block; font-family: 'Noto Sans TC', sans-serif; font-weight: 900; font-size: 14px; color: var(--text); }
+.code-pane.output .code-pane-body h2-demo { display: block; font-family: 'Noto Sans TC', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); }
+.code-pane.output .code-pane-body li-demo { display: block; padding-left: 16px; position: relative; }
+.code-pane.output .code-pane-body li-demo::before { content: '•'; position: absolute; left: 4px; }
+.code-pane.output .code-pane-body oli-demo { display: block; padding-left: 0; }
+.code-pane.output .code-pane-body code-demo { display: block; background: rgba(124,255,178,0.07); border: 1px solid rgba(124,255,178,0.15); border-radius: 6px; padding: 8px 12px; font-family: 'Space Mono', monospace; font-size: 11px; color: var(--primary); margin: 4px 0; }
+.code-pane.output .code-pane-body quote-demo { display: block; border-left: 3px solid var(--primary); padding-left: 12px; color: var(--text-muted); font-style: italic; }
+.code-pane.output .code-pane-body hr-demo { display: block; height: 1px; background: var(--border); margin: 8px 0; }
+
+/* ── Combo card ── */
+.combo-card { background: rgba(124,255,178,0.04); border: 1px solid rgba(124,255,178,0.2); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.combo-title { font-size: 15px; font-weight: 700; color: var(--green); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.combo-example { font-family: 'Space Mono', monospace; font-size: 13px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 16px 18px; color: var(--text-muted); line-height: 2; }
+.combo-example .sym-placeholder { color: var(--primary); }
+.combo-example .sym-yaml { color: var(--yellow); }
+.combo-example .sym-xml { color: #7cd4ff; }
+
+/* ── Tool card ── */
+.tool-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; display: flex; align-items: flex-start; gap: 18px; }
+.tool-icon { font-size: 32px; flex-shrink: 0; }
+.tool-body {}
+.tool-name { font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+.tool-desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+.tool-desc strong { color: var(--text); }
+
+/* ── Takeaway ── */
+.takeaway { background: linear-gradient(135deg, rgba(124,255,178,0.08), rgba(0,0,0,0)); border: 1px solid rgba(124,255,178,0.25); border-radius: var(--radius); padding: 36px; margin-top: 48px; animation: fadeUp 0.5s ease both; }
+.takeaway-title { font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.takeaway-list { list-style: none; display: flex; flex-direction: column; gap: 12px; counter-reset: li; }
+.takeaway-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; color: var(--text); line-height: 1.6; counter-increment: li; }
+.takeaway-list li::before { content: counter(li); background: var(--primary); color: #000; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+
+code { font-family: 'Space Mono', monospace; font-size: 0.85em; background: rgba(124,255,178,0.1); color: var(--primary); padding: 2px 7px; border-radius: 5px; }
+.highlight { color: var(--primary); font-weight: 700; }
+.divider { height: 1px; background: var(--border); margin: 48px 0; }
+
+@media (max-width: 600px) {
+  
+  .progress-bar-wrap { padding: 0 16px; }
+  .code-demo { grid-template-columns: 1fr; }
+  .card, .quiz-box, .takeaway, .tip-box, .analogy { padding: 20px; }
+  .symbol-card { padding: 20px; }
+  .container { padding-left: 16px; padding-right: 16px; }
+}
+</style>
+<style id='vc-nav-css'>#vc-nav{position:sticky;top:0;z-index:200;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border,rgba(255,255,255,0.1));}#vc-nav a{font-size:14px;font-weight:500;color:#888;text-decoration:none;transition:color .15s;}#vc-nav a:hover{color:#fff;}#vc-nav-right{display:flex;align-items:center;gap:10px;}#vc-nav-user{font-size:13px;color:#888;}#vc-logout{font-size:13px;font-weight:600;color:#666;background:rgba(255,255,255,0.04);border:1px solid var(--border,rgba(255,255,255,0.1));border-radius:8px;padding:4px 12px;cursor:pointer;font-family:inherit;}</style></head>
+<body>
+<nav id='vc-nav'><a href='../'>← 返回課程選單</a><div id='vc-nav-right'><span id='vc-nav-user'></span><button id='vc-logout' onclick="localStorage.removeItem('aischool_user');window.location.href='../../login.html';">登出</button></div></nav><script>(function(){var u=JSON.parse(localStorage.getItem('aischool_user')||'null');if(u&&u.name)document.getElementById('vc-nav-user').textContent=u.name;})();</script>
+<script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
+
+</div>
+
+<!-- Sticky Progress Bar -->
+<div class="progress-bar-wrap">
+  <span class="progress-label-text">AI 寫程式入門課程</span>
+  <div class="progress-track">
+    <div class="progress-fill" style="width: 75%"></div>
+  </div>
+  <div class="progress-step">章節 1-3 / 4</div>
+</div>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-meta">
+      <span class="chapter-badge">CH 1-3</span>
+      <span class="tag tag-beginner">✦ SDLC 第二步</span>
+      <span class="tag tag-time">⏱ 約 10 分鐘</span>
+    </div>
+    <h1>Markdown：<br><em>AI 看得懂的特殊符號</em></h1>
+    <p class="hero-sub">學會這些符號，你就能用更少的字，讓 AI 更精準地理解你的意思。不需要死記，用幾次就自然記住了。</p>
+  </div>
+
+  <!-- Section 1: 什麼是 Markdown -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>Markdown 是什麼？為什麼要學？</h2>
+    </div>
+
+    <div class="card">
+      <p>
+        Markdown 是一種格式語言——用<strong>特定符號表示文字的結構和意義</strong>，例如標題、清單、程式碼。AI 已完整學會這套語言，<strong>在指令裡用 Markdown，AI 讀得更快、理解得更準。</strong>
+      </p>
+    </div>
+
+    <div class="analogy">
+      <div class="label">💡 一句話理解</div>
+      <p>
+        就像中文的標點符號——不用也能看懂，但加上了，閱讀效率和理解準確度都大幅提升。<strong>Markdown 對 AI 的作用，就是這樣。</strong>
+      </p>
+    </div>
+
+    <div class="card">
+      <p>
+        不要被「格式語言」嚇到。Markdown 就是幾個你鍵盤上本來就有的符號——<code>#</code>、<code>-</code>、<code>```</code>，被大家約定好了特定意義，全世界都這樣用。
+      </p>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-icon">🛠️</div>
+      <div class="tool-body">
+        <div class="tool-name"><a href="https://markdownlivepreview.com/" target="_blank" style="color: var(--primary); text-decoration: none;">練習工具：Markdown Live Preview ↗</a></div>
+        <div class="tool-desc">
+          提供<strong>即時預覽</strong>——左邊輸入語法，右邊同步顯示排版效果，完全免費、免安裝。把上個單元的提示詞貼進去，就能直接看到各符號的效果。進入後全選刪掉預設文字，從空白開始練習。
+        </div>
+      </div>
+    </div>
+
+  <!-- 實際示範：Markdown Live Preview 操作影片 -->
+  <div style="margin-bottom: 20px;">
+    <div style="font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; font-family: 'Space Mono', monospace;">▶ 實際操作示範（7 分 28 秒）</div>
+    <video controls style="width: 100%; border-radius: 12px; border: 1px solid var(--border); background: #000;">
+      <source src="./assets/1-3_3.1-6-normalized.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 2: Markdown 符號 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>常用的 Markdown 符號</h2>
+    </div>
+
+    <div class="symbol-list">
+
+      <!-- # 標題 -->
+      <div class="symbol-card">
+        <div class="symbol-header">
+          <span class="symbol-badge"># ## ###</span>
+          <span class="symbol-name">標題層級</span>
+        </div>
+        <div class="symbol-desc">
+          井字號代表標題。<strong>一個 <code>#</code> 是最大標題，兩個是次標題，三個是小標題。</strong>用來讓指令裡的段落層次更清楚。
+        </div>
+        <div class="code-demo">
+          <div class="code-pane input">
+            <div class="code-pane-label">你輸入</div>
+            <div class="code-pane-body"># 大標題<br>## 次標題<br>### 小標題</div>
+          </div>
+          <div class="code-pane output">
+            <div class="code-pane-label">AI 理解為</div>
+            <div class="code-pane-body"><h-demo>大標題</h-demo><h2-demo>次標題</h2-demo><span style="font-size:12px;font-weight:600;color:var(--text-muted);">小標題</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 清單 -->
+      <div class="symbol-card">
+        <div class="symbol-header">
+          <span class="symbol-badge">- * 1.</span>
+          <span class="symbol-name">清單</span>
+        </div>
+        <div class="symbol-desc">
+          <code>-</code> 或 <code>*</code> 開頭是無序清單；<code>1.</code>、<code>2.</code> 是有序清單。<strong>符號或數字後面必須加空格，且要用英文半形符號</strong>——中文符號 AI 可能無法解讀。
+        </div>
+        <div class="code-demo">
+          <div class="code-pane input">
+            <div class="code-pane-label">你輸入</div>
+            <div class="code-pane-body">- 項目 A<br>- 項目 B<br><br>1. 第一步<br>2. 第二步</div>
+          </div>
+          <div class="code-pane output">
+            <div class="code-pane-label">AI 理解為</div>
+            <div class="code-pane-body"><li-demo>項目 A</li-demo><li-demo>項目 B</li-demo><br><oli-demo>1. 第一步</oli-demo><oli-demo>2. 第二步</oli-demo></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 程式碼區塊 -->
+      <div class="symbol-card">
+        <div class="symbol-header">
+          <span class="symbol-badge">``` ```</span>
+          <span class="symbol-name">程式碼 ／ 資料區塊</span>
+        </div>
+        <div class="symbol-desc">
+          三個倒引號（<code>```</code>）成對包住一段內容，告訴 AI：<strong>這是程式碼、資料或錯誤訊息，不是指令。</strong>貼程式碼或錯誤訊息給 AI 時，都用這個包起來。
+        </div>
+        <div class="code-demo">
+          <div class="code-pane input">
+            <div class="code-pane-label">你輸入</div>
+            <div class="code-pane-body">```<br>這裡是程式碼<br>或錯誤訊息<br>```</div>
+          </div>
+          <div class="code-pane output">
+            <div class="code-pane-label">AI 理解為</div>
+            <div class="code-pane-body"><code-demo>這裡是程式碼<br>或錯誤訊息</code-demo></div>
+          </div>
+        </div>
+        <div style="margin-top:12px;font-size:13px;color:var(--text-muted);">
+          💡 貼錯誤訊息時用 <code>```</code> 包起來，AI 就知道這是要修正的內容。
+        </div>
+      </div>
+
+      <!-- 引用 -->
+      <div class="symbol-card">
+        <div class="symbol-header">
+          <span class="symbol-badge">&gt;</span>
+          <span class="symbol-name">引用</span>
+        </div>
+        <div class="symbol-desc">
+          <code>&gt;</code>（大於號）開頭表示引用。<strong>標示「這段是貼進來的原始內容」</strong>，和指令做區隔。
+        </div>
+        <div class="code-demo">
+          <div class="code-pane input">
+            <div class="code-pane-label">你輸入</div>
+            <div class="code-pane-body">&gt; 這是錯誤訊息<br>&gt; 第二行<br><br>請幫我修正</div>
+          </div>
+          <div class="code-pane output">
+            <div class="code-pane-label">AI 理解為</div>
+            <div class="code-pane-body"><quote-demo>這是錯誤訊息<br>第二行</quote-demo><br>請幫我修正</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 分隔線 -->
+      <div class="symbol-card">
+        <div class="symbol-header">
+          <span class="symbol-badge">---</span>
+          <span class="symbol-name">分隔線</span>
+        </div>
+        <div class="symbol-desc">
+          三個減號（<code>---</code>）是分隔線。<strong>區隔指令與要被處理的資料</strong>，比倒引號好打，效果相似。
+        </div>
+        <div class="code-demo">
+          <div class="code-pane input">
+            <div class="code-pane-label">你輸入</div>
+            <div class="code-pane-body">幫我修正以下程式碼：<br>---<br>function hello() {<br>&nbsp;&nbsp;consle.log("hi")<br>}</div>
+          </div>
+          <div class="code-pane output">
+            <div class="code-pane-label">AI 理解為</div>
+            <div class="code-pane-body">幫我修正以下程式碼：<hr-demo></hr-demo><span style="font-family:'Space Mono';font-size:11px;">（以下是要被處理的程式碼）</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 3: Placeholder & XML & YAML -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>工程師慣例符號</h2>
+    </div>
+
+    <div class="card">
+      <p>除了 Markdown，還有幾個來自軟體工程慣例的符號，AI 也完全看得懂。</p>
+    </div>
+
+    <div class="symbol-list">
+
+      <!-- Placeholder -->
+      <div class="symbol-card">
+        <div class="symbol-header">
+          <span class="symbol-badge">&lt;變數&gt; &nbsp; {變數}</span>
+          <span class="symbol-name">Placeholder（佔位符）</span>
+        </div>
+        <div class="symbol-desc">
+          角括號 <code>&lt; &gt;</code> 或花括號 <code>{ }</code> 包住的內容，代表<strong>「這個位置之後會被實際的值取代」</strong>。AI 看到就知道這是待填入的變數。
+        </div>
+        <div class="code-demo">
+          <div class="code-pane input">
+            <div class="code-pane-label">你輸入</div>
+            <div class="code-pane-body">活動標題：&lt;活動名稱&gt;<br>寄件人：{負責人姓名}</div>
+          </div>
+          <div class="code-pane output">
+            <div class="code-pane-label">AI 理解為</div>
+            <div class="code-pane-body">「活動名稱」和「負責人姓名」是待填入的變數，程式執行時從資料來源取值代入</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- XML -->
+      <div class="symbol-card">
+        <div class="symbol-header">
+          <span class="symbol-badge">&lt;標籤&gt; &lt;/標籤&gt;</span>
+          <span class="symbol-name">XML 標籤</span>
+        </div>
+        <div class="symbol-desc">
+          成對的標籤標記一段內容，<strong>告訴 AI 這段的性質是什麼</strong>。結尾標籤比開頭多一個斜線 <code>/</code>。角括號和 Placeholder 長得一樣，但 AI 會根據上下文判斷。
+        </div>
+        <div class="code-demo">
+          <div class="code-pane input">
+            <div class="code-pane-label">你輸入</div>
+            <div class="code-pane-body">&lt;信件內容&gt;<br>親愛的 {收件人}，<br>感謝您報名本次活動...<br>&lt;/信件內容&gt;</div>
+          </div>
+          <div class="code-pane output">
+            <div class="code-pane-label">AI 理解為</div>
+            <div class="code-pane-body">標籤之間的文字是「信件內容」的樣板，不是指令本身</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- YAML -->
+      <div class="symbol-card">
+        <div class="symbol-header">
+          <span class="symbol-badge">鍵: 值</span>
+          <span class="symbol-name">YAML 鍵值對</span>
+        </div>
+        <div class="symbol-desc">
+          冒號 <code>:</code> 表示<strong>「名稱對應內容」</strong>的關係，左邊欄位名、右邊值。<strong>冒號後面一定要有空格</strong>，AI 才能正確解析。
+        </div>
+        <div class="code-demo">
+          <div class="code-pane input">
+            <div class="code-pane-label">你輸入</div>
+            <div class="code-pane-body">信件主旨: 活動報到提醒<br>收件人: {姓名}<br>活動日期: 2024/04/20</div>
+          </div>
+          <div class="code-pane output">
+            <div class="code-pane-label">AI 理解為</div>
+            <div class="code-pane-body">三個欄位各自對應的值，結構清晰，AI 能精準區分每個欄位</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 4: 組合技 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>組合技：混搭使用效果最好</h2>
+    </div>
+
+    <div class="card">
+      <p>
+        跟以前寫程式不同，你不需要每個語法都精確無誤。<strong>把不同的符號混在一起用，只要上下文清楚，AI 就能正確理解。</strong>
+      </p>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-title">✦ 組合技範例：YAML ＋ XML ＋ Placeholder</div>
+      <div class="combo-example">
+        <span class="sym-yaml">信件主旨: </span>活動報到提醒<br>
+        <br>
+        <span class="sym-xml">&lt;信件內容樣板&gt;</span><br>
+        親愛的 <span class="sym-placeholder">{姓名}</span>，感謝您報名 <span class="sym-placeholder">&lt;活動名稱&gt;</span>...<br>
+        <span class="sym-xml">&lt;/信件內容樣板&gt;</span>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="label">🔑 怎麼解讀這個組合技</div>
+      <p>
+        <strong>YAML 冒號</strong>：標示欄位名稱與對應值。<br>
+        <strong>Placeholder</strong>：標記哪些地方是待填入的動態變數。<br>
+        <strong>XML 標籤</strong>：圈出「樣板內容」，和指令做區隔。<br><br>
+        三個符號各司其職，組合起來用很少的字就能說清楚複雜需求。
+      </p>
+    </div>
+
+    <div class="analogy">
+      <div class="label">💡 一句話理解</div>
+      <p>
+        這些符號就像標點符號——不用也能溝通，但<strong>用了之後 AI 讀懂得更快更準</strong>。不需要完美，大致正確就能理解。
+      </p>
+    </div>
+
+    <div class="quiz-box">
+      <div class="label">🤔 想一想</div>
+      <p>
+        回到上一章的萬用句型，試著加入這章的符號：用 <code>#</code> 分段、<code>```</code> 包資料、<code>-</code> 列清單。重寫一遍，感受一下指令是不是清楚多了。
+      </p>
+    </div>
+  </div>
+
+  <!-- Takeaway -->
+  <div class="takeaway">
+    <div class="takeaway-title">✦ 本章重點整理</div>
+    <ul class="takeaway-list">
+      <li>Markdown 是 AI 完全看得懂的格式語言，用了能提升理解準確度。</li>
+      <li><code>#</code> 標題、<code>-</code> 清單、<code>```</code> 程式碼區塊、<code>&gt;</code> 引用、<code>---</code> 分隔線——五個最常用的 Markdown 符號。</li>
+      <li><code>&lt;變數&gt;</code> / <code>{變數}</code> 是 Placeholder，告訴 AI「這裡之後會被取代」。</li>
+      <li>XML 標籤 <code>&lt;名稱&gt;..&lt;/名稱&gt;</code> 用來圈出特定性質的內容區塊。</li>
+      <li>YAML 冒號 <code>鍵: 值</code> 是最快速標示欄位對應關係的方式。</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>
