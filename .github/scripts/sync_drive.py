@@ -189,7 +189,7 @@ def list_folders(parent_id):
 def list_files(parent_id):
     resp = service.files().list(
         q=f"'{parent_id}' in parents and trashed=false",
-        fields="files(id,name,mimeType)", **SD
+        fields="files(id,name,mimeType,size)", **SD
     ).execute()
     return resp.get("files", [])
 
@@ -361,16 +361,33 @@ for course_folder in course_folders:
             video_note += " + vtt"
 
         # Assets subfolder
+        VIDEO_EXTS = {".mp4", ".mov", ".webm", ".avi", ".mkv"}
+        ASSET_SIZE_LIMIT = 20 * 1024 * 1024  # 20MB — larger videos → Drive iframe
         assets_folder = next((f for f in files if f["mimeType"] == "application/vnd.google-apps.folder"
                                and f["name"] == "assets"), None)
         if assets_folder:
             assets_dir = f"{lecture_dir}/assets"
             os.makedirs(assets_dir, exist_ok=True)
             asset_files = list_files(assets_folder["id"])
+            downloaded = 0
             for af in asset_files:
-                with open(f"{assets_dir}/{af['name']}", "wb") as fh:
-                    fh.write(download_bytes(af["id"]))
-            video_note += f" + {len(asset_files)} assets"
+                ext = os.path.splitext(af["name"])[1].lower()
+                size = int(af.get("size", 0))
+                if ext in VIDEO_EXTS and size > ASSET_SIZE_LIMIT:
+                    # Replace reference in HTML with Drive iframe instead of downloading
+                    drive_url = f"https://drive.google.com/file/d/{af['id']}/preview"
+                    iframe = (f'<iframe src="{drive_url}" width="100%" '
+                              f'style="aspect-ratio:16/9;border:none;border-radius:8px;" '
+                              f'allow="autoplay" allowfullscreen></iframe>')
+                    html = re.sub(
+                        rf'<video[^>]*>\s*<source[^>]*{re.escape(af["name"])}[^>]*>\s*(?:<source[^>]*/>\s*)*</video>',
+                        iframe, html, flags=re.IGNORECASE | re.DOTALL)
+                    print(f"    ↳ {af['name']} ({size//1024//1024}MB) → Drive iframe (skipped download)")
+                else:
+                    with open(f"{assets_dir}/{af['name']}", "wb") as fh:
+                        fh.write(download_bytes(af["id"]))
+                    downloaded += 1
+            video_note += f" + {downloaded} assets"
 
         print(f"  [{idx}] {folder['name'][:40]} → lecture{idx}/ ({video_note})")
         lecture_manifest[folder["id"]] = {"lecture": idx, "synced_at": TODAY}
