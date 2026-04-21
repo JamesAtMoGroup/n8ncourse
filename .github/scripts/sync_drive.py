@@ -222,6 +222,8 @@ def inject_nav(html):
         html = re.sub(r"(<body[^>]*>)", r"\1\n" + NAV_HTML, html, count=1, flags=re.IGNORECASE)
     # Remove orphaned </div> immediately after injected nav block
     html = re.sub(r"(id='vc-nav'[^<]*(?:<[^>]+>[^<]*)*</nav>[^<]*<script>[^<]*</script>)\s*</div>", r"\1", html, count=1)
+    # Remove body padding-top added for progress bar
+    html = re.sub(r'(body\s*\{[^}]*)\bpadding-top\s*:\s*\d+px\s*;?\s*', r'\1', html)
     # Strip progress-bar-wrap CSS and HTML — not part of the standard lecture layout
     html = re.sub(r'/\*[^*]*[Pp]rogress[^*]*\*/\s*', '', html)
     html = re.sub(r'\.progress[-\w]*\s*\{[^}]*\}\s*', '', html)
