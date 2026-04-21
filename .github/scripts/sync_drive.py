@@ -224,12 +224,9 @@ def inject_nav(html):
     html = re.sub(r"(id='vc-nav'[^<]*(?:<[^>]+>[^<]*)*</nav>[^<]*<script>[^<]*</script>)\s*</div>", r"\1", html, count=1)
     # Strip progress-bar-wrap CSS and HTML — not part of the standard lecture layout
     html = re.sub(r'/\*[^*]*[Pp]rogress[^*]*\*/\s*', '', html)
-    html = re.sub(r'\.progress-bar-wrap\s*\{[^}]*\}\s*', '', html)
-    html = re.sub(r'\.progress-track\s*\{[^}]*\}\s*', '', html)
-    html = re.sub(r'\.progress-fill\s*\{[^}]*\}\s*', '', html)
-    html = re.sub(r'\.progress-label[^{]*\{[^}]*\}\s*', '', html)
-    html = re.sub(r'\.progress-step\s*\{[^}]*\}\s*', '', html)
-    html = re.sub(r'<div\s+class=["\']progress-bar-wrap["\'][^>]*>.*?</div>\s*', '', html, flags=re.DOTALL)
+    html = re.sub(r'\.progress[-\w]*\s*\{[^}]*\}\s*', '', html)
+    # Remove the entire progress block including comment, nested divs, and any orphaned closing tags
+    html = re.sub(r'<!--[^>]*[Pp]rogress[^>]*-->\s*(?:</div>\s*)?(?:<div[^>]*>.*?</div>\s*)*(?:</div>\s*)?', '', html, flags=re.DOTALL)
     return html
 
 
