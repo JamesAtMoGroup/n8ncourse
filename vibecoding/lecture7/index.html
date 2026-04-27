@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>章節 1-4｜流程圖、資料流圖：軟體工程最重要的 2 種圖</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #7cffb2;
+  --primary-light: rgba(124,255,178,0.07);
+  --accent: #7cffb2;
+  --green: #7cffb2;
+  --yellow: #ffd166;
+  --blue: #7cd4ff;
+  --bg: #000000;
+  --surface: #0d0d0d;
+  --surface2: #111111;
+  --text: #ffffff;
+  --text-muted: #888888;
+  --border: rgba(124,255,178,0.14);
+  --radius: 16px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', sans-serif; font-size: 16px; line-height: 1.8; min-height: 100vh; }
+
+.container { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
+
+/* ── Hero ── */
+.hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); margin-bottom: 56px; animation: fadeUp 0.6s ease both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+.hero-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.chapter-badge { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--primary); border: 1px solid var(--primary); padding: 4px 14px; border-radius: 99px; letter-spacing: 0.05em; text-shadow: 0 0 10px rgba(124,255,178,0.4); }
+.tag { font-size: 12px; padding: 4px 12px; border-radius: 99px; font-weight: 500; }
+.tag-beginner { background: rgba(124,255,178,0.1); color: var(--green); }
+.tag-time { background: rgba(255,209,102,0.1); color: var(--yellow); }
+h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 16px; }
+h1 em { font-style: normal; color: var(--primary); }
+.hero-sub { font-size: 17px; color: var(--text-muted); max-width: 540px; line-height: 1.7; }
+
+/* ── Section ── */
+.section { margin-bottom: 56px; animation: fadeUp 0.5s ease both; }
+.section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+.section-num { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--primary); background: rgba(124,255,178,0.08); border: 1px solid var(--border); padding: 5px 14px; border-radius: 99px; white-space: nowrap; letter-spacing: 0.05em; }
+h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+
+/* ── Card / Analogy / Tip ── */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.card p { color: var(--text-muted); } .card p + p { margin-top: 12px; } .card strong { color: var(--text); }
+.analogy { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 var(--radius) var(--radius) 0; padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.analogy .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.analogy p { color: #c8ffe0; font-size: 15px; line-height: 1.75; } .analogy strong { color: #fff; }
+.tip-box { background: rgba(124,255,178,0.04); border: 1px solid rgba(124,255,178,0.2); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.tip-box .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.tip-box p { color: var(--text-muted); font-size: 15px; line-height: 1.75; } .tip-box strong { color: var(--text); }
+.tip-box-yellow { background: rgba(255,209,102,0.04); border: 1px solid rgba(255,209,102,0.2); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.tip-box-yellow .label { font-size: 12px; font-weight: 700; color: var(--yellow); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.tip-box-yellow p { color: #ffe8a0; font-size: 15px; line-height: 1.75; } .tip-box-yellow strong { color: #fff; }
+
+/* ── Concept cards ── */
+.concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.concept-card { border-radius: var(--radius); padding: 28px 24px; text-align: center; }
+.concept-card.green { background: rgba(124,255,178,0.07); border: 2px solid rgba(124,255,178,0.3); }
+.concept-card.yellow { background: rgba(255,209,102,0.06); border: 1px solid rgba(255,209,102,0.25); }
+.concept-card .icon { font-size: 40px; margin-bottom: 12px; }
+.concept-card .title { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+.concept-card.green .title { color: var(--primary); }
+.concept-card.yellow .title { color: var(--yellow); }
+.concept-card .subtitle { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px; }
+.concept-card .desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+/* ── Shape legend ── */
+.shape-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.shape-item { display: flex; align-items: center; gap: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 24px; }
+.shape-preview { width: 64px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+.shape-info .name { font-size: 16px; font-weight: 700; }
+.shape-info .desc { font-size: 13px; color: var(--text-muted); }
+
+/* ── Flowchart diagram ── */
+.flowchart { display: flex; align-items: center; gap: 0; flex-wrap: wrap; gap: 0; overflow-x: auto; padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 20px; }
+.fc-node { padding: 10px 18px; font-size: 14px; font-weight: 700; text-align: center; }
+.fc-node.terminal { background: rgba(124,255,178,0.1); border: 1.5px solid rgba(124,255,178,0.4); border-radius: 99px; color: var(--primary); }
+.fc-node.process { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: var(--text); }
+.fc-node.diamond { background: rgba(255,209,102,0.08); border: 1.5px solid rgba(255,209,102,0.4); border-radius: 8px; color: var(--yellow); transform: rotate(0deg); }
+.fc-arrow { display: flex; align-items: center; flex-shrink: 0; padding: 0 4px; }
+.fc-arrow-line { width: 20px; height: 2px; background: rgba(124,255,178,0.35); }
+.fc-arrow-head { width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 8px solid rgba(124,255,178,0.4); }
+
+/* ── DFD diagram ── */
+.dfd-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; overflow-x: auto; }
+.dfd-label { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 16px; }
+
+/* ── Three format cards ── */
+.format-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.format-card { border-radius: 12px; padding: 18px 20px; }
+.format-card .label { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+.format-card .field { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--text-muted); border-left: 2px solid; padding: 4px 10px; margin-bottom: 4px; }
+.format-card.fc1 { background: rgba(124,255,178,0.06); border: 1px solid rgba(124,255,178,0.3); }
+.format-card.fc1 .label { color: var(--primary); }
+.format-card.fc1 .field { border-color: rgba(124,255,178,0.25); }
+.format-card.fc2 { background: rgba(255,209,102,0.06); border: 1px solid rgba(255,209,102,0.3); }
+.format-card.fc2 .label { color: var(--yellow); }
+.format-card.fc2 .field { border-color: rgba(255,209,102,0.25); }
+.format-card.fc3 { background: rgba(124,212,255,0.06); border: 1px solid rgba(124,212,255,0.3); }
+.format-card.fc3 .label { color: var(--blue); }
+.format-card.fc3 .field { border-color: rgba(124,212,255,0.25); }
+
+/* ── Benefit cards ── */
+.benefit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.benefit-card { border-radius: 12px; padding: 18px 20px; }
+.benefit-card .num { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+.benefit-card .title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.benefit-card .desc { font-size: 13px; color: var(--text-muted); }
+
+/* ── Tip numbered list ── */
+.tip-numbered { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.tip-item { display: flex; gap: 16px; align-items: flex-start; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px; border-left: 4px solid; }
+.tip-item .num { font-family: 'Space Mono', monospace; font-size: 20px; font-weight: 800; flex-shrink: 0; line-height: 1; padding-top: 2px; }
+.tip-item .body .title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.tip-item .body .desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+/* ── Mermaid card ── */
+.mermaid-demo { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; margin-bottom: 20px; }
+.code-block { background: rgba(0,0,0,0.7); border: 1px solid rgba(124,255,178,0.2); border-radius: 12px; padding: 20px 22px; }
+.code-block .block-label { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+.code-block pre { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--primary); line-height: 2; }
+.code-arrow { font-size: 24px; color: var(--primary); opacity: 0.5; text-align: center; }
+.preview-block { background: rgba(255,255,255,0.96); border-radius: 12px; padding: 20px 22px; }
+.preview-block .block-label { font-family: 'Space Mono', monospace; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+.preview-node { background: #f0f0f0; border: 1px solid #ccc; border-radius: 6px; padding: 6px 14px; font-family: 'Noto Sans TC', sans-serif; font-size: 14px; font-weight: 700; color: #000; display: inline-block; margin-bottom: 6px; }
+.preview-connector { width: 2px; height: 14px; background: #aaa; margin: 0 0 6px 20px; }
+
+/* ── Tool card ── */
+.tool-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.tool-name { font-size: 17px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+.tool-desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+.tool-desc strong { color: var(--text); }
+
+/* ── Takeaway ── */
+.takeaway { background: linear-gradient(135deg, rgba(124,255,178,0.08), rgba(0,0,0,0)); border: 1px solid rgba(124,255,178,0.25); border-radius: var(--radius); padding: 36px; margin-top: 48px; animation: fadeUp 0.5s ease both; }
+.takeaway-title { font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.takeaway-list { list-style: none; display: flex; flex-direction: column; gap: 12px; counter-reset: li; }
+.takeaway-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; color: var(--text); line-height: 1.6; counter-increment: li; }
+.takeaway-list li::before { content: counter(li); background: var(--primary); color: #000; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+
+code { font-family: 'Space Mono', monospace; font-size: 0.85em; background: rgba(124,255,178,0.1); color: var(--primary); padding: 2px 7px; border-radius: 5px; }
+.highlight { color: var(--primary); font-weight: 700; }
+.highlight-y { color: var(--yellow); font-weight: 700; }
+.divider { height: 1px; background: var(--border); margin: 48px 0; }
+
+@media (max-width: 600px) {
+  .concept-grid, .format-grid, .benefit-grid { grid-template-columns: 1fr; }
+  .mermaid-demo { grid-template-columns: 1fr; }
+  .code-arrow { display: none; }
+  .card, .tip-box, .analogy { padding: 20px; }
+  .container { padding-left: 16px; padding-right: 16px; }
+}
+</style>
+<style id='vc-nav-css'>#vc-nav{position:sticky;top:0;z-index:200;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border,rgba(255,255,255,0.1));}#vc-nav a{font-size:14px;font-weight:500;color:#888;text-decoration:none;transition:color .15s;}#vc-nav a:hover{color:#fff;}#vc-nav-right{display:flex;align-items:center;gap:10px;}#vc-nav-user{font-size:13px;color:#888;}#vc-logout{font-size:13px;font-weight:600;color:#666;background:rgba(255,255,255,0.04);border:1px solid var(--border,rgba(255,255,255,0.1));border-radius:8px;padding:4px 12px;cursor:pointer;font-family:inherit;}</style></head>
+<body>
+<nav id='vc-nav'><a href='../'>← 返回課程選單</a><div id='vc-nav-right'><span id='vc-nav-user'></span><button id='vc-logout' onclick="localStorage.removeItem('aischool_user');window.location.href='../../login.html';">登出</button></div></nav><script>(function(){var u=JSON.parse(localStorage.getItem('aischool_user')||'null');if(u&&u.name)document.getElementById('vc-nav-user').textContent=u.name;})();</script>
+<script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
+
+<div class="progress-step">章節 1-4 / 4</div>
+</div>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-meta">
+      <span class="chapter-badge">CH 1-4</span>
+      <span class="tag tag-beginner">✦ SDLC 第二步</span>
+      <span class="tag tag-time">⏱ 約 14 分鐘</span>
+    </div>
+    <h1>流程圖、資料流圖：<br><em>軟體工程最重要的 2 種圖</em></h1>
+    <p class="hero-sub">把複雜的需求用圖表呈現，AI 能更清楚地理解你想要做什麼。學會這兩種圖，讓 AI 真正讀懂你的需求。</p>
+  </div>
+
+  <!-- Section 01: 兩種圖的差異 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>兩種圖的核心差異</h2>
+    </div>
+
+    <div class="card">
+      <p>這兩種圖解決了程式最重要的兩個問題：<strong>流程</strong>和<strong>資料</strong>。選對圖，AI 就能精準理解你的需求。</p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card green">
+        <div class="icon">→</div>
+        <div class="title">流程圖</div>
+        <div class="subtitle">以步驟為主角</div>
+        <div class="desc">說明這件事情的流程長什麼樣子，每個步驟按順序排列</div>
+      </div>
+      <div class="concept-card yellow">
+        <div class="icon">⟳</div>
+        <div class="title">資料流圖</div>
+        <div class="subtitle">以資料為主角</div>
+        <div class="desc">說明資料有哪些格式，以及如何被加工、轉換、最後輸出</div>
+      </div>
+    </div>
+
+    <div class="analogy">
+      <div class="label">💡 一句話記住</div>
+      <p><strong>流程圖 = 說步驟、資料流圖 = 說資料形態。</strong>這兩種圖對應程式最重要的兩件事：流程 + 資料。</p>
+    </div>
+  </div>
+
+  <!-- Section 02: 流程圖元素 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>流程圖的基本元素</h2>
+    </div>
+
+    <div class="card">
+      <p>流程圖有幾個<strong>重要的圖形符號</strong>——不同形狀代表不同意義。不需要死記，看幾次就熟了。</p>
+    </div>
+
+    <div class="shape-list">
+      <div class="shape-item">
+        <div class="shape-preview">
+          <div style="width: 52px; height: 26px; border-radius: 99px; border: 2px solid var(--primary); background: rgba(124,255,178,0.1);"></div>
+        </div>
+        <div class="shape-info">
+          <div class="name" style="color: var(--primary);">起點 / 終點</div>
+          <div class="desc">圓角矩形，用在流程的開始和結束</div>
+        </div>
+      </div>
+      <div class="shape-item">
+        <div class="shape-preview">
+          <div style="width: 52px; height: 26px; border: 2px solid var(--blue); background: rgba(124,212,255,0.08);"></div>
+        </div>
+        <div class="shape-info">
+          <div class="name" style="color: var(--blue);">步驟（流程）</div>
+          <div class="desc">一般矩形，代表每一個執行步驟</div>
+        </div>
+      </div>
+      <div class="shape-item">
+        <div class="shape-preview">
+          <div style="width: 28px; height: 28px; border: 2px solid var(--yellow); background: rgba(255,209,102,0.1); transform: rotate(45deg);"></div>
+        </div>
+        <div class="shape-info">
+          <div class="name" style="color: var(--yellow);">判斷（if/else）</div>
+          <div class="desc">菱形，代表有條件分支的地方，兩條路分出 Y / N</div>
+        </div>
+      </div>
+      <div class="shape-item">
+        <div class="shape-preview">
+          <div style="width: 52px; height: 26px; border: 2px solid #e29bff; background: rgba(226,155,255,0.08); transform: skewX(-15deg);"></div>
+        </div>
+        <div class="shape-info">
+          <div class="name" style="color: #e29bff;">輸入 / 輸出</div>
+          <div class="desc">平行四邊形，代表資料的輸入或輸出</div>
+        </div>
+      </div>
+      <div class="shape-item">
+        <div class="shape-preview">
+          <div style="display: flex; align-items: center;">
+            <div style="width: 36px; height: 2px; background: rgba(124,255,178,0.5);"></div>
+            <div style="width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 10px solid rgba(124,255,178,0.5);"></div>
+          </div>
+        </div>
+        <div class="shape-info">
+          <div class="name" style="color: var(--text-muted);">順序箭頭</div>
+          <div class="desc">連接各節點，表示執行順序</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="analogy">
+      <div class="label">💡 核心觀念</div>
+      <p>核心只有一個：<strong>列步驟 → 套圖形 → 箭頭連。</strong>把步驟列清楚就是流程圖了，不需要完美。</p>
+    </div>
+  </div>
+
+  <!-- Section 03: 流程圖實例 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>流程圖實例</h2>
+    </div>
+
+    <div class="card">
+      <p>以<strong>講座報名自動化</strong>為例，把步驟畫出來：</p>
+    </div>
+
+    <div class="flowchart" style="flex-wrap: nowrap; overflow-x: auto; padding: 28px 24px; gap: 0;">
+      <div class="fc-node terminal">報名表單</div>
+      <div class="fc-arrow"><div class="fc-arrow-line"></div><div class="fc-arrow-head"></div></div>
+      <div class="fc-node process">整理資料</div>
+      <div class="fc-arrow"><div class="fc-arrow-line"></div><div class="fc-arrow-head"></div></div>
+      <div class="fc-node process">轉主辦格式</div>
+      <div class="fc-arrow"><div class="fc-arrow-line"></div><div class="fc-arrow-head"></div></div>
+      <div class="fc-node process">轉場地格式</div>
+      <div class="fc-arrow"><div class="fc-arrow-line"></div><div class="fc-arrow-head"></div></div>
+      <div class="fc-node terminal">傳送</div>
+    </div>
+
+    <div class="tip-box">
+      <div class="label">✦ 重點</div>
+      <p>步驟列清楚就是流程圖了。<strong>不需要完美</strong>——只要讓 AI 看懂流程順序即可。</p>
+    </div>
+  </div>
+
+  <!-- Section 04: 菱形 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>菱形：判斷節點（if / else）</h2>
+    </div>
+
+    <div class="card">
+      <p>當流程有<strong class="highlight-y">條件分支</strong>時，加入一個菱形節點。菱形代表 if-else 的判斷，讓 AI 知道這裡有兩條路。</p>
+    </div>
+
+    <div class="card">
+      <p>以報名流程為例，「整理資料」後加入判斷：</p>
+      <div style="margin-top: 16px; display: flex; flex-direction: column; align-items: flex-start; gap: 0;">
+        <div class="fc-node process" style="margin-bottom: 8px;">整理資料</div>
+        <div style="width: 2px; height: 16px; background: rgba(124,255,178,0.3); margin-left: 40px; margin-bottom: 8px;"></div>
+        <div class="fc-node diamond" style="border-radius: 8px; margin-bottom: 8px;">資料完整？</div>
+        <div style="display: flex; gap: 32px; margin-top: 8px;">
+          <div>
+            <div style="font-family: 'Space Mono', monospace; font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">Y →</div>
+            <div class="fc-node process" style="font-size: 13px;">繼續下一步</div>
+          </div>
+          <div>
+            <div style="font-family: 'Space Mono', monospace; font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">N →</div>
+            <div class="fc-node" style="background: rgba(255,209,102,0.08); border: 1px solid rgba(255,209,102,0.3); border-radius: 8px; color: var(--yellow); font-size: 13px; padding: 8px 16px;">補齊資料</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="analogy">
+      <div class="label">💡 記住</div>
+      <p><strong>菱形 = if-else。</strong>圖比文字直觀多了——AI 看到菱形就知道這裡有條件判斷。</p>
+    </div>
+  </div>
+
+  <!-- Section 05: 資料流圖 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>資料流圖是什麼？</h2>
+    </div>
+
+    <div class="card">
+      <p>用<strong class="highlight-y">塑膠工廠</strong>來比喻：原料進去，加工後輸出不同產品。資料流圖就是讓你看清楚，<strong>資料在每一個階段長什麼樣子</strong>。</p>
+    </div>
+
+    <div class="card">
+      <p style="font-family: 'Space Mono', monospace; font-size: 12px; color: var(--text-muted); margin-bottom: 16px; letter-spacing: 0.06em;">工廠類比</p>
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <div style="text-align: center; padding: 16px 20px; background: rgba(255,209,102,0.08); border: 1px solid rgba(255,209,102,0.3); border-radius: 50%; width: 90px; height: 90px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">
+          <div style="font-size: 24px;">🧴</div>
+          <div style="font-size: 11px; color: var(--yellow);">原料</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0; flex-shrink: 0;">
+          <div style="width: 24px; height: 2px; background: rgba(124,255,178,0.3);"></div>
+          <div style="width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 8px solid rgba(124,255,178,0.3);"></div>
+        </div>
+        <div style="text-align: center; padding: 16px 20px; background: rgba(124,255,178,0.08); border: 1.5px solid rgba(124,255,178,0.3); border-radius: 12px; width: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">
+          <div style="font-size: 24px;">🏭</div>
+          <div style="font-size: 12px; color: var(--primary); font-weight: 700;">工廠加工</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0; flex-shrink: 0;">
+          <div style="width: 24px; height: 2px; background: rgba(124,255,178,0.3);"></div>
+          <div style="width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 8px solid rgba(124,255,178,0.3);"></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="padding: 8px 14px; background: rgba(124,212,255,0.08); border: 1px solid rgba(124,212,255,0.3); border-radius: 99px; font-size: 13px; color: var(--blue); display: flex; align-items: center; gap: 8px;"><span>🥤</span> 杯子</div>
+          <div style="padding: 8px 14px; background: rgba(124,212,255,0.08); border: 1px solid rgba(124,212,255,0.3); border-radius: 99px; font-size: 13px; color: var(--blue); display: flex; align-items: center; gap: 8px;"><span>🍽️</span> 餐具</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="label">✦ 關鍵觀念</div>
+      <p><strong>資料流圖 = 工廠示意圖。</strong>看清每個階段資料的形態，讓 AI 知道資料從哪來、變成什麼、去哪裡。</p>
+    </div>
+  </div>
+
+  <!-- Section 06: DFD 實例 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>資料流圖實例</h2>
+    </div>
+
+    <div class="card">
+      <p>以講座報名為例。同樣的報名資料需要輸出成<strong class="highlight-y">三種不同的格式</strong>——這正是資料流圖能幫你說清楚的事。</p>
+    </div>
+
+    <div class="format-grid">
+      <div class="format-card fc1">
+        <div class="label">原始報名表單</div>
+        <div class="field">姓名</div>
+        <div class="field">Email</div>
+        <div class="field">電話</div>
+      </div>
+      <div class="format-card fc2">
+        <div class="label">主辦確認表單</div>
+        <div class="field">姓名</div>
+        <div class="field">座位號</div>
+        <div class="field">確認狀態</div>
+      </div>
+      <div class="format-card fc3">
+        <div class="label">場地座位表單</div>
+        <div class="field">座位號</div>
+        <div class="field">區域</div>
+        <div class="field">姓名</div>
+      </div>
+    </div>
+
+    <div class="dfd-wrap">
+      <div class="dfd-label">資料流圖示意</div>
+      <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <div style="width: 72px; height: 72px; border-radius: 50%; background: rgba(124,255,178,0.1); border: 2px solid rgba(124,255,178,0.4); display: flex; align-items: center; justify-content: center; text-align: center; font-size: 12px; font-weight: 700; color: var(--primary);">講座<br>系統</div>
+        <div style="display: flex; align-items: center;"><div style="width: 20px; height: 2px; background: rgba(124,255,178,0.3);"></div><div style="width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 8px solid rgba(124,255,178,0.3);"></div></div>
+        <div style="padding: 10px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; font-size: 13px; font-weight: 700; color: var(--text);">報名總表</div>
+        <div style="display: flex; flex-direction: column; gap: 16px; margin-left: 4px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="display: flex; align-items: center;"><div style="width: 16px; height: 2px; background: rgba(255,209,102,0.3);"></div><div style="width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 7px solid rgba(255,209,102,0.4);"></div></div>
+            <div style="padding: 8px 14px; background: rgba(255,209,102,0.06); border: 1px solid rgba(255,209,102,0.3); border-radius: 8px; font-size: 12px; font-weight: 700; color: var(--yellow);">主辦確認表</div>
+            <div style="display: flex; align-items: center;"><div style="width: 12px; height: 2px; background: rgba(255,209,102,0.3);"></div><div style="width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 6px solid rgba(255,209,102,0.3);"></div></div>
+            <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(255,209,102,0.08); border: 1.5px solid rgba(255,209,102,0.3); display: flex; align-items: center; justify-content: center; text-align: center; font-size: 11px; color: var(--yellow);">主辦<br>系統</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="display: flex; align-items: center;"><div style="width: 16px; height: 2px; background: rgba(124,212,255,0.3);"></div><div style="width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 7px solid rgba(124,212,255,0.4);"></div></div>
+            <div style="padding: 8px 14px; background: rgba(124,212,255,0.06); border: 1px solid rgba(124,212,255,0.3); border-radius: 8px; font-size: 12px; font-weight: 700; color: var(--blue);">場地座位表</div>
+            <div style="display: flex; align-items: center;"><div style="width: 12px; height: 2px; background: rgba(124,212,255,0.3);"></div><div style="width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 6px solid rgba(124,212,255,0.3);"></div></div>
+            <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(124,212,255,0.08); border: 1.5px solid rgba(124,212,255,0.3); display: flex; align-items: center; justify-content: center; text-align: center; font-size: 11px; color: var(--blue);">座位<br>系統</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="analogy">
+      <div class="label">💡 關鍵</div>
+      <p>資料流圖把<strong>格式差異攤開來</strong>，讓 AI 理解真正費工之處。才是真正的痛點所在。</p>
+    </div>
+  </div>
+
+  <!-- Section 07: 中繼表 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>進階技巧：中繼表</h2>
+    </div>
+
+    <div class="card">
+      <p>輸入來源超過三個時，建議<strong class="highlight">先彙整成一張中繼表</strong>（統一格式的中間層），再做後續處理。這樣程式讀取資料時，只要讀取這份中繼表就好了。</p>
+    </div>
+
+    <div class="benefit-grid">
+      <div class="benefit-card" style="background: rgba(124,255,178,0.06); border: 1px solid rgba(124,255,178,0.2);">
+        <div class="num" style="color: var(--primary);">①</div>
+        <div class="title">複雜度降低</div>
+        <div class="desc">程式只需讀一份表，不容易出錯</div>
+      </div>
+      <div class="benefit-card" style="background: rgba(255,209,102,0.06); border: 1px solid rgba(255,209,102,0.2);">
+        <div class="num" style="color: var(--yellow);">②</div>
+        <div class="title">易於除錯</div>
+        <div class="desc">直接看中繼表，找出錯誤在哪裡</div>
+      </div>
+      <div class="benefit-card" style="background: rgba(124,212,255,0.06); border: 1px solid rgba(124,212,255,0.2);">
+        <div class="num" style="color: var(--blue);">③</div>
+        <div class="title">擴充容易</div>
+        <div class="desc">新增來源只加一個轉換步驟，不用動其他地方</div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="label">✦ 一句話記住</div>
+      <p><strong>中繼表是擴充的緩衝層。</strong>新增來源不影響下游程式，開發更靈活。</p>
+    </div>
+  </div>
+
+  <!-- Section 08: Mermaid -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <h2>Mermaid：用文字畫流程圖</h2>
+    </div>
+
+    <div class="card">
+      <p>不擅長拖拉式繪圖工具？推薦試試 <strong class="highlight">Mermaid</strong>——一種<strong>用文字生成流程圖</strong>的工具。你可以用文字方式描述流程，它會自動幫你轉換成圖表。</p>
+    </div>
+
+    <div class="mermaid-demo">
+      <div class="code-block">
+        <div class="block-label">Mermaid 語法</div>
+        <pre>graph TD
+A[報名表單]
+--> B[整理資料]
+--> C[轉換格式]</pre>
+      </div>
+      <div class="code-arrow">→</div>
+      <div class="preview-block">
+        <div class="block-label" style="color: #888;">生成流程圖</div>
+        <div class="preview-node">報名表單</div><div class="preview-connector"></div>
+        <div class="preview-node">整理資料</div><div class="preview-connector"></div>
+        <div class="preview-node">轉換格式</div>
+      </div>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-name">具體使用方式</div>
+      <div class="tool-desc" style="margin-top: 8px;">
+        <p style="margin-bottom: 8px;">① 用文字描述你的需求（語音輸入也可以）</p>
+        <p style="margin-bottom: 8px;">② 把內容說給 AI，或直接貼給 AI</p>
+        <p style="margin-bottom: 8px;">③ 請 AI 幫你整理成條列式摘要，確認理解正確</p>
+        <p style="margin-bottom: 8px;">④ 請 AI 轉換成 <strong>Mermaid 流程圖語法</strong></p>
+        <p>⑤ 複製貼上到 <strong>Mermaid 線上編輯器</strong>，自動生成圖表</p>
+      </div>
+    </div>
+
+    <!-- Mermaid demo videos -->
+    <div style="margin-bottom: 20px;">
+      <div style="font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; font-family: 'Space Mono', monospace;">▶ GPT 生成 Mermaid 語法示範</div>
+      <video controls style="width: 100%; border-radius: 12px; border: 1px solid var(--border); background: #000;">
+        <source src="./assets/gpt-mermaid-demo.mp4" type="video/mp4">
+      </video>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <div style="font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; font-family: 'Space Mono', monospace;">▶ Mermaid 線上編輯器使用方式</div>
+      <video controls style="width: 100%; border-radius: 12px; border: 1px solid var(--border); background: #000;">
+        <source src="./assets/mermaid-usage.mp4" type="video/mp4">
+      </video>
+    </div>
+
+    <div class="analogy">
+      <div class="label">💡 Mermaid 的優勢</div>
+      <p>Mermaid 處在<strong>文字與圖像的中間地帶</strong>。AI 擅長閱讀文字，人類是視覺動物——這個工具剛好同時滿足兩種需求。而且修改只需改文字，圖表自動更新。</p>
+    </div>
+  </div>
+
+  <!-- Section 09: 四個提醒 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">09</span>
+      <h2>畫圖的四個小提醒</h2>
+    </div>
+
+    <div class="tip-numbered">
+      <div class="tip-item" style="border-color: var(--primary);">
+        <div class="num" style="color: var(--primary);">①</div>
+        <div class="body">
+          <div class="title">不求完美</div>
+          <div class="desc">符號用對了一半就夠，初學者不需要卡在每個細節都畫對。只要圖能幫你釐清思緒、讓 AI 理解你想要什麼，就已經非常 OK。</div>
+        </div>
+      </div>
+      <div class="tip-item" style="border-color: var(--yellow);">
+        <div class="num" style="color: var(--yellow);">②</div>
+        <div class="body">
+          <div class="title">工具混搭</div>
+          <div class="desc">文字、流程圖、資料流圖可以一起用，沒有硬性規定。步驟複雜就加流程圖，資料複雜就加資料流圖，全都複雜就全部一起給 AI。</div>
+        </div>
+      </div>
+      <div class="tip-item" style="border-color: var(--blue);">
+        <div class="num" style="color: var(--blue);">③</div>
+        <div class="body">
+          <div class="title">回頭簡化</div>
+          <div class="desc">畫完後再看一次，有沒有哪個部分可以簡化。越清楚越簡單的圖，交給 AI 寫程式的成功率就越高。圖如果很複雜，通常代表流程本身還有很多優化空間。</div>
+        </div>
+      </div>
+      <div class="tip-item" style="border-color: #e29bff;">
+        <div class="num" style="color: #e29bff;">④</div>
+        <div class="body">
+          <div class="title">現況 + 期待兩張圖</div>
+          <div class="desc">先畫出現在的流程是什麼樣子，再畫出希望改善後的流程，然後把這兩張圖一起提供給 AI。AI 就能更清楚地知道你要從哪裡優化到哪裡。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Takeaway -->
+  <div class="takeaway">
+    <div class="takeaway-title">
+      <span>✦</span> 本章重點整理
+    </div>
+    <ul class="takeaway-list">
+      <li>流程圖以<strong>步驟</strong>為主角，適合說明這件事情的流程長什麼樣子</li>
+      <li>資料流圖以<strong>資料</strong>為主角，適合說明資料的格式以及如何被加工、轉換</li>
+      <li>輸入來源超過三個時，建議彙整成<strong>中繼表</strong>，可以大幅降低程式複雜度</li>
+      <li>繪製流程圖的工具很多。不擅長畫圖就用 <strong>Mermaid</strong>，用文字生成圖表，修改很方便，對 AI 也很友善</li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>
