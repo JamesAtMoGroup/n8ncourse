@@ -40,5 +40,12 @@
     "title": "Markdown：AI 看得懂的特殊符號",
     "status": "open",
     "url": "./lecture6/"
+  },
+  {
+    "day": 7,
+    "chapter": "CH1-4",
+    "title": "流程圖、資料流圖：軟體工程最重要的 2 種圖",
+    "status": "open",
+    "url": "./lecture7/"
   }
 ]
