@@ -18,5 +18,15 @@
     "lectureOpen": 7,
     "status": "active",
     "url": "./vibecoding/"
+  },
+  {
+    "id": "claude-60009311-f5f8-47a2-8656-986d67fed072",
+    "title": "【Claude 實戰】60009311-f5f8-47a2-8656-986d67fed072",
+    "description": "",
+    "thumbnail": null,
+    "lectureTotal": 1,
+    "lectureOpen": 1,
+    "status": "active",
+    "url": "./claude-60009311-f5f8-47a2-8656-986d67fed072/"
   }
 ]

@@ -1,7 +1,8 @@
 {
   "_courses": {
     "1jt_nkySWqs_iGBVUARVDW053DA6pOlJY": "vibecoding",
-    "1Qdwiyg5gwpzmvyKsvuTGKehS9WIZ7Wj4": "n8ncourse"
+    "1Qdwiyg5gwpzmvyKsvuTGKehS9WIZ7Wj4": "n8ncourse",
+    "1IBDJk4QXyA4SKuIIfa9Xkw5kEASr53W8": "claude-60009311-f5f8-47a2-8656-986d67fed072"
   },
   "vibecoding": {
     "1mNISiwN6waiezYfor6yHdPUzjpHM5gVy": {
@@ -53,5 +54,6 @@
       "synced_at": "2026-04-08",
       "note": "pre-existing"
     }
-  }
+  },
+  "claude-60009311-f5f8-47a2-8656-986d67fed072": {}
 }
