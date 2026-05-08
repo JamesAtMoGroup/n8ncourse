@@ -1,7 +1,6 @@
 {
   "_courses": {
-    "1jt_nkySWqs_iGBVUARVDW053DA6pOlJY": "vibecoding",
-    "1Qdwiyg5gwpzmvyKsvuTGKehS9WIZ7Wj4": "n8ncourse"
+    "1jt_nkySWqs_iGBVUARVDW053DA6pOlJY": "vibecoding"
   },
   "vibecoding": {
     "1mNISiwN6waiezYfor6yHdPUzjpHM5gVy": {
@@ -36,23 +35,5 @@
       "lecture": 7,
       "synced_at": "2026-04-27"
     }
-  },
-  "n8ncourse": {
-    "1L8nJS9hc9ylSMMHR-GLQdn4wBAVfB_I4": {
-      "lecture": 1,
-      "synced_at": "2026-04-08",
-      "note": "pre-existing"
-    },
-    "1RqxvlIYscl-1IY2yj2zEiBfIpwoYS_iP": {
-      "lecture": 2,
-      "synced_at": "2026-04-08",
-      "note": "pre-existing"
-    },
-    "1Q1Z6qmHmyhA9kfIWyxpldDyFp4iQP_Z5": {
-      "lecture": 3,
-      "synced_at": "2026-04-08",
-      "note": "pre-existing"
-    }
-  },
-  "claude-60009311-f5f8-47a2-8656-986d67fed072": {}
+  }
 }
