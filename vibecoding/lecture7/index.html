@@ -141,8 +141,8 @@ h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
 .takeaway { background: linear-gradient(135deg, rgba(124,255,178,0.08), rgba(0,0,0,0)); border: 1px solid rgba(124,255,178,0.25); border-radius: var(--radius); padding: 36px; margin-top: 48px; animation: fadeUp 0.5s ease both; }
 .takeaway-title { font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
 .takeaway-list { list-style: none; display: flex; flex-direction: column; gap: 12px; counter-reset: li; }
-.takeaway-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; color: var(--text); line-height: 1.6; counter-increment: li; }
-.takeaway-list li::before { content: counter(li); background: var(--primary); color: #000; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+.takeaway-list li { position: relative; padding-left: 34px; font-size: 15px; color: var(--text); line-height: 1.7; counter-increment: li; }
+.takeaway-list li::before { content: counter(li); position: absolute; left: 0; top: 3px; background: var(--primary); color: #000; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 
 code { font-family: 'Space Mono', monospace; font-size: 0.85em; background: rgba(124,255,178,0.1); color: var(--primary); padding: 2px 7px; border-radius: 5px; }
 .highlight { color: var(--primary); font-weight: 700; }
@@ -161,9 +161,6 @@ code { font-family: 'Space Mono', monospace; font-size: 0.85em; background: rgba
 <body>
 <nav id='vc-nav'><a href='../'>← 返回課程選單</a><div id='vc-nav-right'><span id='vc-nav-user'></span><button id='vc-logout' onclick="localStorage.removeItem('aischool_user');window.location.href='../../login.html';">登出</button></div></nav><script>(function(){var u=JSON.parse(localStorage.getItem('aischool_user')||'null');if(u&&u.name)document.getElementById('vc-nav-user').textContent=u.name;})();</script>
 <script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
-
-<div class="progress-step">章節 1-4 / 4</div>
-</div>
 
 <div class="container">
 
