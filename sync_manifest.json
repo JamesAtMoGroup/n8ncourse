@@ -34,6 +34,11 @@
     "1S1GCrwq2IjYpsdsv78beLr47vZ10bs3x": {
       "lecture": 7,
       "synced_at": "2026-04-27"
+    },
+    "1pbdKR5xOXimJJT5evq7hvF1SRGf-X_bH": {
+      "lecture": 8,
+      "synced_at": "2026-05-20",
+      "note": "manual (auto-sync was finding 0 course folders)"
     }
   }
 }

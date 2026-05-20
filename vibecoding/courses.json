@@ -47,5 +47,12 @@
     "title": "流程圖、資料流圖：軟體工程最重要的 2 種圖",
     "status": "open",
     "url": "./lecture7/"
+  },
+  {
+    "day": 8,
+    "chapter": "CH2-1",
+    "title": "先別寫程式：思考不同解法，選一條最可行的路",
+    "status": "open",
+    "url": "./lecture8/"
   }
 ]
