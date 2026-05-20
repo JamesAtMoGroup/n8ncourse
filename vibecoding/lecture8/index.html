@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>章節 2-1｜先別寫程式：思考不同解法，選一條最可行的路</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #7cffb2;
+  --primary-light: rgba(124,255,178,0.07);
+  --accent: #7cffb2;
+  --green: #7cffb2;
+  --yellow: #ffd166;
+  --blue: #7cd4ff;
+  --pink: #e29bff;
+  --bg: #000000;
+  --surface: #0d0d0d;
+  --surface2: #111111;
+  --text: #ffffff;
+  --text-muted: #888888;
+  --border: rgba(124,255,178,0.14);
+  --radius: 16px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', sans-serif; font-size: 16px; line-height: 1.8; min-height: 100vh; }
+
+.container { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
+
+/* ── Hero ── */
+.hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); margin-bottom: 56px; animation: fadeUp 0.6s ease both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+.hero-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.chapter-badge { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--primary); border: 1px solid var(--primary); padding: 4px 14px; border-radius: 99px; letter-spacing: 0.05em; text-shadow: 0 0 10px rgba(124,255,178,0.4); }
+.tag { font-size: 12px; padding: 4px 12px; border-radius: 99px; font-weight: 500; }
+.tag-beginner { background: rgba(124,255,178,0.1); color: var(--green); }
+.tag-time { background: rgba(255,209,102,0.1); color: var(--yellow); }
+h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 16px; }
+h1 em { font-style: normal; color: var(--primary); }
+.hero-sub { font-size: 17px; color: var(--text-muted); max-width: 560px; line-height: 1.7; }
+
+/* ── Section ── */
+.section { margin-bottom: 56px; animation: fadeUp 0.5s ease both; }
+.section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+.section-num { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--primary); background: rgba(124,255,178,0.08); border: 1px solid var(--border); padding: 5px 14px; border-radius: 99px; white-space: nowrap; letter-spacing: 0.05em; }
+h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+
+/* ── Card / Analogy / Tip ── */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.card p { color: var(--text-muted); } .card p + p { margin-top: 12px; } .card strong { color: var(--text); }
+.analogy { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 var(--radius) var(--radius) 0; padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.analogy .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.analogy p { color: #c8ffe0; font-size: 15px; line-height: 1.75; } .analogy strong { color: #fff; }
+.tip-box { background: rgba(124,255,178,0.04); border: 1px solid rgba(124,255,178,0.2); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.tip-box .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.tip-box p { color: var(--text-muted); font-size: 15px; line-height: 1.75; } .tip-box strong { color: var(--text); }
+.tip-box-yellow { background: rgba(255,209,102,0.04); border: 1px solid rgba(255,209,102,0.2); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.tip-box-yellow .label { font-size: 12px; font-weight: 700; color: var(--yellow); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.tip-box-yellow p { color: #ffe8a0; font-size: 15px; line-height: 1.75; } .tip-box-yellow strong { color: #fff; }
+
+/* ── Concept cards ── */
+.concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.concept-card { border-radius: var(--radius); padding: 28px 24px; text-align: center; }
+.concept-card.green { background: rgba(124,255,178,0.07); border: 2px solid rgba(124,255,178,0.3); }
+.concept-card.yellow { background: rgba(255,209,102,0.06); border: 1px solid rgba(255,209,102,0.25); }
+.concept-card .icon { font-size: 40px; margin-bottom: 12px; }
+.concept-card .title { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+.concept-card.green .title { color: var(--primary); }
+.concept-card.yellow .title { color: var(--yellow); }
+.concept-card .subtitle { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px; }
+.concept-card .desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+/* ── Transport options ── */
+.opt-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.opt-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 14px; text-align: center; }
+.opt-card .emoji { font-size: 34px; margin-bottom: 8px; }
+.opt-card .name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.opt-card .note { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-muted); }
+.eval-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+.eval-chip { background: rgba(124,212,255,0.08); border: 1px solid rgba(124,212,255,0.3); border-radius: 99px; padding: 6px 18px; font-family: 'Space Mono', monospace; font-size: 12px; color: var(--blue); letter-spacing: 0.05em; }
+
+/* ── Tradeoff chips ── */
+.chip-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.chip { border-radius: 99px; padding: 10px 22px; font-size: 15px; font-weight: 700; }
+.chip.g { background: rgba(124,255,178,0.1); border: 1.5px solid rgba(124,255,178,0.45); color: var(--primary); }
+.chip.b { background: rgba(124,212,255,0.1); border: 1.5px solid rgba(124,212,255,0.45); color: var(--blue); }
+.chip.y { background: rgba(255,209,102,0.1); border: 1.5px solid rgba(255,209,102,0.45); color: var(--yellow); }
+
+/* ── Two-column compare (role split / vs) ── */
+.split { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center; margin-bottom: 20px; }
+.split-card { border-radius: var(--radius); padding: 24px 24px; text-align: center; }
+.split-card.muted { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); }
+.split-card.green { background: rgba(124,255,178,0.08); border: 2px solid rgba(124,255,178,0.4); }
+.split-card.blue { background: rgba(124,212,255,0.08); border: 2px solid rgba(124,212,255,0.4); }
+.split-card .role { font-size: 30px; margin-bottom: 8px; }
+.split-card .who { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+.split-card.green .who { color: var(--primary); }
+.split-card.blue .who { color: var(--blue); }
+.split-card .what { font-size: 14px; color: var(--text-muted); }
+.split-mid { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--text-muted); text-align: center; }
+
+/* ── Keyword zoo ── */
+.kw-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.kw { background: rgba(124,255,178,0.07); border: 1px solid rgba(124,255,178,0.3); border-radius: 12px; padding: 16px 14px; text-align: center; }
+.kw .term { font-size: 17px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
+.kw .use { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+/* ── Search compare ── */
+.search-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.search-card { border-radius: var(--radius); padding: 22px 24px; }
+.search-card.vague { background: var(--surface); border: 1px solid rgba(255,209,102,0.25); }
+.search-card.precise { background: var(--surface); border: 1.5px solid rgba(124,255,178,0.4); }
+.search-card .label { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+.search-card.vague .label { color: var(--yellow); }
+.search-card.precise .label { color: var(--primary); }
+.search-card .query { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 14px; font-family: 'Space Mono', monospace; font-size: 13px; line-height: 1.6; }
+.search-card.vague .query { color: var(--text); }
+.search-card.precise .query { color: var(--primary); border-color: rgba(124,255,178,0.3); }
+
+/* ── Toolbox ── */
+.tool-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.tool-pill { flex: 1; min-width: 90px; text-align: center; border-radius: 12px; padding: 14px 12px; font-size: 15px; font-weight: 700; }
+.tool-pill.req { background: rgba(124,255,178,0.08); border: 1.5px solid rgba(124,255,178,0.4); color: var(--primary); }
+.tool-pill.bonus { background: rgba(124,212,255,0.06); border: 1.5px solid rgba(124,212,255,0.3); color: var(--blue); }
+.tool-grouplabel { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+
+/* ── Filter question hero ── */
+.filter-hero { background: rgba(124,255,178,0.06); border: 2px solid rgba(124,255,178,0.45); border-radius: var(--radius); padding: 32px 36px; margin-bottom: 20px; text-align: center; box-shadow: 0 0 40px rgba(124,255,178,0.12); }
+.filter-hero .label { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 14px; }
+.filter-hero .q { font-size: clamp(20px, 3.6vw, 28px); font-weight: 800; line-height: 1.5; }
+.filter-hero .q em { font-style: normal; color: var(--primary); border-bottom: 2px solid var(--primary); }
+.branch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.branch { border-radius: var(--radius); padding: 22px 24px; }
+.branch.no { background: rgba(124,255,178,0.1); border: 2px solid rgba(124,255,178,0.5); }
+.branch.yes { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.15); }
+.branch .head { font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.08em; margin-bottom: 10px; }
+.branch.no .head { color: var(--primary); } .branch.yes .head { color: var(--text-muted); }
+.branch .title { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+.branch.no .title { color: var(--primary); } .branch.yes .title { color: var(--text-muted); }
+.branch .desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+/* ── Map analogy ── */
+.map-row { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+.map-line { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 22px; }
+.map-line .badge { font-family: 'Space Mono', monospace; font-size: 12px; padding: 4px 12px; border-radius: 99px; white-space: nowrap; }
+.map-line.bad .badge { background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.4); color: #ff6b6b; }
+.map-line.good .badge { background: rgba(124,255,178,0.1); border: 1px solid rgba(124,255,178,0.4); color: var(--primary); }
+.map-line .text { font-size: 15px; color: var(--text); }
+.map-line .text strong { color: var(--primary); }
+
+/* ── Takeaway ── */
+.takeaway { background: linear-gradient(135deg, rgba(124,255,178,0.08), rgba(0,0,0,0)); border: 1px solid rgba(124,255,178,0.25); border-radius: var(--radius); padding: 36px; margin-top: 48px; animation: fadeUp 0.5s ease both; }
+.takeaway-title { font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.takeaway-list { list-style: none; display: flex; flex-direction: column; gap: 12px; counter-reset: li; }
+.takeaway-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; color: var(--text); line-height: 1.6; counter-increment: li; }
+.takeaway-list li::before { content: counter(li); background: var(--primary); color: #000; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+.final-note { margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(124,255,178,0.2); font-size: 16px; line-height: 1.7; color: #c8ffe0; }
+.final-note strong { color: var(--primary); }
+
+code { font-family: 'Space Mono', monospace; font-size: 0.85em; background: rgba(124,255,178,0.1); color: var(--primary); padding: 2px 7px; border-radius: 5px; }
+.highlight { color: var(--primary); font-weight: 700; }
+.highlight-y { color: var(--yellow); font-weight: 700; }
+.divider { height: 1px; background: var(--border); margin: 48px 0; }
+
+@media (max-width: 600px) {
+  .concept-grid, .search-grid, .branch-grid, .kw-grid { grid-template-columns: 1fr; }
+  .opt-grid { grid-template-columns: 1fr 1fr; }
+  .split { grid-template-columns: 1fr; }
+  .card, .tip-box, .analogy { padding: 20px; }
+  .container { padding-left: 16px; padding-right: 16px; }
+}
+</style>
+<style id='vc-nav-css'>#vc-nav{position:sticky;top:0;z-index:200;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border,rgba(255,255,255,0.1));}#vc-nav a{font-size:14px;font-weight:500;color:#888;text-decoration:none;transition:color .15s;}#vc-nav a:hover{color:#fff;}#vc-nav-right{display:flex;align-items:center;gap:10px;}#vc-nav-user{font-size:13px;color:#888;}#vc-logout{font-size:13px;font-weight:600;color:#666;background:rgba(255,255,255,0.04);border:1px solid var(--border,rgba(255,255,255,0.1));border-radius:8px;padding:4px 12px;cursor:pointer;font-family:inherit;}</style></head>
+<body>
+<nav id='vc-nav'><a href='../'>← 返回課程選單</a><div id='vc-nav-right'><span id='vc-nav-user'></span><button id='vc-logout' onclick="localStorage.removeItem('aischool_user');window.location.href='../../login.html';">登出</button></div></nav><script>(function(){var u=JSON.parse(localStorage.getItem('aischool_user')||'null');if(u&&u.name)document.getElementById('vc-nav-user').textContent=u.name;})();</script>
+<script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
+
+<div class="progress-step">章節 2-1</div>
+</div>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-meta">
+      <span class="chapter-badge">CH 2-1</span>
+      <span class="tag tag-beginner">✦ SDLC 第三步</span>
+      <span class="tag tag-time">⏱ 約 10 分鐘</span>
+    </div>
+    <h1>先別寫程式：<br><em>思考不同解法，選一條最可行的路</em></h1>
+    <p class="hero-sub">上一章把現況、痛點、期待都說清楚了，這一章我們進入「解法設計」：在動手之前，先選對路。跳過這一步，往往做到一半才發現方向不對，又得重來。</p>
+  </div>
+
+  <!-- Section 01: 解法設計是什麼 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>解法設計是什麼？</h2>
+    </div>
+
+    <div class="card">
+      <p>解法設計，就是在<strong>有許多方案可以選</strong>的情況下，先挑出一條最適合你目前狀況的路，再開始動手。</p>
+    </div>
+
+    <div class="analogy">
+      <div class="label">💡 交通工具的比喻</div>
+      <p>假設你要去一個地方<strong>開會</strong>，可以搭計程車、騎 YouBike、搭捷運，甚至走路。四種方式都能抵達，但你會評估<strong>距離、剩餘時間、天氣</strong>，選最適合現在的自己。選錯了，輕則更辛苦，重則遲到錯過會議。</p>
+    </div>
+
+    <div class="opt-grid">
+      <div class="opt-card"><div class="emoji">🚕</div><div class="name">計程車</div><div class="note">快但貴</div></div>
+      <div class="opt-card"><div class="emoji">🚲</div><div class="name">YouBike</div><div class="note">彈性中</div></div>
+      <div class="opt-card"><div class="emoji">🚇</div><div class="name">捷運</div><div class="note">穩定快</div></div>
+      <div class="opt-card"><div class="emoji">🚶</div><div class="name">走路</div><div class="note">近距離</div></div>
+    </div>
+
+    <div class="eval-row">
+      <span class="eval-chip">評估：距離</span>
+      <span class="eval-chip">評估：時間</span>
+      <span class="eval-chip">評估：天氣</span>
+    </div>
+
+    <div class="card">
+      <p>同一個需求，往往有<strong>好幾個技術方案</strong>可以實現——有些快又穩、有些你現在就能掌握、有些則要多花時間才能上手。解法設計，就是在動手前先把這些可能想清楚，選一條目前最適合的方向。</p>
+    </div>
+
+    <div class="chip-row">
+      <span class="chip g">快又穩</span>
+      <span class="chip b">你能掌握</span>
+      <span class="chip y">需多花時間上手</span>
+    </div>
+
+    <div class="tip-box">
+      <div class="label">✦ 一句話記住</div>
+      <p><strong>最適合 ≠ 最快。</strong>解法設計＝在眾多方案中，挑出最匹配當下狀況的那一個。</p>
+    </div>
+  </div>
+
+  <!-- Section 02: AI 不一定給你最短的路 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>AI 很博學，但不一定給你最短的路</h2>
+    </div>
+
+    <div class="card">
+      <p>「既然 AI 這麼厲害，直接問它幫我選解法不就好了？」這想法很合理，但有個地方要注意：AI 不了解你目前的<strong class="highlight">脈絡</strong>——它只能依字面回答你。</p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card yellow">
+        <div class="icon">🤖</div>
+        <div class="title">AI 不知道的事</div>
+        <div class="subtitle">It can't see your context</div>
+        <div class="desc">你有多少時間 · 你學到哪裡了 · 環境有什麼限制</div>
+      </div>
+      <div class="concept-card green">
+        <div class="icon">🧭</div>
+        <div class="title">你的任務</div>
+        <div class="subtitle">Decide the direction</div>
+        <div class="desc">告訴 AI 走哪一條路，讓它去執行細節</div>
+      </div>
+    </div>
+
+    <div class="analogy">
+      <div class="label">💡 隔壁棟開會的比喻</div>
+      <p>你問 AI 怎麼到隔壁棟，它可能建議<strong>叫計程車繞園區一圈</strong>；但熟悉環境的老同事一看就知道——<strong>走那條小路兩分鐘就到了</strong>。AI 知道很多條路，卻不一定知道哪條最適合你現在的狀況。</p>
+    </div>
+
+    <div class="map-row">
+      <div class="map-line bad"><span class="badge">AI 建議</span><span class="text">計程車繞園區一圈</span></div>
+      <div class="map-line good"><span class="badge">熟手路線</span><span class="text">走小路 <strong>2 分鐘</strong>到</span></div>
+    </div>
+
+    <div class="split">
+      <div class="split-card green">
+        <div class="role">🧑‍💻</div>
+        <div class="who">你</div>
+        <div class="what">決定<strong style="color:var(--primary)">方向</strong></div>
+      </div>
+      <div class="split-mid">下指令<br>→</div>
+      <div class="split-card blue">
+        <div class="role">🤖</div>
+        <div class="who">AI</div>
+        <div class="what">執行<strong style="color:var(--blue)">細節</strong></div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="label">✦ 為什麼學觀念 CP 值高</div>
+      <p>在 AI 時代，你<strong>對方向有把握</strong>，AI 就能幫你把細節全部搞定。所以你不需要弄懂每個細節，但需要對方向有判斷力。</p>
+    </div>
+  </div>
+
+  <!-- Section 03: 技術關鍵字 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>技術關鍵字：你指路給 AI 的工具</h2>
+    </div>
+
+    <div class="card">
+      <p>要怎麼告訴 AI 走哪條路？答案是<strong class="highlight">技術關鍵字</strong>。就像搜尋時，同一個問題用不同關鍵字，結果完全不一樣。你懂的技術關鍵字越多，AI 就越能精準理解你想用哪種技術完成。</p>
+    </div>
+
+    <div class="search-grid">
+      <div class="search-card vague">
+        <div class="label">模糊關鍵字</div>
+        <div class="query">🔍 「我要一個網站」</div>
+      </div>
+      <div class="search-card precise">
+        <div class="label">精準關鍵字</div>
+        <div class="query">🔍 「課程網站前端首頁，用 React，先不用後端，內容用假資料」</div>
+      </div>
+    </div>
+
+    <div class="analogy">
+      <div class="label">💡 前端 vs 後端</div>
+      <p>知道<strong>前端</strong>（使用者看到、操作的畫面）和<strong>後端</strong>（背後處理資料的伺服器）的差別，你就能精準下指令，AI 不會把前後端的東西全混在一起，而你還沒察覺。</p>
+    </div>
+
+    <div class="card">
+      <p>下面這些名詞<strong>不需要今天全部學會</strong>，先有印象就好——後面的章節會一個一個帶你認識：</p>
+    </div>
+
+    <div class="kw-grid">
+      <div class="kw"><div class="term">資料庫</div><div class="use">資料持久化、存取系統</div></div>
+      <div class="kw"><div class="term">部署</div><div class="use">讓成果在網路上被看到</div></div>
+      <div class="kw"><div class="term">API</div><div class="use">不同系統互相溝通</div></div>
+      <div class="kw"><div class="term">爬蟲</div><div class="use">自動抓取網路資料</div></div>
+      <div class="kw"><div class="term">腳本</div><div class="use">讓電腦執行某些任務</div></div>
+      <div class="kw"><div class="term">排程</div><div class="use">定時自動執行</div></div>
+    </div>
+
+    <div class="tip-box">
+      <div class="label">✦ 用心智圖累積詞彙</div>
+      <p>用<strong>心智圖</strong>整理技術關鍵字：這個工具屬於哪一類？同類還有哪些選項？一層一層往外擴展，你的<strong>技術詞彙字典</strong>就會越來越完整。每多掌握一個詞，就多了一種跟 AI 溝通的方式。</p>
+    </div>
+  </div>
+
+  <!-- Section 04: 用一個問題篩選 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>哪些名詞值得學？用一個問題篩選</h2>
+    </div>
+
+    <div class="card">
+      <p>程式領域名詞這麼多，到底從哪些開始學？其實新手現階段真正需要的，只有兩大類文件——而且你的溝通對象是 <strong class="highlight">AI</strong>，不是工程師。</p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card green">
+        <div class="icon">📋</div>
+        <div class="title">需求文件</div>
+        <div class="subtitle">對齊需求</div>
+        <div class="desc">把現況、期待、解法說清楚——這就是 AI 需要的</div>
+      </div>
+      <div class="concept-card yellow">
+        <div class="icon">🛠️</div>
+        <div class="title">開發文件</div>
+        <div class="subtitle">技術提案（給工程師）</div>
+        <div class="desc">像 API 規格——AI 並不需要這麼完整的規格書</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p>與其花時間學寫完整規格書，不如把<strong>上一章的工具箱</strong>用熟——再搭配 Markdown 符號和流程圖，跟 AI 溝通反而更有效率：</p>
+      <div class="tool-grouplabel" style="color:var(--primary); margin-top:16px;">● 三項必填</div>
+      <div class="tool-row">
+        <div class="tool-pill req">現況</div>
+        <div class="tool-pill req">痛點</div>
+        <div class="tool-pill req">期待</div>
+      </div>
+      <div class="tool-grouplabel" style="color:var(--blue);">○ 三項加分</div>
+      <div class="tool-row">
+        <div class="tool-pill bonus">驗收清單</div>
+        <div class="tool-pill bonus">指定解法</div>
+        <div class="tool-pill bonus">資料範例</div>
+      </div>
+    </div>
+
+    <div class="filter-hero">
+      <div class="label">篩選問題</div>
+      <div class="q">「如果我不知道這個東西，<em>還能不能做出我要的程式？</em>」</div>
+    </div>
+
+    <div class="branch-grid">
+      <div class="branch yes">
+        <div class="head">YES → 可以</div>
+        <div class="title">先放一邊</div>
+        <div class="desc">非當下必學，不會擋住你做事，可以慢慢補。</div>
+      </div>
+      <div class="branch no">
+        <div class="head">NO → 做不出來</div>
+        <div class="title">現在就要學</div>
+        <div class="desc">這就是<strong style="color:var(--primary)">核心知識</strong>，值得花時間搞懂。</div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="label">✦ 篩選的效果</div>
+      <p>用這個問題，就能初步篩出那些「<strong>現在就能幫你做出東西</strong>」的核心知識，把學習重心放對地方，過濾掉大半的學習焦慮。</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Takeaway -->
+  <div class="takeaway">
+    <div class="takeaway-title">
+      <span>✦</span> 本章重點整理
+    </div>
+    <ul class="takeaway-list">
+      <li>解法設計是<strong>動手之前的必要步驟</strong>。先選好最適合的方向，比直接跳下去寫更省時間、少走冤枉路</li>
+      <li>AI 知識豐富，但不一定給你最短的路。你的任務是<strong>告訴 AI 走哪個方向</strong>，而不是把整個決策都交給它</li>
+      <li><strong>技術關鍵字</strong>是你和 AI 溝通的基礎。掌握的詞彙越多，AI 給的建議就越精準</li>
+      <li>不是所有名詞都值得現在學。先問：「不知道這個，還能不能做出我要的程式？」用這個問題篩選</li>
+    </ul>
+    <div class="final-note">
+      跟 AI 溝通最有效的方式，不是一份漂亮的規格文件，而是把<strong>現況、期待、解法說清楚</strong>的習慣——這個習慣，才是你在 AI 時代真正的競爭力。
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
