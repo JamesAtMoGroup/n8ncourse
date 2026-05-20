@@ -31,6 +31,13 @@ for fn in ("inject_auth", "inject_nav"):
 
 # ── Build the lecture page (same transform order as sync_drive.py) ────────────
 html = open(src_html, encoding="utf-8").read()
+
+# Strip the standalone-page progress bar BEFORE inject. inject_nav's own progress
+# regex is fragile and leaves an orphan (e.g. "章節 2-1"); removing the whole block
+# (comment + progress-bar-wrap … up to <div class="container">) first avoids that.
+html = html.replace("<!-- Sticky Progress Bar -->", "")
+html = re.sub(r'<div class="progress-bar-wrap">.*?(?=<div class="container">)', "", html, flags=re.DOTALL)
+
 html = ns["inject_auth"](html)
 html = ns["inject_nav"](html)
 
