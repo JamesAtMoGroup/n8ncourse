@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CH 2-2｜工程師解題思維：Top-Down vs Bottom-Up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #7cffb2;
+      --primary-light: rgba(124,255,178,0.07);
+      --accent: #7cffb2;
+      --green: #7cffb2;
+      --yellow: #ffd166;
+      --orange: #ff9f43;
+      --bg: #000000;
+      --surface: #0d0d0d;
+      --surface2: #111111;
+      --text: #ffffff;
+      --text-muted: #888888;
+      --border: rgba(124,255,178,0.14);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', sans-serif; font-size: 16px; line-height: 1.8; min-height: 100vh; }
+
+    .container { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
+
+    .hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); margin-bottom: 56px; animation: fadeUp 0.6s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .hero-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .chapter-badge { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--primary); border: 1px solid var(--primary); padding: 4px 14px; border-radius: 99px; letter-spacing: 0.05em; text-shadow: 0 0 10px rgba(124,255,178,0.4); }
+    .tag { font-size: 12px; padding: 4px 12px; border-radius: 99px; font-weight: 500; }
+    .tag-beginner { background: rgba(124,255,178,0.1); color: var(--green); }
+    .tag-time { background: rgba(255,209,102,0.1); color: var(--yellow); }
+    h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 16px; }
+    h1 em { font-style: normal; color: var(--primary); }
+    .hero-sub { font-size: 17px; color: var(--text-muted); max-width: 540px; line-height: 1.7; }
+
+    .section { margin-bottom: 56px; animation: fadeUp 0.5s ease both; }
+    .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .section-num { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--primary); background: rgba(124,255,178,0.08); border: 1px solid var(--border); padding: 5px 14px; border-radius: 99px; white-space: nowrap; letter-spacing: 0.05em; }
+    h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+    .card p { color: var(--text-muted); } .card p + p { margin-top: 12px; } .card strong { color: var(--text); }
+
+    .analogy { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 var(--radius) var(--radius) 0; padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+    .analogy .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .analogy p { color: #c8ffe0; font-size: 15px; line-height: 1.75; } .analogy strong { color: #fff; }
+
+    .tip-box { background: rgba(124,255,178,0.04); border: 1px solid rgba(124,255,178,0.2); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+    .tip-box .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .tip-box p { color: var(--text-muted); font-size: 15px; line-height: 1.75; } .tip-box strong { color: var(--text); }
+
+    .quiz-box { border: 2px dashed rgba(255,209,102,0.35); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; background: rgba(255,209,102,0.03); animation: fadeUp 0.5s ease both; }
+    .quiz-box .label { font-size: 12px; font-weight: 700; color: var(--yellow); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+    .quiz-box p { color: var(--text-muted); font-size: 15px; line-height: 1.7; }
+
+    .shape-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .shape-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; animation: fadeUp 0.5s ease both; }
+    .shape-icon { flex-shrink: 0; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; font-size: 22px; }
+    .shape-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .shape-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+    .mermaid-card { background: rgba(124,255,178,0.04); border: 1px solid rgba(124,255,178,0.2); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+    .mermaid-title { font-size: 16px; font-weight: 900; color: var(--green); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+    .mermaid-steps { display: flex; flex-direction: column; gap: 10px; }
+    .mermaid-step { display: flex; align-items: flex-start; gap: 12px; }
+    .mermaid-step-num { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: #000; background: var(--primary); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 3px; }
+    .mermaid-step-text { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+    .mermaid-step-text strong { color: var(--text); }
+
+    .tips-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+    .tip-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; display: flex; gap: 14px; animation: fadeUp 0.5s ease both; }
+    .tip-item-num { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: #000; background: var(--primary); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .tip-item-text { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+    .tip-item-text strong { color: var(--text); }
+
+    .takeaway { background: linear-gradient(135deg, rgba(124,255,178,0.08), rgba(0,0,0,0)); border: 1px solid rgba(124,255,178,0.25); border-radius: var(--radius); padding: 36px; margin-top: 48px; animation: fadeUp 0.5s ease both; }
+    .takeaway-title { font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+    .takeaway-list { list-style: none; display: flex; flex-direction: column; gap: 12px; counter-reset: li; }
+    .takeaway-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; color: var(--text); line-height: 1.6; counter-increment: li; }
+    .takeaway-list li::before { content: counter(li); background: var(--primary); color: #000; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+
+    code { font-family: 'Space Mono', monospace; font-size: 0.85em; background: rgba(124,255,178,0.1); color: var(--primary); padding: 2px 7px; border-radius: 5px; }
+    .highlight { color: var(--primary); font-weight: 700; }
+    .divider { height: 1px; background: var(--border); margin: 48px 0; }
+
+    /* 比較卡片 */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .compare-card { border-radius: var(--radius); padding: 24px; }
+    .compare-card.top { background: rgba(255,209,102,0.06); border: 1px solid rgba(255,209,102,0.25); }
+    .compare-card.bottom { background: rgba(124,255,178,0.06); border: 1px solid rgba(124,255,178,0.25); }
+    .compare-label { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 10px; }
+    .compare-card.top .compare-label { color: var(--yellow); }
+    .compare-card.bottom .compare-label { color: var(--primary); }
+    .compare-title { font-size: 18px; font-weight: 900; margin-bottom: 10px; }
+    .compare-card.top .compare-title { color: var(--yellow); }
+    .compare-card.bottom .compare-title { color: var(--primary); }
+    .compare-desc { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+    .compare-desc strong { color: var(--text); }
+    .compare-pros { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+    .compare-pro { font-size: 12px; color: var(--text-muted); display: flex; gap: 6px; }
+    .compare-pro::before { content: "✓"; color: var(--primary); font-weight: 700; flex-shrink: 0; }
+    .compare-con::before { content: "✗"; color: #ff6b6b; font-weight: 700; flex-shrink: 0; }
+
+    @media (max-width: 600px) {
+      .shape-grid { grid-template-columns: 1fr 1fr; }
+      .card, .quiz-box, .takeaway, .tip-box { padding: 20px; }
+      .container { padding-left: 16px; padding-right: 16px; }
+      .compare-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+<style id='vc-nav-css'>#vc-nav{position:sticky;top:0;z-index:200;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border,rgba(255,255,255,0.1));}#vc-nav a{font-size:14px;font-weight:500;color:#888;text-decoration:none;transition:color .15s;}#vc-nav a:hover{color:#fff;}#vc-nav-right{display:flex;align-items:center;gap:10px;}#vc-nav-user{font-size:13px;color:#888;}#vc-logout{font-size:13px;font-weight:600;color:#666;background:rgba(255,255,255,0.04);border:1px solid var(--border,rgba(255,255,255,0.1));border-radius:8px;padding:4px 12px;cursor:pointer;font-family:inherit;}</style></head>
+<body>
+<nav id='vc-nav'><a href='../'>← 返回課程選單</a><div id='vc-nav-right'><span id='vc-nav-user'></span><button id='vc-logout' onclick="localStorage.removeItem('aischool_user');window.location.href='../../login.html';">登出</button></div></nav><script>(function(){var u=JSON.parse(localStorage.getItem('aischool_user')||'null');if(u&&u.name)document.getElementById('vc-nav-user').textContent=u.name;})();</script>
+<script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
+
+  <h1>工程師解題思維：<br><em>Top-Down vs Bottom-Up</em></h1>
+      <p class="hero-sub">學會在不同情境下切換解題策略，讓 AI 幫你把複雜任務拆解到搞得定為止。</p>
+    </div>
+
+    <!-- Section 01 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2>你已經會的方法：Top-Down</h2>
+      </div>
+
+      <!-- Top-Down 三角形圖示 -->
+      <div style="background:#0d0d0d;border:1px solid rgba(124,255,178,0.14);border-radius:16px;padding:24px 16px 18px;margin-bottom:20px;text-align:center;">
+        <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:360px;display:inline-block;">
+          <!-- 倒三角，3 層不重疊切片 -->
+          <!-- 頂點: TL(0,10) TR(280,10) B(140,150) -->
+          <!-- y=63: Lx=53, Rx=227 | y=110: Lx=100, Rx=180 -->
+          <polygon points="0,10 280,10 227,63 53,63"     fill="#1e3a5f"/>
+          <polygon points="53,63 227,63 180,110 100,110"  fill="#1a3354"/>
+          <polygon points="100,110 180,110 140,150"        fill="#162c47"/>
+          <line x1="53"  y1="63"  x2="227" y2="63"  stroke="white" stroke-width="1.5" stroke-opacity="0.3"/>
+          <line x1="100" y1="110" x2="180" y2="110" stroke="white" stroke-width="1.5" stroke-opacity="0.3"/>
+        </svg>
+        <div style="font-size:13px;font-weight:700;color:#7cffb2;margin-top:8px;font-family:'Space Mono',monospace;letter-spacing:0.05em;">TOP-DOWN　由上而下</div>
+      </div>
+
+      <div class="card">
+        <p>到目前為止，你學的方式都屬於 <strong>Top-Down（由上而下）</strong>——用一句話或一段需求描述，直接告訴 AI 你要什麼，再讓 AI 把整件事搞定。</p>
+        <p>這就是網路上流行的 Vibe Coding 精神：<strong>你負責想清楚要什麼，AI 負責把它變出來。</strong></p>
+      </div>
+
+      <div class="analogy">
+        <div class="label">💡 舉例說明</div>
+        <p>就像你跟外送平台說「幫我點一份牛肉麵」，不用說麵要幾克、湯頭要熬幾小時——你只說目標，其他讓平台處理。<strong>Top-Down 就是這種「說結果，不說過程」的溝通方式。</strong></p>
+      </div>
+
+      <div class="tip-box">
+        <div class="label">📌 使用萬用句型</div>
+        <p>你在上個單元學的萬用句型（<strong>現況、痛點、期待</strong>），就是讓 Top-Down 成功率大幅提升的秘技。句型越完整，AI 理解你需求的機率就越高。</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 02 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2>Top-Down 什麼時候會失靈？</h2>
+      </div>
+
+      <div class="card">
+        <p>Top-Down 很好用，但它有個弱點：<strong>當你的需求越複雜，或描述得不夠精準，AI 就可能開始跑偏。</strong></p>
+        <p>常見的失靈症狀包括：對話越來越長、AI 一直繞圈子、每次修改都改出新問題，最後你不知道從哪裡繼續。</p>
+      </div>
+
+      <div class="quiz-box">
+        <div class="label">🤔 想一想</div>
+        <p>你有沒有遇過，跟 AI 講了半天，它給你的東西跟你想要的完全不一樣？或者對話改了十幾輪還是沒改好？那很可能就是 Top-Down 在這個任務上失靈了。</p>
+      </div>
+
+      <div class="card">
+        <p>這時候，光靠更好的提示詞已經不夠了。你需要的是<strong>換一種解題思維</strong>——從工程師的角度重新看問題。</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 03 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2>分而治之：Bottom-Up 的底層邏輯</h2>
+      </div>
+
+      <!-- Bottom-Up 三角形圖示 -->
+      <div style="background:#0d0d0d;border:1px solid rgba(124,255,178,0.14);border-radius:16px;padding:24px 16px 18px;margin-bottom:20px;text-align:center;">
+        <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:360px;display:inline-block;">
+          <!-- 正三角，3 層不重疊切片 -->
+          <!-- 頂點: T(140,10) BL(0,150) BR(280,150) -->
+          <!-- y=63: Lx=87, Rx=193 | y=110: Lx=40, Rx=240 -->
+          <polygon points="140,10 193,63 87,63"            fill="#e88236"/>
+          <polygon points="87,63 193,63 240,110 40,110"    fill="#d05a22"/>
+          <polygon points="40,110 240,110 280,150 0,150"   fill="#c44a1a"/>
+          <line x1="87"  y1="63"  x2="193" y2="63"  stroke="white" stroke-width="1.5" stroke-opacity="0.3"/>
+          <line x1="40"  y1="110" x2="240" y2="110" stroke="white" stroke-width="1.5" stroke-opacity="0.3"/>
+        </svg>
+        <div style="font-size:13px;font-weight:700;color:#ff9f43;margin-top:8px;font-family:'Space Mono',monospace;letter-spacing:0.05em;">BOTTOM-UP　由下而上</div>
+      </div>
+
+      <div class="card">
+        <p><strong>Bottom-Up（由下而上）</strong> 的核心做法是：<strong>把大問題拆成小問題，逐一確認 AI 能解決，最後再組合在一起。</strong></p>
+        <p>如果小問題還是太難，就繼續往下拆，直到每一塊 AI 都搞得定為止。</p>
+      </div>
+
+      <div class="tip-box">
+        <div class="label">🧠 這個概念有個正式名稱</div>
+        <p>電腦科學裡叫做 <strong>分而治之（Divide and Conquer）</strong>，是軟體工程師從業幾十年積累下來的解題哲學，AI 對這套邏輯非常熟悉。</p>
+      </div>
+
+      <!-- 分而治之 架構圖 -->
+      <div style="background:#0d0d0d;border:1px solid rgba(124,255,178,0.14);border-radius:16px;padding:28px 16px 24px;margin-bottom:20px;">
+        <svg viewBox="0 0 500 185" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+          <!-- Title -->
+          <text x="250" y="22" text-anchor="middle" fill="#7cffb2" font-size="16" font-weight="bold" font-family="'Noto Sans TC',sans-serif">分而治之（Divide and Conquer）</text>
+          <!-- 大問題 box -->
+          <rect x="175" y="36" width="150" height="42" rx="8" fill="#111111" stroke="rgba(124,255,178,0.35)" stroke-width="1.5"/>
+          <text x="250" y="62" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="bold" font-family="'Noto Sans TC',sans-serif">大問題</text>
+          <!-- Vertical line down from 大問題 -->
+          <line x1="250" y1="78" x2="250" y2="100" stroke="rgba(124,255,178,0.45)" stroke-width="1.5"/>
+          <!-- Horizontal connector -->
+          <line x1="90" y1="100" x2="410" y2="100" stroke="rgba(124,255,178,0.45)" stroke-width="1.5"/>
+          <!-- Three verticals down -->
+          <line x1="90" y1="100" x2="90" y2="118" stroke="rgba(124,255,178,0.45)" stroke-width="1.5"/>
+          <line x1="250" y1="100" x2="250" y2="118" stroke="rgba(124,255,178,0.45)" stroke-width="1.5"/>
+          <line x1="410" y1="100" x2="410" y2="118" stroke="rgba(124,255,178,0.45)" stroke-width="1.5"/>
+          <!-- 小問題 boxes -->
+          <rect x="15" y="118" width="150" height="42" rx="8" fill="#111111" stroke="rgba(124,255,178,0.2)" stroke-width="1"/>
+          <text x="90" y="144" text-anchor="middle" fill="#cccccc" font-size="14" font-family="'Noto Sans TC',sans-serif">小問題</text>
+          <rect x="175" y="118" width="150" height="42" rx="8" fill="#111111" stroke="rgba(124,255,178,0.2)" stroke-width="1"/>
+          <text x="250" y="144" text-anchor="middle" fill="#cccccc" font-size="14" font-family="'Noto Sans TC',sans-serif">小問題</text>
+          <rect x="335" y="118" width="150" height="42" rx="8" fill="#111111" stroke="rgba(124,255,178,0.2)" stroke-width="1"/>
+          <text x="410" y="144" text-anchor="middle" fill="#cccccc" font-size="14" font-family="'Noto Sans TC',sans-serif">小問題</text>
+          <!-- Arrow hints on small boxes -->
+          <text x="90" y="175" text-anchor="middle" fill="rgba(124,255,178,0.4)" font-size="11" font-family="'Noto Sans TC',sans-serif">逐一用 AI 解決</text>
+          <text x="250" y="175" text-anchor="middle" fill="rgba(124,255,178,0.4)" font-size="11" font-family="'Noto Sans TC',sans-serif">逐一用 AI 解決</text>
+          <text x="410" y="175" text-anchor="middle" fill="rgba(124,255,178,0.4)" font-size="11" font-family="'Noto Sans TC',sans-serif">逐一用 AI 解決</text>
+        </svg>
+      </div>
+
+      <div class="card">
+        <p>這個概念不只在程式裡有用，你在日常生活中也一直在用它，只是沒意識到：</p>
+      </div>
+
+      <div class="shape-grid">
+        <div class="shape-item">
+          <div class="shape-icon">🎯</div>
+          <div>
+            <div class="shape-name">目標管理</div>
+            <div class="shape-desc">把年度大目標拆成每月、每週的小任務，一步一步達成</div>
+          </div>
+        </div>
+        <div class="shape-item">
+          <div class="shape-icon">🍳</div>
+          <div>
+            <div class="shape-name">備料煮飯</div>
+            <div class="shape-desc">先備料、先炒配料、最後組合成一道菜，分步驟完成</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 04 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2>Bottom-Up 實戰：三個步驟</h2>
+      </div>
+
+      <div class="card">
+        <p>假設你想要自動化一件重複性的工作——例如<strong>批次幫 30 位同事更新一份線上表單的資料</strong>。用 Top-Down 一次下指令，AI 可能給你一個龐大又難以除錯的程式。改用 Bottom-Up，流程會是這樣：</p>
+      </div>
+
+      <div class="mermaid-card">
+        <div class="mermaid-title">⚡ Bottom-Up 三步驟</div>
+        <div class="mermaid-steps">
+          <div class="mermaid-step">
+            <div class="mermaid-step-num">1</div>
+            <div class="mermaid-step-text"><strong>拆出最小可測試的功能</strong><br>不要一次想完成所有事。先問自己：「整件任務裡，最小的一步是什麼？」例如先讓程式能填好<strong>第一個欄位</strong>就好。確認成功，才往下走。</div>
+          </div>
+          <div class="mermaid-step">
+            <div class="mermaid-step-num">2</div>
+            <div class="mermaid-step-text"><strong>驗證後逐步延伸</strong><br>第一步成功後，開新對話，把已驗證的程式貼進去，問 AI 能不能處理<strong>所有欄位</strong>。遇到特殊情況（例如某個欄位是下拉選單）就另開對話單獨處理。</div>
+          </div>
+          <div class="mermaid-step">
+            <div class="mermaid-step-num">3</div>
+            <div class="mermaid-step-text"><strong>把所有小功能組合起來</strong><br>所有小塊都驗證可行後，再開新對話，把各個已驗證的小程式貼給 AI，請它整合成完整的解決方案。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <div class="label">🔑 關鍵技巧</div>
+        <p>每一步都<strong>開新對話</strong>。這樣可以確保 AI 不會把前面的失敗經驗帶進來，也讓每一個小問題都能被乾淨地測試。</p>
+      </div>
+
+      <div class="analogy">
+        <div class="label">🧩 拼圖比喻</div>
+        <p>Bottom-Up 就像拼一個 1000 片的拼圖——沒有人會一開始就把所有碎片全部混在一起亂拼。你會先把<strong>邊框確定好</strong>，再分區塊各個擊破：先拼天空、再拼海洋、再拼陸地，每個區塊確認拼好了，最後再把各區塊接起來。<strong>每一小塊都是驗證過的，拼錯了也只需要重拼那一區，不用把整幅圖打散重來。</strong></p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 05 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <h2>兩種方法，各有舞台</h2>
+      </div>
+
+      <!-- Triangle Visual -->
+      <div style="background:#0d0d0d;border:1px solid rgba(124,255,178,0.14);border-radius:16px;padding:28px 16px 20px;margin-bottom:20px;">
+        <svg viewBox="0 0 580 210" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+          <!-- Left: Top-Down 倒三角，3 層不重疊 -->
+          <!-- 頂點: TL(0,10) TR(270,10) B(135,170) -->
+          <!-- y=63: Lx=135*(53/160)=44.7 → Lx=44.7, Rx=225.3 -->
+          <!-- y=116: Lx=135*(106/160)=89.4 → Lx=89.4, Rx=180.6 -->
+          <polygon points="0,10 270,10 225,63 45,63"     fill="#1e3a5f"/>
+          <polygon points="45,63 225,63 180,116 90,116"   fill="#1a3354"/>
+          <polygon points="90,116 180,116 135,170"         fill="#162c47"/>
+          <line x1="45"  y1="63"  x2="225" y2="63"  stroke="white" stroke-width="1.5" stroke-opacity="0.3"/>
+          <line x1="90"  y1="116" x2="180" y2="116" stroke="white" stroke-width="1.5" stroke-opacity="0.3"/>
+          <!-- Right: Bottom-Up 正三角，3 層不重疊 -->
+          <!-- 頂點: T(445,10) BL(310,170) BR(580,170) -->
+          <!-- 半寬 = 135; y=63: half=135*(53/160)=44.7 → Lx=400.3, Rx=489.7 -->
+          <!-- y=116: half=135*(106/160)=89.4 → Lx=355.6, Rx=534.4 -->
+          <polygon points="445,10 489,63 401,63"              fill="#e88236"/>
+          <polygon points="401,63 489,63 534,116 356,116"     fill="#d05a22"/>
+          <polygon points="356,116 534,116 580,170 310,170"   fill="#c44a1a"/>
+          <line x1="401" y1="63"  x2="489" y2="63"  stroke="white" stroke-width="1.5" stroke-opacity="0.3"/>
+          <line x1="356" y1="116" x2="534" y2="116" stroke="white" stroke-width="1.5" stroke-opacity="0.3"/>
+          <!-- Divider -->
+          <line x1="290" y1="10" x2="290" y2="178" stroke="rgba(124,255,178,0.15)" stroke-width="1" stroke-dasharray="4,4"/>
+          <!-- Labels -->
+          <text x="135" y="190" text-anchor="middle" fill="#7cffb2" font-size="14" font-weight="bold" font-family="'Noto Sans TC',sans-serif">Top-Down</text>
+          <text x="135" y="206" text-anchor="middle" fill="#888888" font-size="11" font-family="'Noto Sans TC',sans-serif">（由上而下）</text>
+          <text x="445" y="190" text-anchor="middle" fill="#ff9f43" font-size="14" font-weight="bold" font-family="'Noto Sans TC',sans-serif">Bottom-Up</text>
+          <text x="445" y="206" text-anchor="middle" fill="#888888" font-size="11" font-family="'Noto Sans TC',sans-serif">（由下而上）</text>
+        </svg>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-card top">
+          <div class="compare-label">TOP-DOWN</div>
+          <div class="compare-title">⬇ 由上而下</div>
+          <div class="compare-desc">直接描述高層次需求，讓 AI 一次搞定</div>
+          <div class="compare-pros">
+            <div class="compare-pro">任務簡單、邊界清楚</div>
+            <div class="compare-pro">提示詞夠完整時效率最高</div>
+            <div class="compare-pro compare-con">任務複雜時容易跑偏</div>
+            <div class="compare-pro compare-con">出錯時難以鎖定問題</div>
+          </div>
+        </div>
+        <div class="compare-card bottom">
+          <div class="compare-label">BOTTOM-UP</div>
+          <div class="compare-title">⬆ 由下而上</div>
+          <div class="compare-desc">拆解成小功能逐一驗證，再組合</div>
+          <div class="compare-pros">
+            <div class="compare-pro">複雜任務也能穩定推進</div>
+            <div class="compare-pro">出錯時容易定位問題</div>
+            <div class="compare-pro compare-con">前期需要多一點耐心</div>
+            <div class="compare-pro compare-con">步驟較多，不適合簡單任務</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <p>兩種方法不是對立的，而是<strong>互補的工具</strong>。大多數時候先從 Top-Down 試試看，遇到卡關再切換到 Bottom-Up 重新拆解。隨著你掌握的技術詞彙越多，你就越知道什麼時候該用哪一種。</p>
+      </div>
+
+      <div class="quiz-box">
+        <div class="label">🤔 想一想</div>
+        <p>你現在手邊有沒有一件想用 AI 自動化的重複性工作？試著想想看，如果要用 Bottom-Up 拆解它，第一步最小的功能會是什麼？</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 06 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <h2>為什麼接下來要學技術概念？</h2>
+      </div>
+
+      <div class="card">
+        <p>接下來的課程，我們會帶你認識平台、程式語言、API、爬蟲等技術詞彙。這不是要你變成工程師，而是要讓你<strong>知道有哪些「積木」可以用</strong>。</p>
+        <p>當 Top-Down 失敗，你想嘗試 Bottom-Up 的時候，你就能立刻知道要拆成哪些小塊，而不用從零開始探索。</p>
+      </div>
+
+      <div class="tips-list">
+        <div class="tip-item">
+          <div class="tip-item-num">1</div>
+          <div class="tip-item-text"><strong>這些都是 AI 非常熟悉的老知識</strong><br>程式語言、API 這些概念已經存在幾十年，AI 對它們的理解非常深入。你只要說對關鍵詞，AI 就能精準地執行。</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-item-num">2</div>
+          <div class="tip-item-text"><strong>你不需要從頭剪出每一片拼圖</strong><br>了解這些概念，讓你能直接「召喚」已存在的解法，而不是讓 AI 從無到有瞎摸索。這大幅降低出錯機率。</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-item-num">3</div>
+          <div class="tip-item-text"><strong>學觀念的 CP 值最高</strong><br>你不需要會寫程式，但懂得觀念，就能更精準地指揮 AI。這是在 AI 時代讓自己保持競爭力的最短路徑。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Takeaway -->
+    <div class="takeaway">
+      <div class="takeaway-title">✦ 本章重點整理</div>
+      <ul class="takeaway-list">
+        <li>Top-Down 適合簡單任務，直接描述需求讓 AI 一次完成</li>
+        <li>任務複雜時 Top-Down 容易跑偏，這時切換到 Bottom-Up</li>
+        <li>Bottom-Up 核心：拆小 → 逐一驗證 → 最後組合</li>
+        <li>每個小步驟開新對話，保持每次測試的乾淨與精準</li>
+        <li>學技術概念是為了知道有哪些積木，讓 Bottom-Up 更有效率</li>
+      </ul>
+    </div>
+
+  </div><!-- /container -->
+</body>
+</html>

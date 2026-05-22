@@ -54,5 +54,12 @@
     "title": "先別寫程式：思考不同解法，選一條最可行的路",
     "status": "open",
     "url": "./lecture8/"
+  },
+  {
+    "day": 9,
+    "chapter": "CH2-2",
+    "title": "工程師解題思維：Top-Down vs Bottom-Up",
+    "status": "open",
+    "url": "./lecture9/"
   }
 ]
