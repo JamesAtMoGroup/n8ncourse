@@ -61,5 +61,12 @@
     "title": "工程師解題思維：Top-Down vs Bottom-Up",
     "status": "open",
     "url": "./lecture9/"
+  },
+  {
+    "day": 10,
+    "chapter": "CH2-3",
+    "title": "先決定平台：手機、電腦、網頁⋯⋯我會在哪裡用這個程式？",
+    "status": "open",
+    "url": "./lecture10/"
   }
 ]

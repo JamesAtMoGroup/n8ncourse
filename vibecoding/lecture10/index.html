@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CH 2-3｜先決定平台：手機、電腦、網頁⋯⋯我會在哪裡用這個程式？</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #7cffb2;
+      --primary-light: rgba(124,255,178,0.07);
+      --accent: #7cffb2;
+      --green: #7cffb2;
+      --yellow: #ffd166;
+      --orange: #ff9f43;
+      --bg: #000000;
+      --surface: #0d0d0d;
+      --surface2: #111111;
+      --text: #ffffff;
+      --text-muted: #888888;
+      --border: rgba(124,255,178,0.14);
+      --orange-border: rgba(255,159,67,0.25);
+      --orange-light: rgba(255,159,67,0.06);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', sans-serif; font-size: 16px; line-height: 1.8; min-height: 100vh; }
+
+    .container { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
+
+    .hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); margin-bottom: 56px; animation: fadeUp 0.6s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .hero-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .chapter-badge { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--primary); border: 1px solid var(--primary); padding: 4px 14px; border-radius: 99px; letter-spacing: 0.05em; text-shadow: 0 0 10px rgba(124,255,178,0.4); }
+    .tag { font-size: 12px; padding: 4px 12px; border-radius: 99px; font-weight: 500; }
+    .tag-beginner { background: rgba(124,255,178,0.1); color: var(--green); }
+    .tag-time { background: rgba(255,209,102,0.1); color: var(--yellow); }
+    h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 16px; }
+    h1 em { font-style: normal; color: var(--primary); }
+    .hero-sub { font-size: 17px; color: var(--text-muted); max-width: 540px; line-height: 1.7; }
+
+    .section { margin-bottom: 56px; animation: fadeUp 0.5s ease both; }
+    .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .section-num { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--primary); background: rgba(124,255,178,0.08); border: 1px solid var(--border); padding: 5px 14px; border-radius: 99px; white-space: nowrap; letter-spacing: 0.05em; }
+    h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+    .card p { color: var(--text-muted); } .card p + p { margin-top: 12px; } .card strong { color: var(--text); }
+
+    .analogy { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 var(--radius) var(--radius) 0; padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+    .analogy .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .analogy p { color: #c8ffe0; font-size: 15px; line-height: 1.75; } .analogy strong { color: #fff; }
+
+    .tip-box { background: rgba(124,255,178,0.04); border: 1px solid rgba(124,255,178,0.2); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+    .tip-box .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .tip-box p { color: var(--text-muted); font-size: 15px; line-height: 1.75; } .tip-box strong { color: var(--text); }
+    .tip-box p + p { margin-top: 10px; }
+
+    .tip-box.orange { background: var(--orange-light); border: 1px solid var(--orange-border); }
+    .tip-box.orange .label { color: var(--orange); }
+    .tip-box.orange strong { color: #fff; }
+
+    .quiz-box { border: 2px dashed rgba(255,209,102,0.35); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; background: rgba(255,209,102,0.03); animation: fadeUp 0.5s ease both; }
+    .quiz-box .label { font-size: 12px; font-weight: 700; color: var(--yellow); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+    .quiz-box p { color: var(--text-muted); font-size: 15px; line-height: 1.7; }
+
+    .shape-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .shape-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; animation: fadeUp 0.5s ease both; }
+    .shape-icon { flex-shrink: 0; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; font-size: 22px; }
+    .shape-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .shape-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+    .mermaid-card { background: var(--orange-light); border: 1px solid var(--orange-border); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+    .mermaid-title { font-size: 16px; font-weight: 900; color: var(--orange); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+    .mermaid-steps { display: flex; flex-direction: column; gap: 10px; }
+    .mermaid-step { display: flex; align-items: flex-start; gap: 12px; }
+    .mermaid-step-num { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: #000; background: var(--orange); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 3px; }
+    .mermaid-step-text { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+    .mermaid-step-text strong { color: var(--text); }
+
+    .takeaway { background: linear-gradient(135deg, rgba(124,255,178,0.08), rgba(0,0,0,0)); border: 1px solid rgba(124,255,178,0.25); border-radius: var(--radius); padding: 36px; margin-top: 48px; animation: fadeUp 0.5s ease both; }
+    .takeaway-title { font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+    .takeaway-list { list-style: none; display: flex; flex-direction: column; gap: 12px; counter-reset: li; }
+    .takeaway-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; color: var(--text); line-height: 1.6; counter-increment: li; }
+    .takeaway-list li::before { content: counter(li); background: var(--primary); color: #000; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+
+    code { font-family: 'Space Mono', monospace; font-size: 0.85em; background: rgba(255,159,67,0.12); color: var(--orange); padding: 2px 7px; border-radius: 5px; }
+    .highlight { color: var(--primary); font-weight: 700; }
+    .highlight-orange { color: var(--orange); font-weight: 700; }
+    .divider { height: 1px; background: var(--border); margin: 48px 0; }
+
+    .web-split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .web-card { background: var(--orange-light); border: 1px solid var(--orange-border); border-radius: var(--radius); padding: 22px 24px; }
+    .web-card .label { font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: 0.04em; margin-bottom: 10px; }
+    .web-card .desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; } .web-card strong { color: #fff; }
+
+    @media (max-width: 600px) {
+      .shape-grid { grid-template-columns: 1fr 1fr; }
+      .card, .quiz-box, .takeaway, .tip-box { padding: 20px; }
+      .container { padding-left: 16px; padding-right: 16px; }
+      .web-split { grid-template-columns: 1fr; }
+    }
+  </style>
+<style id='vc-nav-css'>#vc-nav{position:sticky;top:0;z-index:200;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border,rgba(255,255,255,0.1));}#vc-nav a{font-size:14px;font-weight:500;color:#888;text-decoration:none;transition:color .15s;}#vc-nav a:hover{color:#fff;}#vc-nav-right{display:flex;align-items:center;gap:10px;}#vc-nav-user{font-size:13px;color:#888;}#vc-logout{font-size:13px;font-weight:600;color:#666;background:rgba(255,255,255,0.04);border:1px solid var(--border,rgba(255,255,255,0.1));border-radius:8px;padding:4px 12px;cursor:pointer;font-family:inherit;}</style></head>
+<body>
+<nav id='vc-nav'><a href='../'>← 返回課程選單</a><div id='vc-nav-right'><span id='vc-nav-user'></span><button id='vc-logout' onclick="localStorage.removeItem('aischool_user');window.location.href='../../login.html';">登出</button></div></nav><script>(function(){var u=JSON.parse(localStorage.getItem('aischool_user')||'null');if(u&&u.name)document.getElementById('vc-nav-user').textContent=u.name;})();</script>
+<script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
+
+  <h1>先決定平台：<br><em>手機、電腦、網頁⋯⋯我會在哪裡用這個程式？</em></h1>
+      <p class="hero-sub">開始寫程式前，你必須先知道它最終會跑在哪裡——因為不同平台，用的是完全不同的語言。</p>
+    </div>
+
+    <!-- Section 01 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2>為什麼要先選平台？</h2>
+      </div>
+      <div class="card">
+        <p>你有一個想法，想把它做成一個程式——但在動手之前，<strong>第一個問題是：它要跑在哪裡？</strong></p>
+        <p>平台不同，程式碼就長得不一樣。這就是為什麼你下載軟體時要選 <strong>macOS 版</strong>或 <strong>Windows 版</strong>；下載 App 要選 <strong>iOS</strong> 或 <strong>Android</strong>；甚至買遊戲，也分 <strong>Switch</strong> 或 <strong>PS5</strong>。它們的程式碼結構，可能是完全不同的東西。</p>
+      </div>
+      <div class="analogy">
+        <div class="label">💡 料理類比</div>
+        <p>同一道菜，在 <strong>氣炸鍋、電鍋、烤箱</strong>裡做，食材雖然相同，但步驟和時間完全不一樣。<strong>不先確認手邊的設備，就沒辦法選對做法。</strong>寫程式也一樣——不先確認平台，AI 也不知道該給你哪種程式碼。</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 02 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2>常見的 5 種平台</h2>
+      </div>
+      <div class="card">
+        <p>除了電腦和手機，還有更多你可能沒想到的平台。以下是 5 個最常見的類型：</p>
+      </div>
+
+      <div class="shape-grid">
+        <div class="shape-item">
+          <div class="shape-icon">🖥️</div>
+          <div>
+            <div class="shape-name">桌機程式</div>
+            <div class="shape-desc">安裝在電腦上執行，Windows 和 macOS 是兩套不同系統</div>
+          </div>
+        </div>
+        <div class="shape-item">
+          <div class="shape-icon">📱</div>
+          <div>
+            <div class="shape-name">手機 App</div>
+            <div class="shape-desc">iOS 與 Android 是兩套獨立系統，App 通常分開開發</div>
+          </div>
+        </div>
+        <div class="shape-item">
+          <div class="shape-icon">🌐</div>
+          <div>
+            <div class="shape-name">網頁</div>
+            <div class="shape-desc">用瀏覽器開啟，不需安裝，電腦手機都能用</div>
+          </div>
+        </div>
+        <div class="shape-item">
+          <div class="shape-icon">🧩</div>
+          <div>
+            <div class="shape-name">瀏覽器外掛</div>
+            <div class="shape-desc">加裝在 Chrome / Edge 上，擴充原有的瀏覽功能</div>
+          </div>
+        </div>
+        <div class="shape-item">
+          <div class="shape-icon">💬</div>
+          <div>
+            <div class="shape-name">通訊軟體 Bot</div>
+            <div class="shape-desc">在 Line、Discord、Slack 裡跑的自動化程式</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <div class="label">🧩 瀏覽器外掛是怎麼來的？</div>
+        <p>翻譯外掛、截圖工具、廣告封鎖器，這些都是瀏覽器外掛。早期幾乎都是技術高手非法改寫瀏覽器才做到的，後來各大瀏覽器才開放<strong>合法的外掛機制</strong>。現在 <strong>Chrome 和 Edge 共用同一套標準</strong>，一個外掛就能橫跨兩個瀏覽器。</p>
+      </div>
+
+      <div class="tip-box">
+        <div class="label">💬 通訊軟體也能跑程式？</div>
+        <p>Line、Discord、Slack 這類通訊軟體，允許你在裡面建立<strong>自動化的 Bot</strong>。你可以把行事曆、待辦清單或外部服務（像是線上的預約系統）串進聊天室，讓 Bot 自動提醒今天的行程、幫你翻譯訊息，甚至回覆常見問題。</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 03 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2>網頁也分好幾種</h2>
+      </div>
+      <div class="card">
+        <p>網頁這個平台比較特別——它<strong>又可以細分</strong>成幾種類型：</p>
+      </div>
+
+      <div class="web-split">
+        <div class="web-card">
+          <div class="label">Website</div>
+          <div class="desc"><strong>網站</strong>——偏向品牌形象頁或電商頁面，重視<strong>資訊的呈現</strong>。</div>
+        </div>
+        <div class="web-card">
+          <div class="label">Web App</div>
+          <div class="desc"><strong>網頁應用程式</strong>——互動感更強，更像桌機軟體搬進瀏覽器。例如 <strong>Canva、Notion、Figma</strong>。</div>
+        </div>
+      </div>
+
+      <div class="tip-box orange">
+        <div class="label">📐 RWD ｜ Responsive Web Design</div>
+        <p>手機版和桌機版的網頁，有時會分開開發（<strong>Desktop Web</strong> / <strong>Mobile Web</strong>），但很多廠商會選擇用<strong>一套程式碼</strong>，讓網頁自動根據螢幕大小調整。這種方式叫做 <strong>RWD（響應式設計）</strong>——<span class="highlight-orange">一份程式碼，自動適應所有螢幕</span>。</p>
+      </div>
+
+      <div class="mermaid-card">
+        <div class="mermaid-title">🔍 動手試試：什麼是 RWD？</div>
+        <div class="mermaid-steps">
+          <div class="mermaid-step">
+            <div class="mermaid-step-num">1</div>
+            <div class="mermaid-step-text">用瀏覽器開啟 <strong>YouTube</strong></div>
+          </div>
+          <div class="mermaid-step">
+            <div class="mermaid-step-num">2</div>
+            <div class="mermaid-step-text">在頁面任意處按 <strong>右鍵 → 選「檢查」</strong>，進入開發者工具<br><span style="color:var(--orange);">（快捷鍵：<code>Ctrl+Shift+I</code>，Mac：<code>⌘+Option+I</code>）</span></div>
+          </div>
+          <div class="mermaid-step">
+            <div class="mermaid-step-num">3</div>
+            <div class="mermaid-step-text">點擊「<strong>切換裝置工具列</strong>」圖示，或按快捷鍵 <code>Ctrl+Shift+M</code>（Mac：<code>⌘+Shift+M</code>）</div>
+          </div>
+          <div class="mermaid-step">
+            <div class="mermaid-step-num">4</div>
+            <div class="mermaid-step-text">在右上角<strong>切換不同裝置尺寸</strong>，觀察網頁排版的變化——這就是響應式設計的實際效果</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 04 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2>每個平台，都有最適合它的語言</h2>
+      </div>
+      <div class="card">
+        <p>不同平台的背後，跑的是不同的程式語言。你不需要親自學會這些語言，但<strong>知道自己的目標平台，就能給 AI 更精準的關鍵字</strong>，讓對話不容易跑偏、答案不容易離題。</p>
+      </div>
+      <div class="tip-box">
+        <div class="label">📌 下一步預告</div>
+        <p>下個單元，我們會把常見的<strong>平台和程式語言</strong>「連連看」，幫你建立第一份平台與語言對照表。</p>
+      </div>
+    </div>
+
+    <!-- 重點整理 -->
+    <div class="takeaway">
+      <div class="takeaway-title">✦ 本章重點整理</div>
+      <ul class="takeaway-list">
+        <li>寫程式前必須先確認平台——不同平台需要不同的程式碼，知道目標平台才能給 AI 精準的關鍵字</li>
+        <li>常見的 5 種平台：桌機程式、手機 App、網頁、瀏覽器外掛、通訊軟體 Bot——每一個都是不同的環境，有各自的開發方式</li>
+        <li>網頁細分成 Website（重資訊）和 Web App（重互動）；手機桌機常用 RWD 一份程式碼適應所有螢幕</li>
+      </ul>
+    </div>
+
+  </div><!-- /container -->
+</body>
+</html>
