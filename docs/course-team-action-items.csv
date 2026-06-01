@@ -1,0 +1,12 @@
+id,project_id,parent_project_id,workstream,owner,due_date,status,task,acceptance_signal,evidence
+AICT-001,f9f386e7-b8e1-49bb-acfc-c7ae4b8a6aed,ecd425ca-9c82-4093-b4b3-8caf1040fc8f,auto-push,AI Supervisor,2026-06-01,done,建立本推進文件與 action_items,docs/course-team-30-day-push.md 與 docs/course-team-action-items.csv 可打開,本檔案與主文件已建立
+AICT-002,f9f386e7-b8e1-49bb-acfc-c7ae4b8a6aed,ecd425ca-9c82-4093-b4b3-8caf1040fc8f,organization,Louis / Supervisor,2026-06-03,next,指定三組 cell owner 與 backup,3 個 owner 名字、聯絡方式、投入時段,
+AICT-003,f9f386e7-b8e1-49bb-acfc-c7ae4b8a6aed,ecd425ca-9c82-4093-b4b3-8caf1040fc8f,recruiting,Recruiting Lead,2026-06-05,next,建立 30 人候選池,候選表含來源、角色、優先級,
+AICT-004,f9f386e7-b8e1-49bb-acfc-c7ae4b8a6aed,ecd425ca-9c82-4093-b4b3-8caf1040fc8f,recruiting,Recruiting Lead,2026-06-06,next,發出第一批 15 封邀約,訊息紀錄與回覆狀態,
+AICT-005,f9f386e7-b8e1-49bb-acfc-c7ae4b8a6aed,ecd425ca-9c82-4093-b4b3-8caf1040fc8f,recruiting,Recruiting Lead + Cell Leads,2026-06-12,next,完成 9 份面談 scorecard,每份有分數、風險、建議,
+AICT-006,f9f386e7-b8e1-49bb-acfc-c7ae4b8a6aed,ecd425ca-9c82-4093-b4b3-8caf1040fc8f,recruiting,Louis / Recruiting Lead,2026-06-18,next,取得 3 名核心 owner trial agreement,文字確認與 D30 交付承諾,
+AICT-007,f9f386e7-b8e1-49bb-acfc-c7ae4b8a6aed,ecd425ca-9c82-4093-b4b3-8caf1040fc8f,course-product,Course Product Lead,2026-06-07,next,完成 Vibe Coding starter path,學習成果、章節、推廣賣點,
+AICT-008,f9f386e7-b8e1-49bb-acfc-c7ae4b8a6aed,ecd425ca-9c82-4093-b4b3-8caf1040fc8f,course-product,Course Product Lead,2026-06-14,next,完成 n8n gap plan 與下一批 5 講,每講主題、素材缺口、owner,
+AICT-009,f9f386e7-b8e1-49bb-acfc-c7ae4b8a6aed,ecd425ca-9c82-4093-b4b3-8caf1040fc8f,growth,Growth Lead,2026-06-14,next,完成首批推廣包,3 則內容、1 個 CTA、1 個回填表,
+AICT-010,f9f386e7-b8e1-49bb-acfc-c7ae4b8a6aed,ecd425ca-9c82-4093-b4b3-8caf1040fc8f,evidence,Growth + Product,2026-06-23,next,完成至少 1 次真實使用 / 回填,試聽、demo、訪談或內部導入紀錄,
+AICT-011,f9f386e7-b8e1-49bb-acfc-c7ae4b8a6aed,ecd425ca-9c82-4093-b4b3-8caf1040fc8f,decision,Supervisor,2026-06-30,next,D30 決策,續行 / 暫停 / 換 owner / 升級系統,
