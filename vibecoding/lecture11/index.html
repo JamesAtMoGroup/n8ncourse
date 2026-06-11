@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CH 2-4｜程式語言——每個平台都有最適合它的語言</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #7cffc2;
+      --primary-light: rgba(124,255,194,0.07);
+      --accent: #7cffc2;
+      --green: #7cffc2;
+      --yellow: #ffd166;
+      --orange: #ff9f43;
+      --purple: #a855f7;
+      --red: #ff6b6b;
+      --bg: #0a0a0a;
+      --surface: #0d0d0d;
+      --surface2: #111111;
+      --text: #ffffff;
+      --text-muted: #888888;
+      --border: rgba(124,255,194,0.14);
+      --orange-border: rgba(255,159,67,0.25);
+      --orange-light: rgba(255,159,67,0.06);
+      --purple-border: rgba(168,85,247,0.25);
+      --purple-light: rgba(168,85,247,0.06);
+      --yellow-border: rgba(255,209,102,0.25);
+      --yellow-light: rgba(255,209,102,0.06);
+      --red-border: rgba(255,107,107,0.25);
+      --red-light: rgba(255,107,107,0.06);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', sans-serif; font-size: 16px; line-height: 1.8; min-height: 100vh; }
+
+    .container { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
+
+    .hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); margin-bottom: 56px; animation: fadeUp 0.6s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .hero-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .chapter-badge { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--primary); border: 1px solid var(--primary); padding: 4px 14px; border-radius: 99px; letter-spacing: 0.05em; text-shadow: 0 0 10px rgba(124,255,194,0.4); }
+    .tag { font-size: 12px; padding: 4px 12px; border-radius: 99px; font-weight: 500; }
+    .tag-beginner { background: rgba(124,255,194,0.1); color: var(--green); }
+    .tag-time { background: rgba(255,209,102,0.1); color: var(--yellow); }
+    h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 16px; }
+    h1 em { font-style: normal; color: var(--primary); }
+    .hero-sub { font-size: 17px; color: var(--text-muted); max-width: 540px; line-height: 1.7; }
+
+    .section { margin-bottom: 56px; animation: fadeUp 0.5s ease both; }
+    .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .section-num { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--primary); background: rgba(124,255,194,0.08); border: 1px solid var(--border); padding: 5px 14px; border-radius: 99px; white-space: nowrap; letter-spacing: 0.05em; }
+    h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+    .card p { color: var(--text-muted); } .card p + p { margin-top: 12px; } .card strong { color: var(--text); }
+
+    .analogy { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 var(--radius) var(--radius) 0; padding: 24px 28px; margin-bottom: 20px; }
+    .analogy .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+    .analogy p { color: #c8ffe0; font-size: 15px; line-height: 1.75; } .analogy strong { color: #fff; }
+
+    .tip-box { background: rgba(124,255,194,0.04); border: 1px solid rgba(124,255,194,0.2); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; }
+    .tip-box .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+    .tip-box p { color: var(--text-muted); font-size: 15px; line-height: 1.75; } .tip-box strong { color: var(--text); }
+    .tip-box p + p { margin-top: 10px; }
+    .tip-box.orange { background: var(--orange-light); border-color: var(--orange-border); }
+    .tip-box.orange .label { color: var(--orange); } .tip-box.orange strong { color: #fff; }
+    .tip-box.red { background: var(--red-light); border-color: var(--red-border); }
+    .tip-box.red .label { color: var(--red); } .tip-box.red strong { color: #fff; }
+
+    /* 御三家 3-col */
+    .trinity-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+    .trinity-card { padding: 22px 20px; border-radius: var(--radius); border: 1px solid; }
+    .trinity-card.html-c { background: var(--orange-light); border-color: var(--orange-border); }
+    .trinity-card.css-c { background: var(--purple-light); border-color: var(--purple-border); }
+    .trinity-card.js-c { background: var(--yellow-light); border-color: var(--yellow-border); }
+    .trinity-name { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .trinity-card.html-c .trinity-name { color: var(--orange); }
+    .trinity-card.css-c .trinity-name { color: var(--purple); }
+    .trinity-card.js-c .trinity-name { color: var(--yellow); }
+    .trinity-role { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+    .trinity-meta { font-size: 12px; color: var(--text-muted); font-style: italic; }
+
+    /* Compare 2-col */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .compare-card { border-radius: var(--radius); padding: 24px; border: 1px solid; }
+    .compare-card.front { background: rgba(124,255,194,0.06); border-color: rgba(124,255,194,0.25); }
+    .compare-card.back { background: var(--orange-light); border-color: var(--orange-border); }
+    .compare-label { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 10px; }
+    .compare-card.front .compare-label { color: var(--primary); }
+    .compare-card.back .compare-label { color: var(--orange); }
+    .compare-title { font-size: 18px; font-weight: 900; margin-bottom: 10px; }
+    .compare-card.front .compare-title { color: var(--primary); }
+    .compare-card.back .compare-title { color: var(--orange); }
+    .compare-desc { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+    .compare-desc strong { color: var(--text); }
+    .compare-bullets { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+    .compare-bullet { font-size: 12px; color: var(--text-muted); display: flex; gap: 6px; }
+    .compare-bullet::before { content: "•"; flex-shrink: 0; font-weight: 700; }
+    .compare-card.front .compare-bullet::before { color: var(--primary); }
+    .compare-card.back .compare-bullet::before { color: var(--orange); }
+
+    /* Lang map */
+    .lang-row { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px; }
+    .lang-num { font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; color: #000; background: var(--primary); border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .lang-row.purple .lang-num { background: var(--purple); color: #fff; }
+    .lang-row.yellow .lang-num { background: var(--yellow); }
+    .lang-row.orange .lang-num { background: var(--orange); color: #fff; }
+    .lang-plat { font-weight: 700; color: var(--text); margin-right: 8px; }
+    .lang-langs { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+    .lang-pill { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 99px; }
+    .lang-row .lang-pill { background: rgba(124,255,194,0.12); color: var(--primary); border: 1px solid rgba(124,255,194,0.25); }
+    .lang-row.purple .lang-pill { background: rgba(168,85,247,0.12); color: var(--purple); border-color: var(--purple-border); }
+    .lang-row.yellow .lang-pill { background: rgba(255,209,102,0.12); color: var(--yellow); border-color: var(--yellow-border); }
+    .lang-row.orange .lang-pill { background: rgba(255,159,67,0.12); color: var(--orange); border-color: var(--orange-border); }
+    .lang-note { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+    .takeaway { background: linear-gradient(135deg, rgba(124,255,194,0.08), rgba(0,0,0,0)); border: 1px solid rgba(124,255,194,0.25); border-radius: var(--radius); padding: 36px; margin-top: 48px; }
+    .takeaway-title { font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; }
+    .takeaway-list { list-style: none; display: flex; flex-direction: column; gap: 12px; counter-reset: li; }
+    .takeaway-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; color: var(--text); line-height: 1.6; counter-increment: li; }
+    .takeaway-list li::before { content: counter(li); background: var(--primary); color: #000; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+
+    code { font-family: 'Space Mono', monospace; font-size: 0.85em; background: rgba(124,255,194,0.1); color: var(--primary); padding: 2px 7px; border-radius: 5px; }
+    .highlight { color: var(--primary); font-weight: 700; }
+    .highlight-orange { color: var(--orange); font-weight: 700; }
+    .highlight-purple { color: var(--purple); font-weight: 700; }
+    .highlight-yellow { color: var(--yellow); font-weight: 700; }
+    .highlight-red { color: var(--red); font-weight: 700; }
+    .divider { height: 1px; background: var(--border); margin: 48px 0; }
+
+    @media (max-width: 600px) {
+      .container { padding-left: 16px; padding-right: 16px; }
+      .card, .takeaway, .tip-box { padding: 20px; }
+      .trinity-grid { grid-template-columns: 1fr; }
+      .compare-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+<style id='vc-nav-css'>#vc-nav{position:sticky;top:0;z-index:200;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border,rgba(255,255,255,0.1));}#vc-nav a{font-size:14px;font-weight:500;color:#888;text-decoration:none;transition:color .15s;}#vc-nav a:hover{color:#fff;}#vc-nav-right{display:flex;align-items:center;gap:10px;}#vc-nav-user{font-size:13px;color:#888;}#vc-logout{font-size:13px;font-weight:600;color:#666;background:rgba(255,255,255,0.04);border:1px solid var(--border,rgba(255,255,255,0.1));border-radius:8px;padding:4px 12px;cursor:pointer;font-family:inherit;}</style></head>
+<body>
+<nav id='vc-nav'><a href='../'>← 返回課程選單</a><div id='vc-nav-right'><span id='vc-nav-user'></span><button id='vc-logout' onclick="localStorage.removeItem('aischool_user');window.location.href='../../login.html';">登出</button></div></nav><script>(function(){var u=JSON.parse(localStorage.getItem('aischool_user')||'null');if(u&&u.name)document.getElementById('vc-nav-user').textContent=u.name;})();</script>
+<script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
+
+  <h1>程式語言：<br><em>每個平台都有最適合它的語言</em></h1>
+      <p class="hero-sub">看到一堆英文夾雜符號就頭大？這集帶你認識常見的程式語言，打破刻板印象——不是要你會寫，而是讓你跟 AI 協作時更有概念、更有效率。</p>
+    </div>
+
+    <!-- Section 01 -->
+    <div class="section" id="section-01-why">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2>為什麼要認識程式語言？</h2>
+      </div>
+      <div class="card">
+        <p>對程式碼有<strong>「對未知的恐懼」</strong>很正常——但只要對常見語言有<strong>基本認識</strong>，就能跨過這道心理門檻：</p>
+      </div>
+      <div class="trinity-grid">
+        <div class="trinity-card" style="background:rgba(124,255,194,0.06);border-color:rgba(124,255,194,0.25);">
+          <div class="trinity-name" style="color:var(--primary);font-family:'Noto Sans TC';font-size:14px;">🎯 跟 AI 更精準溝通</div>
+          <div class="trinity-role">給對關鍵字，對話不容易跑偏</div>
+        </div>
+        <div class="trinity-card" style="background:rgba(124,255,194,0.06);border-color:rgba(124,255,194,0.25);">
+          <div class="trinity-name" style="color:var(--primary);font-family:'Noto Sans TC';font-size:14px;">🧠 知道能改、別動什麼</div>
+          <div class="trinity-role">小修改自己來，不用浪費對話額度</div>
+        </div>
+        <div class="trinity-card" style="background:rgba(124,255,194,0.06);border-color:rgba(124,255,194,0.25);">
+          <div class="trinity-name" style="color:var(--primary);font-family:'Noto Sans TC';font-size:14px;">⚡ 不再腦袋空空</div>
+          <div class="trinity-role">從被 AI 支配變成<strong style="color:#fff">有概念的指揮官</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 02 -->
+    <div class="section" id="section-02-trinity">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2>網頁御三家：HTML、CSS、JavaScript</h2>
+      </div>
+      <div class="card">
+        <p>你打開瀏覽器看到的任何一個網頁，背後都是由<strong>三種語言共同組成</strong>的：</p>
+      </div>
+
+      <div class="trinity-grid">
+        <div class="trinity-card html-c">
+          <div class="trinity-name">HTML</div>
+          <div class="trinity-role">結構 + 內容</div>
+          <div class="trinity-meta">就像角色的<strong style="color:#fff">骨架</strong></div>
+        </div>
+        <div class="trinity-card css-c">
+          <div class="trinity-name">CSS</div>
+          <div class="trinity-role">外觀 + 樣式</div>
+          <div class="trinity-meta">就像角色的<strong style="color:#fff">皮膚衣服</strong></div>
+        </div>
+        <div class="trinity-card js-c">
+          <div class="trinity-name">JavaScript</div>
+          <div class="trinity-role">行為 + 互動</div>
+          <div class="trinity-meta">就像角色的<strong style="color:#fff">大腦</strong></div>
+        </div>
+      </div>
+
+      <div class="analogy">
+        <div class="label">🛒 舉例：購物網站</div>
+        <p><strong class="highlight-orange">HTML</strong> 標記哪是標題、按鈕、輸入欄位；<strong class="highlight-purple">CSS</strong> 決定顏色、字體、版面；當你按下「購買」按鈕時，<strong class="highlight-yellow">JavaScript</strong> 負責跳轉到結帳視窗。<strong>三者缺一不可</strong>，共同組成完整的網頁體驗。</p>
+      </div>
+
+      <!-- Java vs JS -->
+      <div class="tip-box red">
+        <div class="label">⚠️ 常見誤會：Java ≠ JavaScript</div>
+        <p>很多人以為 Java 就是 JavaScript 的簡稱——<strong>但其實它們完全是兩個語言</strong>，就像<strong>老婆餅裡面沒有老婆</strong>。</p>
+        <p>Java 語法嚴謹、有明確型別，早年是 Android 主力語言；JavaScript 靈活寬鬆、專為瀏覽器而生。歷史上先有 Java，JavaScript 取名只是當年蹭熱度，兩者<strong>沒有血緣關係</strong>。</p>
+      </div>
+
+      <!-- TypeScript -->
+      <div class="tip-box">
+        <div class="label">📐 TypeScript = 嚴謹版 JavaScript（有親戚）</div>
+        <p>TypeScript 多了<strong>型別規範</strong>，讓程式碼結構更清晰，適合大型專案或多人協作。這幾年越來越流行，AI 也很擅長寫。<strong>不用特別學，知道它存在就好</strong>。</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 03 -->
+    <div class="section" id="section-03-front-back">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2>前端 vs 後端：誰負責什麼？</h2>
+      </div>
+      <div class="card">
+        <p>任何可以連上網路的應用程式，背後通常分成<strong>兩大部分</strong>：</p>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-card front">
+          <div class="compare-label">FRONT-END</div>
+          <div class="compare-title">⬆ 前端 / 客戶端</div>
+          <div class="compare-desc">就像餐廳的<strong>服務生</strong>——你看到菜單、點餐、上菜</div>
+          <div class="compare-bullets">
+            <div class="compare-bullet">畫面與互動</div>
+            <div class="compare-bullet">表單檢查</div>
+            <div class="compare-bullet">點擊後的視覺反應</div>
+          </div>
+        </div>
+        <div class="compare-card back">
+          <div class="compare-label">BACK-END</div>
+          <div class="compare-title">⬇ 後端 / 伺服器端</div>
+          <div class="compare-desc">就像餐廳的<strong>廚房</strong>——把食物做出來、處理訂單</div>
+          <div class="compare-bullets">
+            <div class="compare-bullet">接收請求、處理資料</div>
+            <div class="compare-bullet">資料庫互動</div>
+            <div class="compare-bullet">回傳結果給前端</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="analogy">
+        <div class="label">🎟️ 例子：演唱會搶票</div>
+        <p>你在頁面上選座位、填資料——這些都是<strong>前端</strong>在處理。但你有沒有想過，<strong>為什麼同一張票不會被兩個人同時買走？</strong>這個把關的工作，就是<strong class="highlight-orange">後端</strong>在做的。<strong>前端讓你看得見、操作得了，後端讓資料不出錯、不重複</strong>。</p>
+      </div>
+
+      <div class="tip-box">
+        <div class="label">🔌 怎麼判斷前端 vs 後端？</div>
+        <p>有一個<strong>很直覺的方法</strong>——<strong class="highlight">把網路關掉</strong>：</p>
+        <p>✓ 還能看到、能用的 → <strong class="highlight">前端</strong><br>
+           ✗ 需要網路才能完成的（登入、送單、載入資料）→ 仰賴<strong class="highlight-orange">後端</strong></p>
+        <p>例外：<strong>計算機、PDF 閱讀器、轉檔工具</strong> 等本機 App，<strong>沒網路也跑得很好</strong>——它們<strong>沒有後端</strong>。</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 04 -->
+    <div class="section" id="section-04-langmap">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2>各平台對應的語言</h2>
+      </div>
+      <div class="card">
+        <p>不同平台用不同語言，<strong>知道目標平台 → 給 AI 精準的關鍵字</strong>就行，<strong>不用全背</strong>：</p>
+      </div>
+
+      <div class="lang-row">
+        <div class="lang-num">1</div>
+        <div>
+          <div><span class="lang-plat">Web 前端</span><span class="lang-langs"><span class="lang-pill">HTML</span><span class="lang-pill">CSS</span><span class="lang-pill">JavaScript</span><span class="lang-pill">TypeScript</span></span></div>
+          <div class="lang-note">Chrome / Edge 外掛也屬於此類</div>
+        </div>
+      </div>
+      <div class="lang-row purple">
+        <div class="lang-num">2</div>
+        <div>
+          <div><span class="lang-plat">iOS App</span><span class="lang-langs"><span class="lang-pill">Swift</span></span></div>
+          <div class="lang-note">Apple 官方主推</div>
+        </div>
+      </div>
+      <div class="lang-row yellow">
+        <div class="lang-num">3</div>
+        <div>
+          <div><span class="lang-plat">Android App</span><span class="lang-langs"><span class="lang-pill">Kotlin</span></span></div>
+          <div class="lang-note">從 Java 演進，更現代</div>
+        </div>
+      </div>
+      <div class="lang-row purple">
+        <div class="lang-num">4</div>
+        <div>
+          <div><span class="lang-plat">跨平台 App</span><span class="lang-langs"><span class="lang-pill">React Native (JS)</span><span class="lang-pill">Flutter (Dart)</span></span></div>
+          <div class="lang-note">RN 開發快、像做網頁；Flutter 滑感接近原生</div>
+        </div>
+      </div>
+      <div class="lang-row orange">
+        <div class="lang-num">5</div>
+        <div>
+          <div><span class="lang-plat">桌面 App</span><span class="lang-langs"><span class="lang-pill">Swift (Mac)</span><span class="lang-pill">C# (Windows)</span><span class="lang-pill">Electron (跨平台)</span></span></div>
+          <div class="lang-note">Electron 用網頁三本柱 HTML/CSS/JS，可跨 Mac+Windows</div>
+        </div>
+      </div>
+      <div class="lang-row orange">
+        <div class="lang-num">6</div>
+        <div>
+          <div><span class="lang-plat">後端 / 伺服器</span><span class="lang-langs"><span class="lang-pill">Node.js</span><span class="lang-pill">Python</span><span class="lang-pill">PHP</span></span></div>
+          <div class="lang-note">後端的語言選擇最自由</div>
+        </div>
+      </div>
+
+      <div class="tip-box orange">
+        <div class="label">🧱 框架（Framework）≠ 程式語言</div>
+        <p>像 <strong>React Native / Flutter / Electron</strong> 這些都不是「語言」，而是<strong>框架</strong>——就像蓋房子有現成的結構圖，你不用從骨架研究起，可以直接改造。<strong>框架幫你搭好基礎結構，你只需專注在功能上</strong>，大幅提升開發效率。</p>
+      </div>
+
+      <div class="tip-box">
+        <div class="label">🌱 新手後端首推 Python 或 Node.js</div>
+        <p><strong class="highlight">Python</strong> 語法簡潔，AI 相關任務綜合能力最強；<strong class="highlight-yellow">Node.js</strong> 用 JavaScript，前後端通用，學一個語言就能通吃。</p>
+      </div>
+
+      <div class="tip-box">
+        <div class="label">🎯 不用背，有印象就好</div>
+        <p>聽了這麼多，是不是有點像劉姥姥逛大觀園？別擔心——<strong>不用把語言全背起來</strong>。當你確定了目標平台，腦袋裡會有<strong>模糊印象</strong>，想不起來搜尋一下，看到結果就會立刻記起來。這比一無所知再去搜尋要快得多。</p>
+      </div>
+    </div>
+
+    <!-- 重點整理 -->
+    <div class="takeaway">
+      <div class="takeaway-title">✦ 本章重點整理</div>
+      <ul class="takeaway-list">
+        <li><strong>認識降低恐懼</strong>——知道哪能改、哪別動，跟 AI 協作更有效率，不浪費對話額度</li>
+        <li><strong>網頁御三家</strong>：HTML（結構）/ CSS（外觀）/ JavaScript（互動）；Java ≠ JavaScript，老婆餅沒有老婆</li>
+        <li><strong>前後端判斷法</strong>：把網路關掉，還能看到的 = 前端；需要網路才能動的 = 後端</li>
+        <li><strong>平台對應語言</strong>：Web 三本柱 / iOS Swift / Android Kotlin / 後端 Python 新手友善</li>
+        <li><strong>框架 ≠ 語言</strong>：React Native、Flutter、Electron 都是框架，幫你搭基礎結構</li>
+      </ul>
+    </div>
+
+  </div><!-- /container -->
+</body>
+</html>

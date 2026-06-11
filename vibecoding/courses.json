@@ -68,5 +68,12 @@
     "title": "先決定平台：手機、電腦、網頁⋯⋯我會在哪裡用這個程式？",
     "status": "open",
     "url": "./lecture10/"
+  },
+  {
+    "day": 11,
+    "chapter": "CH2-4",
+    "title": "程式語言——每個平台都有最適合它的語言",
+    "status": "open",
+    "url": "./lecture11/"
   }
 ]
