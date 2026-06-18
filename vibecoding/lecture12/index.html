@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CH 2-5｜前端、後端——網頁的外表與內在</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #7cffc2;
+      --primary-light: rgba(124,255,194,0.07);
+      --green: #7cffc2;
+      --yellow: #ffd166;
+      --orange: #ff9f43;
+      --purple: #a855f7;
+      --red: #ff6b6b;
+      --bg: #0a0a0a;
+      --surface: #0d0d0d;
+      --surface2: #111111;
+      --text: #ffffff;
+      --text-muted: #888888;
+      --border: rgba(124,255,194,0.14);
+      --orange-border: rgba(255,159,67,0.25);
+      --orange-light: rgba(255,159,67,0.06);
+      --purple-border: rgba(168,85,247,0.25);
+      --purple-light: rgba(168,85,247,0.06);
+      --yellow-border: rgba(255,209,102,0.25);
+      --yellow-light: rgba(255,209,102,0.06);
+      --red-border: rgba(255,107,107,0.25);
+      --red-light: rgba(255,107,107,0.06);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', sans-serif; font-size: 16px; line-height: 1.8; min-height: 100vh; }
+
+    .container { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
+
+    .hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); margin-bottom: 56px; animation: fadeUp 0.6s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .hero-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .chapter-badge { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--primary); border: 1px solid var(--primary); padding: 4px 14px; border-radius: 99px; letter-spacing: 0.05em; text-shadow: 0 0 10px rgba(124,255,194,0.4); }
+    .tag { font-size: 12px; padding: 4px 12px; border-radius: 99px; font-weight: 500; }
+    .tag-beginner { background: rgba(124,255,194,0.1); color: var(--green); }
+    .tag-time { background: rgba(255,209,102,0.1); color: var(--yellow); }
+    h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 16px; }
+    h1 em { font-style: normal; color: var(--primary); }
+    h1 em.orange { color: var(--orange); }
+    .hero-sub { font-size: 17px; color: var(--text-muted); max-width: 540px; line-height: 1.7; }
+
+    .section { margin-bottom: 56px; animation: fadeUp 0.5s ease both; }
+    .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .section-num { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--primary); background: rgba(124,255,194,0.08); border: 1px solid var(--border); padding: 5px 14px; border-radius: 99px; white-space: nowrap; letter-spacing: 0.05em; }
+    h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+    .card p { color: var(--text-muted); } .card p + p { margin-top: 12px; } .card strong { color: var(--text); }
+
+    .analogy { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 var(--radius) var(--radius) 0; padding: 24px 28px; margin-bottom: 20px; }
+    .analogy .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+    .analogy p { color: #c8ffe0; font-size: 15px; line-height: 1.75; } .analogy strong { color: #fff; }
+
+    .tip-box { background: rgba(124,255,194,0.04); border: 1px solid rgba(124,255,194,0.2); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; }
+    .tip-box .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+    .tip-box p { color: var(--text-muted); font-size: 15px; line-height: 1.75; } .tip-box strong { color: var(--text); }
+    .tip-box p + p { margin-top: 10px; }
+    .tip-box.orange { background: var(--orange-light); border-color: var(--orange-border); }
+    .tip-box.orange .label { color: var(--orange); } .tip-box.orange strong { color: #fff; }
+    .tip-box.purple { background: var(--purple-light); border-color: var(--purple-border); }
+    .tip-box.purple .label { color: var(--purple); } .tip-box.purple strong { color: #fff; }
+    .tip-box.yellow { background: var(--yellow-light); border-color: var(--yellow-border); }
+    .tip-box.yellow .label { color: var(--yellow); } .tip-box.yellow strong { color: #fff; }
+    .tip-box.red { background: var(--red-light); border-color: var(--red-border); }
+    .tip-box.red .label { color: var(--red); } .tip-box.red strong { color: #fff; }
+
+    /* Compare 2-col */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .compare-card { border-radius: var(--radius); padding: 24px; border: 1px solid; }
+    .compare-card.front { background: rgba(124,255,194,0.06); border-color: rgba(124,255,194,0.25); }
+    .compare-card.back { background: var(--orange-light); border-color: var(--orange-border); }
+    .compare-card.purple { background: var(--purple-light); border-color: var(--purple-border); }
+    .compare-card.yellow { background: var(--yellow-light); border-color: var(--yellow-border); }
+    .compare-card.red { background: var(--red-light); border-color: var(--red-border); }
+    .compare-label { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 10px; }
+    .compare-card.front .compare-label { color: var(--primary); }
+    .compare-card.back .compare-label { color: var(--orange); }
+    .compare-card.purple .compare-label { color: var(--purple); }
+    .compare-card.yellow .compare-label { color: var(--yellow); }
+    .compare-card.red .compare-label { color: var(--red); }
+    .compare-title { font-size: 18px; font-weight: 900; margin-bottom: 10px; }
+    .compare-card.front .compare-title { color: var(--primary); }
+    .compare-card.back .compare-title { color: var(--orange); }
+    .compare-card.purple .compare-title { color: var(--purple); }
+    .compare-card.yellow .compare-title { color: var(--yellow); }
+    .compare-card.red .compare-title { color: var(--red); }
+    .compare-desc { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+    .compare-desc strong { color: var(--text); }
+    .compare-bullets { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+    .compare-bullet { font-size: 12px; color: var(--text-muted); display: flex; gap: 6px; }
+    .compare-bullet::before { content: "•"; flex-shrink: 0; font-weight: 700; }
+    .compare-card.front .compare-bullet::before { color: var(--primary); }
+    .compare-card.back .compare-bullet::before { color: var(--orange); }
+    .compare-card.purple .compare-bullet::before { color: var(--purple); }
+    .compare-card.yellow .compare-bullet::before { color: var(--yellow); }
+    .compare-card.red .compare-bullet::before { color: var(--red); }
+
+    /* Step rows */
+    .step-row { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 16px; }
+    .step-num { font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; color: #000; background: var(--primary); border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .step-row.green .step-num { background: var(--primary); }
+    .step-row.orange .step-num { background: var(--orange); color: #fff; }
+    .step-actor { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 99px; margin-right: 8px; }
+    .step-row.green .step-actor { background: rgba(124,255,194,0.12); color: var(--primary); border: 1px solid rgba(124,255,194,0.25); }
+    .step-row.orange .step-actor { background: rgba(255,159,67,0.12); color: var(--orange); border: 1px solid var(--orange-border); }
+
+    .takeaway { background: linear-gradient(135deg, rgba(124,255,194,0.08), rgba(0,0,0,0)); border: 1px solid rgba(124,255,194,0.25); border-radius: var(--radius); padding: 36px; margin-top: 48px; }
+    .takeaway-title { font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; }
+    .takeaway-list { list-style: none; display: flex; flex-direction: column; gap: 12px; counter-reset: li; }
+    .takeaway-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; color: var(--text); line-height: 1.6; counter-increment: li; }
+    .takeaway-list li::before { content: counter(li); background: var(--primary); color: #000; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+
+    .next-card { background: linear-gradient(135deg, rgba(168,85,247,0.08), rgba(124,255,194,0.04)); border: 1px solid rgba(168,85,247,0.3); border-radius: var(--radius); padding: 28px; margin-top: 28px; text-align: center; }
+    .next-card .label { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
+    .next-card .title { font-size: 22px; font-weight: 900; color: var(--text); margin-bottom: 8px; }
+    .next-card .title em { font-style: normal; color: var(--primary); }
+    .next-card .title em.purple { color: var(--purple); }
+    .next-card p { font-size: 13px; color: var(--text-muted); }
+
+    code { font-family: 'Space Mono', monospace; font-size: 0.85em; background: rgba(124,255,194,0.1); color: var(--primary); padding: 2px 7px; border-radius: 5px; }
+    .highlight { color: var(--primary); font-weight: 700; }
+    .highlight-orange { color: var(--orange); font-weight: 700; }
+    .highlight-purple { color: var(--purple); font-weight: 700; }
+    .highlight-yellow { color: var(--yellow); font-weight: 700; }
+    .highlight-red { color: var(--red); font-weight: 700; }
+    .divider { height: 1px; background: var(--border); margin: 48px 0; }
+
+    @media (max-width: 600px) {
+      .container { padding-left: 16px; padding-right: 16px; }
+      .card, .takeaway, .tip-box { padding: 20px; }
+      .compare-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+<style id='vc-nav-css'>#vc-nav{position:sticky;top:0;z-index:200;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border,rgba(255,255,255,0.1));}#vc-nav a{font-size:14px;font-weight:500;color:#888;text-decoration:none;transition:color .15s;}#vc-nav a:hover{color:#fff;}#vc-nav-right{display:flex;align-items:center;gap:10px;}#vc-nav-user{font-size:13px;color:#888;}#vc-logout{font-size:13px;font-weight:600;color:#666;background:rgba(255,255,255,0.04);border:1px solid var(--border,rgba(255,255,255,0.1));border-radius:8px;padding:4px 12px;cursor:pointer;font-family:inherit;}</style></head>
+<body>
+<nav id='vc-nav'><a href='../'>← 返回課程選單</a><div id='vc-nav-right'><span id='vc-nav-user'></span><button id='vc-logout' onclick="localStorage.removeItem('aischool_user');window.location.href='../../login.html';">登出</button></div></nav><script>(function(){var u=JSON.parse(localStorage.getItem('aischool_user')||'null');if(u&&u.name)document.getElementById('vc-nav-user').textContent=u.name;})();</script>
+<script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
+
+  
+  <div class="container">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-meta">
+        <span class="chapter-badge">CH 2-5</span>
+        <span class="tag tag-beginner">✦ 網頁的外表與內在</span>
+        <span class="tag tag-time">⏱ 約 11 分鐘</span>
+      </div>
+      <h1><em>前端</em>、<em class="orange">後端</em>：<br>網頁的外表與內在</h1>
+      <p class="hero-sub">上集講了平台對應的程式語言，這集深入聊 Web 前端、Web 後端各自怎麼運作，以及它們之間又是怎麼彼此溝通的。</p>
+    </div>
+
+    <!-- Section 01 — Web 前端 -->
+    <div class="section" id="section-01-frontend">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2>Web 前端：下載到你手邊的迷你 App</h2>
+      </div>
+      <div class="card">
+        <p>當你在瀏覽器輸入網址按下 Enter，這不到三秒的時間裡——你的瀏覽器（Chrome / Safari）會去伺服器上把<strong>前端的程式下載下來</strong>，然後在你的瀏覽器裡執行起來，才變成你眼前看到的畫面。</p>
+        <p>有沒有覺得這個邏輯很像在手機上下載 App？基本上一樣，只是有一個關鍵差異——<strong class="highlight">Web 前端的下載量極輕量，輕到你幾乎感覺不到</strong>。所以你每次打開網頁，其實都是在做「下載→執行」的動作，只是快到沒意識到。</p>
+      </div>
+
+      <div class="analogy">
+        <div class="label">💡 跨裝置的天賦</div>
+        <p>不管電腦還是手機，只要有<strong>瀏覽器</strong>就能跑 Web 前端。<strong>同一份前端程式可以在各種裝置上跑起來</strong>——這就是為什麼網頁比 App 更容易跨裝置，不需要為 iOS 和 Android 各寫一套。</p>
+      </div>
+    </div>
+
+    <!-- Section 01b — UI 設計師 -->
+    <div class="section" id="section-01-uidesigner">
+      <div class="tip-box purple">
+        <div class="label">🎨 UI 設計師 vs 前端工程師</div>
+        <p>你看到的按鈕形狀、顏色配置、畫面排版，<strong>通常不是前端工程師決定的</strong>——前端工程師的任務是「把設計寫成程式、讓它跑起來」。</p>
+        <p>實際上是由 <strong class="highlight-purple">UI 設計師（介面設計師）</strong>先規劃好設計，<strong>交付設計稿</strong>給工程師，工程師再依照設計稿把產品做出來。當然有些大神會身兼多職——設計、前端、後端全部自己來。</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 02 — Web 後端 -->
+    <div class="section" id="section-02-backend">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2>Web 後端：幕後的 24 小時大腦</h2>
+      </div>
+      <div class="card">
+        <p>後端跟前端最大的差別在<strong>運作的位置</strong>。前端會下載到你的瀏覽器，你看得到、可以直接操作；<strong class="highlight-orange">後端則跑在遠端的伺服器上</strong>。</p>
+        <p>你可以把伺服器想成一台放在資料中心、<strong>24 小時不關機的電腦</strong>。你平常不會直接接觸到它，但你每一次點擊、每一次操作，其實都在跟它溝通——它一直在幕後幫你處理事情。</p>
+      </div>
+
+      <div class="tip-box orange">
+        <div class="label">📡 統一接收所有客戶端</div>
+        <p>後端最重要的特質：<strong>同時接收來自各種地方的請求</strong>——電腦瀏覽器、手機瀏覽器、iOS App、Android App，所有這些客戶端都往同一個後端送請求，<strong>後端統一接收、統一處理</strong>。</p>
+        <p>上集提到的「把網路關掉」判斷法：你應該沒辦法看到社群動態、查詢購物訂單、訂票——因為這些功能都需要後端的參與才能完成。</p>
+      </div>
+    </div>
+
+    <!-- Section 02b — 兩大任務 -->
+    <div class="section" id="section-02-tasks">
+      <div class="card">
+        <p>那後端到底在做什麼？<strong>後端主要有兩大任務</strong>：</p>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-card purple">
+          <div class="compare-label">業務邏輯</div>
+          <div class="compare-title">= 規則</div>
+          <div class="compare-desc">所有「判斷規則」的程式都跑在這。</div>
+          <div class="compare-bullets">
+            <div class="compare-bullet">票賣出沒？</div>
+            <div class="compare-bullet">帳號真實登入？</div>
+            <div class="compare-bullet">權限判斷</div>
+            <div class="compare-bullet">用 <strong>PHP / Python</strong> 等寫</div>
+          </div>
+        </div>
+        <div class="compare-card yellow">
+          <div class="compare-label">資料庫 Database</div>
+          <div class="compare-title">= 快速找到</div>
+          <div class="compare-desc">重點不是「存」，而是「<strong>快速找到</strong>」。</div>
+          <div class="compare-bullets">
+            <div class="compare-bullet">有系統的儲存</div>
+            <div class="compare-bullet">可被秒級定位</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="analogy">
+        <div class="label">📚 找一本書</div>
+        <p><strong>書全堆在地上</strong>：只能一本一本翻；<strong class="highlight-yellow">按分類編號上書架</strong>：直接定位某一區，秒找到。</p>
+        <p>所謂資料庫，就是<strong>用電腦科學的方式讓資料永遠保持在「可被快速找到」的狀態</strong>——不管多少人同時查詢，後端都能快速給答案。</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 03 — 請求與回應 -->
+    <div class="section" id="section-03-request">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2>前後端如何溝通？</h2>
+      </div>
+      <div class="card">
+        <p>前端跟後端之間的溝通方式其實很直觀——<strong>「請求然後回應」的來回流程</strong>：</p>
+        <p>前端發出一個<strong class="highlight">請求 Request</strong> → 後端收到後處理 → 把結果<strong class="highlight-orange">回應 Response</strong> → 前端把它呈現出來。</p>
+      </div>
+
+      <div class="tip-box">
+        <div class="label">📧 範例：打開 Gmail</div>
+        <div class="step-row green">
+          <div class="step-num">1</div>
+          <div><span class="step-actor">前端</span><strong>我要 Gmail 這個頁面</strong></div>
+        </div>
+        <div class="step-row orange">
+          <div class="step-num">2</div>
+          <div><span class="step-actor">後端</span>回傳前端程式給瀏覽器</div>
+        </div>
+        <div class="step-row green">
+          <div class="step-num">3</div>
+          <div><span class="step-actor">前端</span>瀏覽器下載 + 執行 → 畫面出現</div>
+        </div>
+        <div class="step-row green">
+          <div class="step-num">4</div>
+          <div><span class="step-actor">前端</span>點開一封信</div>
+        </div>
+        <div class="step-row orange">
+          <div class="step-num">5</div>
+          <div><span class="step-actor">後端</span>驗權限 → 回傳信件內容</div>
+        </div>
+        <div class="step-row green">
+          <div class="step-num">6</div>
+          <div><span class="step-actor">前端</span>顯示信件</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 03b — Error -->
+    <div class="section" id="section-03-error">
+      <div class="tip-box red">
+        <div class="label">⚠️ 如果後端出問題？</div>
+        <p>你可能會遇到幾種情況：<strong>信件一直轉圈載入不出來</strong>、<strong>點開信顯示「無法取得內容」</strong>、<strong>整個收件匣是空的</strong>。某些情況下會看到 <code>503 Server Error</code> 這種錯誤訊息，但更常見的是覺得「網頁卡住了、壞掉了」——基本上都是後端在那個時間點出了問題。</p>
+        <p><strong>前端 = 你看得到的畫面；後端 = 讓這些畫面能正常運作、拿到資料的前提。</strong></p>
+      </div>
+    </div>
+
+    <!-- Section 03c — Cache -->
+    <div class="section" id="section-03-cache">
+      <div class="tip-box yellow">
+        <div class="label">⚡ 加速小撇步：快取 Cache</div>
+        <p>有沒有遇過，打開一個常去的網站，速度特別快？通常不是因為網速突然變快，而是<strong>之前已經造訪過</strong>。</p>
+        <p>瀏覽器會把<strong>圖片、CSS、JavaScript</strong> 等資源<strong>暫存在你的電腦裡</strong>。再次打開同一個網站時，有些內容可以<strong class="highlight-yellow">直接從本地讀取</strong>，不需要每次都重新從後端下載——這個機制就是<strong>快取（Cache）</strong>，讓網站載入速度變得更快。</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 04 — 前端安全限制 -->
+    <div class="section" id="section-04-frontend-limits">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2>為什麼重要的邏輯一定要放後端？</h2>
+      </div>
+      <div class="card">
+        <p>像登入驗證、付款、權限控制這些<strong>跟隱私相關的重要操作</strong>，一定要放在後端做，<strong class="highlight-red">不能在前端做</strong>。</p>
+        <p>還記得前端是什麼嗎？<strong>前端是被下載到你瀏覽器上的程式</strong>。既然是被「下載」下來的，<strong class="highlight-red">只要有心人士懂相關技術，就可以在本地端任意修改它</strong>。</p>
+      </div>
+
+      <div class="tip-box red">
+        <div class="label">📁 類比：下載文件</div>
+        <p>就像你下載了一份文件到電腦——你想怎麼改就怎麼改。<strong>前端程式也是一樣的道理</strong>，只要下載到手邊，任何人就有機會去修改更動。</p>
+      </div>
+    </div>
+
+    <!-- Section 04b — 資訊安全 -->
+    <div class="section" id="section-04-security">
+      <div class="tip-box red">
+        <div class="label">💸 情境：電商網站</div>
+        <p>你在購買商品時，前端會顯示價格和總金額。但<strong>如果有人在前端動手腳</strong>，把價格從 <code>$1000</code> 改成 <code>$10</code>，然後送出訂單——<strong>如果系統只相信前端的資料，就會用 $10 成交</strong>。這種情況其實就是「<strong class="highlight-red">直接影響金流</strong>」，問題會非常嚴重。</p>
+      </div>
+
+      <div class="tip-box orange">
+        <div class="label">✓ 正解：後端必須重新驗證</div>
+        <p>像是<strong>價格計算、付款金額、庫存數量、使用者權限</strong>這些關鍵邏輯，<strong>全部都必須放在後端重新驗證</strong>。因為後端的程式跑在伺服器上，一般使用者無法接觸、也無法竄改。</p>
+        <p>所以你可以這樣理解：<strong class="highlight">前端</strong>負責讓你操作系統，<strong class="highlight-orange">後端</strong>負責確保這些操作是合法且安全。</p>
+      </div>
+    </div>
+
+    <!-- 重點整理 -->
+    <div class="takeaway" id="takeaway">
+      <div class="takeaway-title">✦ 本章重點整理</div>
+      <ul class="takeaway-list">
+        <li><strong>Web 前端 = 迷你 App</strong>：被下載到瀏覽器執行；極輕量 + 天生跨裝置（同份程式跑各種裝置）</li>
+        <li><strong>Web 後端 = 24h 大腦</strong>：跑在伺服器上，統一接收瀏覽器 / iOS / Android 所有客戶端</li>
+        <li><strong>溝通 = 請求—回應</strong>：前端送需求 → 後端處理 → 回傳；快取讓再訪變快</li>
+        <li><strong>重要邏輯必須放後端</strong>：前端會被竄改；登入 / 付款 / 權限這些一定要後端驗證</li>
+        <li><strong>後端兩大任務</strong>：業務邏輯（規則） + 資料庫（讓資料可被快速找到）</li>
+      </ul>
+
+      <div class="next-card">
+        <div class="label">下集預告</div>
+        <div class="title"><em>API</em> — 前後端的<em class="purple">橋樑</em></div>
+        <p>前端到底怎麼跟後端溝通？關鍵就是 API。</p>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+</body>
+</html>

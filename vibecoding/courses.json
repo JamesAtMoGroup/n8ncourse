@@ -75,5 +75,12 @@
     "title": "程式語言——每個平台都有最適合它的語言",
     "status": "open",
     "url": "./lecture11/"
+  },
+  {
+    "day": 12,
+    "chapter": "CH2-5",
+    "title": "前端、後端——網頁的外表與內在",
+    "status": "open",
+    "url": "./lecture12/"
   }
 ]
