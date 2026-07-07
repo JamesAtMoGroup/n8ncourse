@@ -82,5 +82,12 @@
     "title": "前端、後端——網頁的外表與內在",
     "status": "open",
     "url": "./lecture12/"
+  },
+  {
+    "day": 13,
+    "chapter": "CH2-6",
+    "title": "API——跨應用程式、串接時要用的東西",
+    "status": "open",
+    "url": "./lecture13/"
   }
 ]
