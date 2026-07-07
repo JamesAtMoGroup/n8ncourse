@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CH 2-6｜API——跨應用程式、串接時要用的東西</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #7cffc2;
+      --primary-light: rgba(124,255,194,0.07);
+      --green: #7cffc2;
+      --yellow: #ffd166;
+      --orange: #ff9f43;
+      --purple: #a855f7;
+      --red: #ff6b6b;
+      --bg: #0a0a0a;
+      --surface: #0d0d0d;
+      --surface2: #111111;
+      --text: #ffffff;
+      --text-muted: #888888;
+      --border: rgba(124,255,194,0.14);
+      --orange-border: rgba(255,159,67,0.25);
+      --orange-light: rgba(255,159,67,0.06);
+      --purple-border: rgba(168,85,247,0.25);
+      --purple-light: rgba(168,85,247,0.06);
+      --yellow-border: rgba(255,209,102,0.25);
+      --yellow-light: rgba(255,209,102,0.06);
+      --red-border: rgba(255,107,107,0.25);
+      --red-light: rgba(255,107,107,0.06);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', sans-serif; font-size: 16px; line-height: 1.8; min-height: 100vh; }
+
+    .container { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
+
+    .hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); margin-bottom: 56px; animation: fadeUp 0.6s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .hero-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .chapter-badge { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--primary); border: 1px solid var(--primary); padding: 4px 14px; border-radius: 99px; letter-spacing: 0.05em; text-shadow: 0 0 10px rgba(124,255,194,0.4); }
+    .tag { font-size: 12px; padding: 4px 12px; border-radius: 99px; font-weight: 500; }
+    .tag-beginner { background: rgba(124,255,194,0.1); color: var(--green); }
+    .tag-time { background: rgba(255,209,102,0.1); color: var(--yellow); }
+    h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 16px; }
+    h1 em { font-style: normal; color: var(--primary); }
+    h1 em.purple { color: var(--purple); }
+    .hero-sub { font-size: 17px; color: var(--text-muted); max-width: 540px; line-height: 1.7; }
+
+    .section { margin-bottom: 56px; animation: fadeUp 0.5s ease both; }
+    .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .section-num { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--primary); background: rgba(124,255,194,0.08); border: 1px solid var(--border); padding: 5px 14px; border-radius: 99px; white-space: nowrap; letter-spacing: 0.05em; }
+    .section-num.purple { color: var(--purple); background: var(--purple-light); border-color: var(--purple-border); }
+    .section-num.red { color: var(--red); background: var(--red-light); border-color: var(--red-border); }
+    h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+    .card p { color: var(--text-muted); } .card p + p { margin-top: 12px; } .card strong { color: var(--text); }
+
+    .analogy { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 var(--radius) var(--radius) 0; padding: 24px 28px; margin-bottom: 20px; }
+    .analogy .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+    .analogy p { color: #c8ffe0; font-size: 15px; line-height: 1.75; } .analogy strong { color: #fff; }
+    .analogy.purple { background: var(--purple-light); border-left-color: var(--purple); }
+    .analogy.purple .label { color: var(--purple); } .analogy.purple p { color: #e6d5ff; }
+
+    .tip-box { background: rgba(124,255,194,0.04); border: 1px solid rgba(124,255,194,0.2); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; }
+    .tip-box .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+    .tip-box p { color: var(--text-muted); font-size: 15px; line-height: 1.75; } .tip-box strong { color: var(--text); }
+    .tip-box p + p { margin-top: 10px; }
+    .tip-box.orange { background: var(--orange-light); border-color: var(--orange-border); }
+    .tip-box.orange .label { color: var(--orange); } .tip-box.orange strong { color: #fff; }
+    .tip-box.purple { background: var(--purple-light); border-color: var(--purple-border); }
+    .tip-box.purple .label { color: var(--purple); } .tip-box.purple strong { color: #fff; }
+    .tip-box.yellow { background: var(--yellow-light); border-color: var(--yellow-border); }
+    .tip-box.yellow .label { color: var(--yellow); } .tip-box.yellow strong { color: #fff; }
+    .tip-box.red { background: var(--red-light); border-color: var(--red-border); }
+    .tip-box.red .label { color: var(--red); } .tip-box.red strong { color: #fff; }
+
+    /* 生活情境 / 兩層次 grid */
+    .use-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .use-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; }
+    .use-card .use-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+    .use-card .use-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--purple); flex-shrink: 0; box-shadow: 0 0 8px rgba(168,85,247,0.6); }
+    .use-card .use-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+    .use-card .use-desc strong { color: var(--text); }
+
+    /* Numbered step rows */
+    .step-row { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 16px; }
+    .step-num { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #000; background: var(--primary); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .step-row.yellow .step-num { background: var(--yellow); }
+    .step-row.red .step-num { background: var(--red); color: #fff; }
+    .step-body { flex: 1; }
+    .step-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .step-desc { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+    .step-desc strong { color: var(--text); }
+
+    .takeaway { background: linear-gradient(135deg, rgba(124,255,194,0.08), rgba(0,0,0,0)); border: 1px solid rgba(124,255,194,0.25); border-radius: var(--radius); padding: 36px; margin-top: 48px; }
+    .takeaway-title { font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; }
+    .takeaway-list { list-style: none; display: flex; flex-direction: column; gap: 12px; counter-reset: li; }
+    .takeaway-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; color: var(--text); line-height: 1.6; counter-increment: li; }
+    .takeaway-list li::before { content: counter(li, decimal-leading-zero); background: var(--primary); color: #000; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+
+    .next-card { background: linear-gradient(135deg, rgba(255,159,67,0.1), rgba(124,255,194,0.03)); border: 1px solid var(--orange-border); border-radius: var(--radius); padding: 28px; margin-top: 28px; text-align: center; }
+    .next-card .label { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
+    .next-card .title { font-size: 22px; font-weight: 900; color: var(--text); margin-bottom: 8px; }
+    .next-card .title em { font-style: normal; color: var(--orange); }
+    .next-card p { font-size: 13px; color: var(--text-muted); }
+
+    code { font-family: 'Space Mono', monospace; font-size: 0.85em; background: rgba(124,255,194,0.1); color: var(--primary); padding: 2px 7px; border-radius: 5px; }
+    .highlight { color: var(--primary); font-weight: 700; }
+    .highlight-orange { color: var(--orange); font-weight: 700; }
+    .highlight-purple { color: var(--purple); font-weight: 700; }
+    .highlight-yellow { color: var(--yellow); font-weight: 700; }
+    .highlight-red { color: var(--red); font-weight: 700; }
+    .divider { height: 1px; background: var(--border); margin: 48px 0; }
+
+    @media (max-width: 600px) {
+      .container { padding-left: 16px; padding-right: 16px; }
+      .card, .takeaway, .tip-box { padding: 20px; }
+      .use-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+<style id='vc-nav-css'>#vc-nav{position:sticky;top:0;z-index:200;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border,rgba(255,255,255,0.1));}#vc-nav a{font-size:14px;font-weight:500;color:#888;text-decoration:none;transition:color .15s;}#vc-nav a:hover{color:#fff;}#vc-nav-right{display:flex;align-items:center;gap:10px;}#vc-nav-user{font-size:13px;color:#888;}#vc-logout{font-size:13px;font-weight:600;color:#666;background:rgba(255,255,255,0.04);border:1px solid var(--border,rgba(255,255,255,0.1));border-radius:8px;padding:4px 12px;cursor:pointer;font-family:inherit;}</style></head>
+<body>
+<nav id='vc-nav'><a href='../'>← 返回課程選單</a><div id='vc-nav-right'><span id='vc-nav-user'></span><button id='vc-logout' onclick="localStorage.removeItem('aischool_user');window.location.href='../../login.html';">登出</button></div></nav><script>(function(){var u=JSON.parse(localStorage.getItem('aischool_user')||'null');if(u&&u.name)document.getElementById('vc-nav-user').textContent=u.name;})();</script>
+<script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
+
+  
+  <div class="container">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-meta">
+        <span class="chapter-badge">CH 2-6</span>
+        <span class="tag tag-beginner">✦ API 串接</span>
+        <span class="tag tag-time">⏱ 約 12 分鐘</span>
+      </div>
+      <h1><em class="purple">API</em>——跨應用程式、<br>串接時要用的東西</h1>
+      <p class="hero-sub">上集講了前端與後端怎麼溝通，這集聚焦讓它們互相說話的橋樑——API：它是什麼、怎麼串接，以及為什麼 API Key 要像密碼一樣保護好。</p>
+    </div>
+
+    <!-- Section 01 — 生活中的 API -->
+    <div class="section" id="section-01-life-api">
+      <div class="section-header">
+        <span class="section-num purple">01</span>
+        <h2>API 是什麼？先看看生活裡的它</h2>
+      </div>
+      <div class="card">
+        <p>其實 API 早就無所不在，只是你通常感覺不到它的存在。先看四個你每天都在用、背後都是 API 在運作的場景：</p>
+      </div>
+
+      <div class="use-grid">
+        <div class="use-card">
+          <div class="use-title"><span class="dot"></span>用 Google 帳號登入</div>
+          <div class="use-desc">在陌生網站點「用 Google 登入」，是 <strong>API 在背後把兩個服務串起來</strong>，不必再重新註冊。</div>
+        </div>
+        <div class="use-card">
+          <div class="use-title"><span class="dot"></span>行動支付結帳</div>
+          <div class="use-desc">在購物網站選行動支付付款，是 <strong>API 把付款服務接進來</strong>完成交易。</div>
+        </div>
+        <div class="use-card">
+          <div class="use-title"><span class="dot"></span>天氣 App 顯示即時溫度</div>
+          <div class="use-desc">App 上的溫度與降雨機率，是 <strong>API 從氣象資料庫把資料拿過來</strong>。</div>
+        </div>
+        <div class="use-card">
+          <div class="use-title"><span class="dot"></span>線上填表臨櫃馬上看到</div>
+          <div class="use-desc">你線上填的表單，臨櫃人員立刻查得到，是 <strong>API 把資料傳到後端系統同步</strong>。</div>
+        </div>
+      </div>
+
+      <div class="analogy purple">
+        <div class="label">💡 一句話收束</div>
+        <p>這些「理所當然」的體驗，<strong>背後幾乎都是 API 在串接不同的服務</strong>。你感覺不到它，正是因為它做得夠好。</p>
+      </div>
+    </div>
+
+    <!-- Section 01b — API 定義 -->
+    <div class="section" id="section-01-definition">
+      <div class="card">
+        <p>那 API 到底是什麼？全名是 <strong>Application Programming Interface</strong>。你不用背英文，只要記住一個字——<strong class="highlight-purple">橋樑</strong>。</p>
+      </div>
+
+      <div class="tip-box purple">
+        <div class="label">🌉 最終定義</div>
+        <p>API 就是<strong>讓兩個不同的軟體，可以互相溝通、交換資料的橋樑機制</strong>。像銀行 A 要跟銀行 B 對帳，中間需要一套雙方都遵守的規則與管道——這套規則與管道，就是 API。</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 02 — API 兩個層次 -->
+    <div class="section" id="section-02-scales">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2>API 的兩個層次</h2>
+      </div>
+      <div class="card">
+        <p>在不同情境下聽到「API」，指的可能是兩種不同層次的概念。分清楚，之後看文件、跟 AI 溝通都不會混淆：</p>
+      </div>
+
+      <div class="use-grid">
+        <div class="use-card">
+          <div class="use-title"><span class="dot" style="background:var(--green);box-shadow:0 0 8px rgba(124,255,194,0.6)"></span>抽象層次：API 作為技術</div>
+          <div class="use-desc">泛指「<strong>連接兩個不同軟體的橋樑機制</strong>」這種通用能力，讓它們互相溝通、交換資料。</div>
+        </div>
+        <div class="use-card">
+          <div class="use-title"><span class="dot" style="background:var(--orange);box-shadow:0 0 8px rgba(255,159,67,0.6)"></span>具體層次：某服務的 API</div>
+          <div class="use-desc">指「<strong>用程式跟這個特定服務溝通的標準與規則</strong>」，例如某平台的 API 有自己的格式與限制。</div>
+        </div>
+      </div>
+
+      <div class="tip-box orange">
+        <div class="label">🎯 本集聚焦</div>
+        <p>API 的形式有很多種，這集我們只專注在最常用到的 <strong>Web API</strong>——也就是透過網路，讓不同系統互相傳送資料的那一種。</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 03 — 串接三大步驟 -->
+    <div class="section" id="section-03-steps">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2>串接 API 的三大步驟</h2>
+      </div>
+      <div class="card">
+        <p>想把兩個服務串起來，流程基本上都一樣。以下三步驟，<strong>搭配 AI 一起做，整個過程會順很多</strong>：</p>
+      </div>
+
+      <div class="step-row green">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">確認可行性</div>
+          <div class="step-desc">搜尋「<strong>服務名稱 + API Docs</strong>」，看有沒有官方文件。有文件就代表高機率可以串接——不用點進去細讀，看到就算數。</div>
+        </div>
+      </div>
+      <div class="step-row green">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">準備 API Key</div>
+          <div class="step-desc">去該服務的後台找「生成金鑰」的地方，通常叫 <code>API Key</code> 或 <code>Token</code>／<code>Secret</code>。不確定去哪找，直接叫 AI 一步一步帶你設定。</div>
+        </div>
+      </div>
+      <div class="step-row green">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">讓 AI 生成串接程式碼（神燈精靈）</div>
+          <div class="step-desc">把 API 文件交給 AI，<strong class="highlight">請它一步一步教你、幫你寫串接的程式碼</strong>，再告訴你貼到哪裡。這步會來回幾次，有耐心就能搞定。</div>
+        </div>
+      </div>
+
+      <div class="tip-box yellow">
+        <div class="label">💡 工程師的實戰心法</div>
+        <p>先別管功能細節，<strong>確認資料有串起來最重要</strong>。可以先問 AI：「我可以透過這個服務的 API，拿到我資料庫裡的資料嗎？」如果 AI 反應正面，直接說「那你幫我串好吧」——它通常就會生成程式碼並告訴你下一步。記得一步一步來。</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 04 — 卡關怎麼辦 -->
+    <div class="section" id="section-04-stuck">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2>串接卡住了怎麼辦？</h2>
+      </div>
+      <div class="card">
+        <p>老實說，講起來輕鬆，實際串接常常會卡關——這裡先自嘲一下「站著說話不腰疼」。卡關的兩大主因：<strong>你在陌生的後台闖關</strong>，加上 <strong>AI 教的有時候是舊版的操作方式</strong>（軟體介面經常改版）。遇到卡關很正常，以下三個策略輪流試。</p>
+      </div>
+
+      <div class="step-row yellow">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">搜尋成功案例</div>
+          <div class="step-desc">搜尋「<strong>服務A + 服務B + 串接</strong>」，看有沒有中英文成功案例。有的話代表這條路是通的，只是今天 AI 生成的程式碼剛好有問題。</div>
+        </div>
+      </div>
+      <div class="step-row yellow">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">把 API 文件貼給 AI</div>
+          <div class="step-desc">直接去官方 API Docs 找對應段落，開啟翻譯，把你需要的那段<strong>貼給 AI</strong>，讓它依照正確的文件重新生成。</div>
+        </div>
+      </div>
+      <div class="step-row yellow">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">把程式碼範例貼給 AI</div>
+          <div class="step-desc">從成功案例裡找到<strong>程式碼</strong>（程式碼才是重點，不是文章），貼給 AI，請它改成你需要的格式，或一步一步帶你操作。</div>
+        </div>
+      </div>
+
+      <div class="analogy">
+        <div class="label">✦ 一條原則</div>
+        <p><strong>失敗，就提供更多文件、更多範例給 AI。</strong>你給的線索越具體，AI 生成的程式碼就越可能成功。</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 05 — API Key 安全 -->
+    <div class="section" id="section-05-key">
+      <div class="section-header">
+        <span class="section-num red">05</span>
+        <h2>API Key 安全守則</h2>
+      </div>
+
+      <div class="tip-box red">
+        <div class="label">⚠️ 很重要，說三遍</div>
+        <p><strong class="highlight-red">API Key 就是密碼。是密碼。是密碼。</strong>所有你對密碼不該做的事，對 API Key 一樣不該做——別貼上網、別傳給別人、別放進會被別人看到的地方。</p>
+        <p>曾有知名第三方工具因為資安漏洞，洩露了大量用戶的 API Key，這些 Key 直通用戶帳號，造成<strong>數千萬美元的損失</strong>。一旦外洩會有多大損害，就看你的帳號多有價值。</p>
+      </div>
+
+      <div class="step-row red">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">隨時可以撤銷、換新的</div>
+          <div class="step-desc">只要覺得不安全，馬上去後台<strong>撤銷那組 Key、重新生成一組</strong>。這個操作很簡單，不用猶豫。</div>
+        </div>
+      </div>
+      <div class="step-row red">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">開發完成後移到安全位置</div>
+          <div class="step-desc">開發測試階段風險低，暫時直接寫在程式碼裡沒問題。但一旦完成，就請 AI 教你放到更安全的位置（例如 <strong>環境變數</strong>），再把原本那組 Key 撤銷換新。</div>
+        </div>
+      </div>
+      <div class="step-row red">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">給最小權限、設用量上限</div>
+          <div class="step-desc">建立 API Key 時，<strong>只給這次任務需要的權限</strong>，別開放所有功能；同時設定用量上限。這樣即使 Key 不幸外洩，損失也在控制範圍內。</div>
+        </div>
+      </div>
+
+      <div class="tip-box red">
+        <div class="label">✦ 一句話記住</div>
+        <p>把 API Key 當成你家鑰匙——<strong>能換鎖就換鎖、平常收好、別給不必要的人</strong>。</p>
+      </div>
+    </div>
+
+    <!-- 重點整理 -->
+    <div class="takeaway" id="takeaway">
+      <div class="takeaway-title">✦ 本章重點整理</div>
+      <ul class="takeaway-list">
+        <li><strong>API = 橋樑</strong>：讓兩個不同軟體互相溝通、交換資料的橋樑機制（Google 登入 / 行動支付 / 天氣 / 表單同步都是它）</li>
+        <li><strong>串接三步驟</strong>：確認有 API Docs → 取得 API Key → 讓 AI 一步步生成串接程式碼</li>
+        <li><strong>卡關 3 策略</strong>：搜尋成功案例、把 API 文件貼給 AI、把範例程式碼貼給 AI 修改——失敗就給更多線索</li>
+        <li><strong>API Key = 密碼</strong>：外洩後果嚴重；可隨時撤銷換新、開發完移到安全位置、給最小權限與用量上限</li>
+      </ul>
+
+      <div class="next-card">
+        <div class="label">下集預告</div>
+        <div class="title"><em>爬蟲</em> — 沒有 API 時的選擇</div>
+        <p>如果一個服務沒有提供 API，資料還是拿得到嗎？下集聊爬蟲。</p>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+</body>
+</html>
