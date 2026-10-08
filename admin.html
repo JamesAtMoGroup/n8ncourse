@@ -303,14 +303,14 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  // 2026-10-08：service_role 金鑰已移除（曾在此公開頁面外洩，對應 Supabase 專案已刪除/失效）。
+  // 此頁面綁定的 Supabase 專案目前不存在，整頁功能已失效。若要重建，createUser/deleteUser
+  // 這類需要 service_role 的操作必須改走後端代理（n8n webhook 或 Edge Function），不可再放前端。
   const SUPABASE_URL     = 'https://hkdmbfpwqfrjylvsexdu.supabase.co';
   const SUPABASE_ANON    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhrZG1iZnB3cWZyanlsdnNleGR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MDU1NjIsImV4cCI6MjA4OTQ4MTU2Mn0.7BmLMAiStA_OZpnSqgnq8CuXRmp0r7Apg28MJVTURLU';
-  const SUPABASE_SERVICE = '***REMOVED-SUPABASE-SERVICE-KEY***';
 
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-  const sbAdmin = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE, {
-    auth: { autoRefreshToken: false, persistSession: false }
-  });
+  const sbAdmin = null;
 
   let allMembers = [];
 
@@ -394,6 +394,7 @@
     btn.disabled = true; btn.textContent = '新增中...';
     alertEl.classList.remove('show');
 
+    if (!sbAdmin) { showAlert(alertEl, 'service_role 金鑰已移除，此功能需改走後端代理才能恢復', 'error'); btn.disabled = false; btn.textContent = '＋ 新增會員'; return; }
     const { data, error } = await sbAdmin.auth.admin.createUser({
       email, password,
       email_confirm: true,
@@ -424,6 +425,7 @@
 
   async function deleteMember(id, email) {
     if (!confirm(`確定刪除 ${email}？此操作無法復原。`)) return;
+    if (!sbAdmin) { toast('service_role 金鑰已移除，此功能需改走後端代理才能恢復', 'error'); return; }
     const { error: authErr } = await sbAdmin.auth.admin.deleteUser(id);
     if (authErr) { toast('刪除失敗：' + authErr.message, 'error'); return; }
     toast('已刪除', 'success');
@@ -502,6 +504,7 @@
     alertEl.classList.remove('show');
     document.getElementById('importProgressWrap').style.display = 'block';
 
+    if (!sbAdmin) { showAlert(alertEl, 'service_role 金鑰已移除，此功能需改走後端代理才能恢復', 'error'); btn.disabled = false; btn.textContent = '匯入'; return; }
     let ok = 0, fail = 0, skip = 0;
     for (let i = 0; i < csvRows.length; i++) {
       const r = csvRows[i];
