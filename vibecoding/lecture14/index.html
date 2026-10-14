@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CH 2-7｜技術方案｜爬蟲——看得到就爬得到，3 招實用技巧</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #7cffc2;
+      --primary-light: rgba(124,255,194,0.07);
+      --green: #7cffc2;
+      --yellow: #ffd166;
+      --orange: #ff9f43;
+      --purple: #a855f7;
+      --red: #ff6b6b;
+      --bg: #0a0a0a;
+      --surface: #0d0d0d;
+      --surface2: #111111;
+      --text: #ffffff;
+      --text-muted: #888888;
+      --border: rgba(124,255,194,0.14);
+      --orange-border: rgba(255,159,67,0.25);
+      --orange-light: rgba(255,159,67,0.06);
+      --purple-border: rgba(168,85,247,0.25);
+      --purple-light: rgba(168,85,247,0.06);
+      --yellow-border: rgba(255,209,102,0.25);
+      --yellow-light: rgba(255,209,102,0.06);
+      --red-border: rgba(255,107,107,0.25);
+      --red-light: rgba(255,107,107,0.06);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', sans-serif; font-size: 16px; line-height: 1.8; min-height: 100vh; }
+
+    .container { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
+
+    .hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); margin-bottom: 56px; animation: fadeUp 0.6s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .hero-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .chapter-badge { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--primary); border: 1px solid var(--primary); padding: 4px 14px; border-radius: 99px; letter-spacing: 0.05em; text-shadow: 0 0 10px rgba(124,255,194,0.4); }
+    .tag { font-size: 12px; padding: 4px 12px; border-radius: 99px; font-weight: 500; }
+    .tag-beginner { background: rgba(124,255,194,0.1); color: var(--green); }
+    .tag-time { background: rgba(255,209,102,0.1); color: var(--yellow); }
+    h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 16px; }
+    h1 em { font-style: normal; color: var(--primary); }
+    h1 em.orange { color: var(--orange); }
+    .hero-sub { font-size: 17px; color: var(--text-muted); max-width: 540px; line-height: 1.7; }
+
+    .section { margin-bottom: 56px; animation: fadeUp 0.5s ease both; }
+    .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .section-num { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--primary); background: rgba(124,255,194,0.08); border: 1px solid var(--border); padding: 5px 14px; border-radius: 99px; white-space: nowrap; letter-spacing: 0.05em; }
+    .section-num.yellow { color: var(--yellow); background: var(--yellow-light); border-color: var(--yellow-border); }
+    .section-num.orange { color: var(--orange); background: var(--orange-light); border-color: var(--orange-border); }
+    .section-num.red { color: var(--red); background: var(--red-light); border-color: var(--red-border); }
+    h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+    .card p { color: var(--text-muted); } .card p + p { margin-top: 12px; } .card strong { color: var(--text); }
+
+    .analogy { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 var(--radius) var(--radius) 0; padding: 24px 28px; margin-bottom: 20px; }
+    .analogy .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+    .analogy p { color: #c8ffe0; font-size: 15px; line-height: 1.75; } .analogy strong { color: #fff; }
+    .analogy.orange { background: var(--orange-light); border-left-color: var(--orange); }
+    .analogy.orange .label { color: var(--orange); } .analogy.orange p { color: #ffe3cc; }
+
+    .tip-box { background: rgba(124,255,194,0.04); border: 1px solid rgba(124,255,194,0.2); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; }
+    .tip-box .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+    .tip-box p { color: var(--text-muted); font-size: 15px; line-height: 1.75; } .tip-box strong { color: var(--text); }
+    .tip-box p + p { margin-top: 10px; }
+    .tip-box.orange { background: var(--orange-light); border-color: var(--orange-border); }
+    .tip-box.orange .label { color: var(--orange); } .tip-box.orange strong { color: #fff; }
+    .tip-box.yellow { background: var(--yellow-light); border-color: var(--yellow-border); }
+    .tip-box.yellow .label { color: var(--yellow); } .tip-box.yellow strong { color: #fff; }
+    .tip-box.red { background: var(--red-light); border-color: var(--red-border); }
+    .tip-box.red .label { color: var(--red); } .tip-box.red strong { color: #fff; }
+
+    .use-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .use-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; }
+    .use-card .use-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+    .use-card .use-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; box-shadow: 0 0 8px rgba(124,255,194,0.6); }
+    .use-card .use-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+    .use-card .use-desc strong { color: var(--text); }
+
+    .step-row { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 16px; }
+    .step-num { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #000; background: var(--primary); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .step-row.yellow .step-num { background: var(--yellow); }
+    .step-row.orange .step-num { background: var(--orange); }
+    .step-row.red .step-num { background: var(--red); color: #fff; }
+    .step-body { flex: 1; }
+    .step-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .step-desc { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+    .step-desc strong { color: var(--text); }
+
+    .takeaway { background: linear-gradient(135deg, rgba(124,255,194,0.08), rgba(0,0,0,0)); border: 1px solid rgba(124,255,194,0.25); border-radius: var(--radius); padding: 36px; margin-top: 48px; }
+    .takeaway-title { font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; }
+    .takeaway-list { list-style: none; display: flex; flex-direction: column; gap: 12px; counter-reset: li; }
+    .takeaway-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; color: var(--text); line-height: 1.6; counter-increment: li; }
+    .takeaway-list li::before { content: counter(li, decimal-leading-zero); background: var(--primary); color: #000; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .takeaway-list li.yellow::before { background: var(--yellow); }
+    .takeaway-list li.orange::before { background: var(--orange); }
+    .takeaway-list li.red::before { background: var(--red); }
+
+    .next-card { background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(124,255,194,0.03)); border: 1px solid var(--purple-border); border-radius: var(--radius); padding: 28px; margin-top: 28px; text-align: center; }
+    .next-card .label { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: var(--purple); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
+    .next-card .title { font-size: 22px; font-weight: 900; color: var(--text); margin-bottom: 8px; }
+    .next-card .title em { font-style: normal; color: var(--purple); }
+    .next-card p { font-size: 13px; color: var(--text-muted); }
+
+    .asset-item { margin-bottom: 24px; }
+    .asset-item .asset-label { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .asset-item .asset-label .num { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--orange); background: var(--orange-light); border: 1px solid var(--orange-border); padding: 2px 9px; border-radius: 99px; }
+    .asset-item video { width: 100%; border-radius: 12px; border: 1px solid var(--border); display: block; background: #000; }
+
+    code { font-family: 'Space Mono', monospace; font-size: 0.85em; background: rgba(124,255,194,0.1); color: var(--primary); padding: 2px 7px; border-radius: 5px; }
+    .highlight { color: var(--primary); font-weight: 700; }
+    .highlight-orange { color: var(--orange); font-weight: 700; }
+    .highlight-yellow { color: var(--yellow); font-weight: 700; }
+    .highlight-red { color: var(--red); font-weight: 700; }
+    .divider { height: 1px; background: var(--border); margin: 48px 0; }
+
+    @media (max-width: 600px) {
+      .container { padding-left: 16px; padding-right: 16px; }
+      .card, .takeaway, .tip-box { padding: 20px; }
+      .use-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+<style id='vc-nav-css'>#vc-nav{position:sticky;top:0;z-index:200;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border,rgba(255,255,255,0.1));}#vc-nav a{font-size:14px;font-weight:500;color:#888;text-decoration:none;transition:color .15s;}#vc-nav a:hover{color:#fff;}#vc-nav-right{display:flex;align-items:center;gap:10px;}#vc-nav-user{font-size:13px;color:#888;}#vc-logout{font-size:13px;font-weight:600;color:#666;background:rgba(255,255,255,0.04);border:1px solid var(--border,rgba(255,255,255,0.1));border-radius:8px;padding:4px 12px;cursor:pointer;font-family:inherit;}</style></head>
+<body>
+<nav id='vc-nav'><a href='../'>← 返回課程選單</a><div id='vc-nav-right'><span id='vc-nav-user'></span><button id='vc-logout' onclick="localStorage.removeItem('aischool_user');window.location.href='../../login.html';">登出</button></div></nav><script>(function(){var u=JSON.parse(localStorage.getItem('aischool_user')||'null');if(u&&u.name)document.getElementById('vc-nav-user').textContent=u.name;})();</script>
+<script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
+
+  
+  <div class="container">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-meta">
+        <span class="chapter-badge">CH 2-7</span>
+        <span class="tag tag-beginner">✦ 技術方案</span>
+        <span class="tag tag-time">⏱ 約 17 分鐘</span>
+      </div>
+      <h1><em>爬蟲</em>——看得到就爬得到，<br>3 招實用技巧</h1>
+      <p class="hero-sub">上集講了 API 這座橋樑，但如果網站根本沒開放 API 呢？這集帶你認識爬蟲：怎麼判斷網頁是靜態還是動態、3 招快速判斷法、3 種定位線索，還有不能踩的倫理與法律紅線。</p>
+    </div>
+
+    <!-- Section 01 — 爬蟲是什麼 -->
+    <div class="section" id="section-01-what-is">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2>爬蟲是什麼？</h2>
+      </div>
+      <div class="card">
+        <p>想像一個情境：你每天早上都要去三個不同網站，抄下競品今天的特價商品，一筆一筆貼進試算表再傳給主管。不難，但<strong>很煩、每天都要做</strong>，感覺是在浪費生命。</p>
+        <p>這種重複性的工作，其實有辦法自動完成——這就是爬蟲在做的事。</p>
+      </div>
+
+      <div class="tip-box">
+        <div class="label">🕷️ 一句話定義</div>
+        <p>爬蟲就是讓<strong>程式自動造訪指定的網站、找到你要的資料、抓取下來</strong>，再整理成你可以直接用的格式（通常是試算表）。</p>
+      </div>
+
+      <div class="use-grid">
+        <div class="use-card">
+          <div class="use-title"><span class="dot"></span>定時自動跑</div>
+          <div class="use-desc">設定排程，<strong>每天上班前自動跑一次</strong>，到辦公室時資料早已整理好放在雲端。</div>
+        </div>
+        <div class="use-card">
+          <div class="use-title"><span class="dot"></span>需要時手動跑</div>
+          <div class="use-desc">不想設排程也可以，<strong>需要的時候手動執行一次</strong>即可，依需求選擇。</div>
+        </div>
+        <div class="use-card">
+          <div class="use-title"><span class="dot"></span>競品調查</div>
+          <div class="use-desc"><strong>定期抓取多個網站</strong>的產品售價，取代人工比價。</div>
+        </div>
+        <div class="use-card">
+          <div class="use-title"><span class="dot"></span>內容整合 / 資料監控</div>
+          <div class="use-desc">把<strong>分散在多頁的公告統一整理</strong>，或某個數字一有更新就記錄進試算表。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 02 — 靜態 vs 動態 -->
+    <div class="section" id="section-02-static-dynamic">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2>靜態 vs 動態：先搞懂這個</h2>
+      </div>
+      <div class="card">
+        <p>叫 AI 幫你寫爬蟲之前，它很可能會反問：「這個網頁是靜態的還是動態的？」——<strong>這個問題真的很重要</strong>，它會決定寫程式的難度，也決定要用哪種工具。一般來說靜態網頁幾十分鐘就能搞定，動態網頁可能要花上幾個小時。</p>
+      </div>
+
+      <div class="use-grid">
+        <div class="use-card">
+          <div class="use-title"><span class="dot"></span>靜態網頁</div>
+          <div class="use-desc">內容在打開之前就<strong>已經準備好</strong>，每個人看到的都一樣。公司官網介紹頁、活動頁、Landing Page 多屬此類。</div>
+        </div>
+        <div class="use-card">
+          <div class="use-title"><span class="dot" style="background:var(--orange);box-shadow:0 0 8px rgba(255,159,67,0.6)"></span>動態網頁</div>
+          <div class="use-desc">內容<strong>依使用者或當下資料即時產生</strong>。個人化推薦、社群貼文、往下滑一直載入新內容都是典型例子。</div>
+        </div>
+      </div>
+
+      <div class="analogy">
+        <div class="label">💡 真正的重點</div>
+        <p>現代網站很少是純靜態或純動態，<strong>大多是混合式</strong>——標題導覽列固定，但留言區、商品列表動態載入。所以判斷重點不是整個網站，而是<strong class="highlight">「你想抓的那筆資料」到底是靜態還是動態</strong>。</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 03 — 3 招快速判斷 -->
+    <div class="section" id="section-03-three-tricks">
+      <div class="section-header">
+        <span class="section-num yellow">03</span>
+        <h2>3 招快速判斷：靜態還是動態？</h2>
+      </div>
+      <div class="card">
+        <p>不確定的話，這三招不用寫程式、只要用瀏覽器就能判斷。<strong>準確度不同</strong>，建議先從第一招開始，不確定再往下一招確認。</p>
+      </div>
+
+      <div class="step-row yellow">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">招式一：檢視網頁原始碼</div>
+          <div class="step-desc">複製一小段想抓的文字 → 網頁空白處按右鍵選<strong>「檢視網頁原始碼」</strong> → <code>Cmd+F</code>（Windows 為 <code>Ctrl+F</code>）搜尋剛複製的文字。<strong>找得到＝靜態，找不到＝動態</strong>。最快最常用，但不是百分之百準確。</div>
+        </div>
+      </div>
+      <div class="step-row yellow">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">招式二：停用 JavaScript</div>
+          <div class="step-desc">開發人員工具 → 偏好設定 → 偵錯工具區塊 → 勾選<strong>「停用 JavaScript」</strong> → 重新整理頁面。<strong>資料還在＝靜態，資料破相消失＝動態</strong>。更準確，但步驟多一點，檢查完記得取消勾選並重新整理恢復正常。</div>
+        </div>
+      </div>
+      <div class="step-row yellow">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">招式三：下載 HTML 檔案</div>
+          <div class="step-desc">網頁空白處按右鍵選<strong>「另存為」</strong>，格式選「僅限 HTML」下載後用瀏覽器打開。<strong>看得到的內容＝靜態，看不到的＝動態</strong>。最直覺的一招。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 04 — 精準定位 -->
+    <div class="section" id="section-04-locate">
+      <div class="section-header">
+        <span class="section-num orange">04</span>
+        <h2>精準定位：3 種方法告訴 AI 要抓哪裡</h2>
+      </div>
+      <div class="card">
+        <p>只給 AI 網址不夠——頁面上有程式碼、Logo、各種無關內容，AI 不知道你要的是哪一塊。給它更精準的<strong>「定位」線索</strong>，它才能寫出對的程式。</p>
+      </div>
+
+      <div class="step-row orange">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">原始碼法（靜態首選）</div>
+          <div class="step-desc">原始碼裡搜尋到目標文字，複製<strong>前後包覆它的 HTML 標籤</strong>（像 <code>&lt;div&gt;</code>、<code>&lt;span&gt;</code>）連同內容一起貼給 AI。推薦搭配 <strong>Google Apps Script</strong>，快速簡單又能定時爬取，新手首推組合。</div>
+        </div>
+      </div>
+      <div class="step-row orange">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">元素法（適合動態）</div>
+          <div class="step-desc">看得到的內容不一定在原始碼裡，但一定在「<strong>元素</strong>」裡（JS 執行後呈現的完整畫面結構）。開發人員工具 → 點選左上角元素選取圖示 → 點擊目標內容 → 在對應的 HTML 標籤上按右鍵選<strong>「複製元素」</strong>貼給 AI。適合搭配主控台爬蟲，但只能單次手動執行。</div>
+        </div>
+      </div>
+      <div class="step-row orange">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">網路法</div>
+          <div class="step-desc">動態資料常是瀏覽器背後向伺服器拉下來的，有點像 API 呼叫。開發人員工具 → 切換「網路」分頁 → 重新整理 → 搜尋關鍵字 → 右鍵選<strong>「複製為 cURL 格式」</strong>（或 fetch 格式，AI 兩種都看得懂）貼給 AI，請它翻譯成 Google Apps Script。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 05 — 工具選擇決策地圖 -->
+    <div class="section" id="section-05-decision-map">
+      <div class="section-header">
+        <span class="section-num yellow">05</span>
+        <h2>工具選擇決策地圖</h2>
+      </div>
+      <div class="card">
+        <p>把判斷方法跟定位方法整理成一張對照表，四種情境分別適合用什麼工具：</p>
+      </div>
+
+      <div class="step-row yellow">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">靜態資料 → 原始碼法 + Google Apps Script</div>
+          <div class="step-desc">最輕鬆的情況，可設定定時自動執行，<strong>新手首選，強烈推薦</strong>。</div>
+        </div>
+      </div>
+      <div class="step-row yellow">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">動態資料 → 網路法 + Google Apps Script</div>
+          <div class="step-desc">找到對應 API 請求翻譯成 GAS，一樣方便好用，但<strong>不一定每個網頁都能成功</strong>。</div>
+        </div>
+      </div>
+      <div class="step-row yellow">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">動態資料、網路法行不通 → 元素法 + 主控台爬蟲</div>
+          <div class="step-desc">看得到的東西基本上都能抓，但<strong>只能單次手動執行</strong>，無法定時。</div>
+        </div>
+      </div>
+      <div class="step-row yellow">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">前面都失敗 → Python 進階爬蟲</div>
+          <div class="step-desc">用 Python 操作完整瀏覽器模擬人類操作，<strong>幾乎適用任何網站，但難度最高</strong>。</div>
+        </div>
+      </div>
+
+      <div class="tip-box yellow">
+        <div class="label">⚠️ 心理準備</div>
+        <p>網站若有嚴謹的反爬蟲機制，不管用哪個方法難度都會大幅提升。原則是：<strong>能用簡單的就不要用複雜的</strong>，從最輕鬆的方案開始試，真的行不通再往下一個方案。</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Section 06 — 倫理與法律 -->
+    <div class="section" id="section-06-ethics">
+      <div class="section-header">
+        <span class="section-num red">06</span>
+        <h2>爬蟲倫理與法律提醒</h2>
+      </div>
+
+      <div class="analogy">
+        <div class="label">📚 圖書館比喻</div>
+        <p>把網站想成一間圖書館：<strong>進去閱讀資料沒問題</strong>，這本來就開放給大家。但如果你短時間把整個圖書館的書全部掃描帶走，館方會阻止你——這就像爬蟲請求太頻繁會被網站封鎖。書可以讀，但不代表可以隨便複製、出版或拿去賣，<strong>資料的使用也需要遵守規範</strong>。</p>
+      </div>
+
+      <div class="step-row red">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">控制請求頻率</div>
+          <div class="step-desc">每次請求間隔建議 <strong>2 到 5 秒</strong>。沒設定間隔或低於 1 秒，很容易被封鎖，也會對對方伺服器造成負擔。</div>
+        </div>
+      </div>
+      <div class="step-row red">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">商業用途要謹慎</div>
+          <div class="step-desc">把爬下來的資料直接用於商業服務，可能引發<strong>版權或法律爭議</strong>——知名企業之間就曾因此對簿公堂。</div>
+        </div>
+      </div>
+      <div class="step-row red">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">台灣的特殊規定</div>
+          <div class="step-desc">在台灣使用<strong>搶票機器人</strong>（演唱會、高鐵、台鐵皆同）<strong class="highlight-red">屬於違法行為</strong>，即使是自用也一樣。</div>
+        </div>
+      </div>
+
+      <div class="tip-box red">
+        <div class="label">✦ 一句話記住</div>
+        <p><strong>人做起來合理的事情，程式可以做；但變成大量、快速、影響他人的行為，就需要特別小心。</strong></p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 相關素材 -->
+    <div class="section" id="section-assets">
+      <div class="section-header">
+        <span class="section-num orange">📎</span>
+        <h2>相關素材：6 段實機示範</h2>
+      </div>
+      <div class="card">
+        <p>影片裡的操作片段原始檔，想暫停細看每個步驟可以在這裡重播：</p>
+      </div>
+
+      <div class="asset-item">
+        <div class="asset-label"><span class="num">招式一</span>檢視網頁原始碼</div>
+        <video controls preload="none" src="./assets/demo-3-2-viewsource.mp4"></video>
+      </div>
+      <div class="asset-item">
+        <div class="asset-label"><span class="num">招式二</span>停用 JavaScript</div>
+        <video controls preload="none" src="./assets/demo-3-3-disablejs.mp4"></video>
+      </div>
+      <div class="asset-item">
+        <div class="asset-label"><span class="num">招式三</span>下載 HTML 檔案</div>
+        <video controls preload="none" src="./assets/demo-3-4-downloadhtml.mp4"></video>
+      </div>
+      <div class="asset-item">
+        <div class="asset-label"><span class="num">定位法一</span>原始碼法</div>
+        <video controls preload="none" src="./assets/demo-4-2-sourcecode.mp4"></video>
+      </div>
+      <div class="asset-item">
+        <div class="asset-label"><span class="num">定位法二</span>元素法</div>
+        <video controls preload="none" src="./assets/demo-4-3-element.mp4"></video>
+      </div>
+      <div class="asset-item">
+        <div class="asset-label"><span class="num">定位法三</span>網路法</div>
+        <video controls preload="none" src="./assets/demo-4-4-network.mp4"></video>
+      </div>
+    </div>
+
+    <!-- 重點整理 -->
+    <div class="takeaway" id="takeaway">
+      <div class="takeaway-title">✦ 本章重點整理</div>
+      <ul class="takeaway-list">
+        <li><strong>爬蟲 = 自動抓資料整理試算表</strong>：讓程式自動造訪網站、抓指定資料，還能搭配定時機制每天自動跑</li>
+        <li><strong>先判斷「那筆資料」靜態或動態</strong>：聚焦在資料本身，不是整個網站；這決定難度與工具</li>
+        <li class="yellow"><strong>三招快速判斷</strong>：原始碼搜尋 · 停用 JavaScript · 下載 HTML；由簡到準</li>
+        <li class="orange"><strong>三種定位法</strong>：原始碼法（靜）· 元素法（動）· 網路法（動態 API）</li>
+        <li class="red"><strong>倫理與法律底線</strong>：請求要有間隔 · 商業用途謹慎 · 搶票機器人違法</li>
+      </ul>
+
+      <div class="next-card">
+        <div class="label">下集預告</div>
+        <div class="title"><em>部署</em></div>
+        <p>把程式穩定放上線運作，讓別人也能使用。</p>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+</body>
+</html>

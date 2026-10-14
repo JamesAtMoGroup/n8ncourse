@@ -89,5 +89,12 @@
     "title": "API——跨應用程式、串接時要用的東西",
     "status": "open",
     "url": "./lecture13/"
+  },
+  {
+    "day": 14,
+    "chapter": "CH2-7",
+    "title": "技術方案｜爬蟲——看得到就爬得到，3 招實用技巧",
+    "status": "open",
+    "url": "./lecture14/"
   }
 ]
