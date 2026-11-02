@@ -28,7 +28,7 @@ n8ncourse: https://n8ncourse.zeabur.app/n8ncourse/
 
 ## Auth
 
-- Login: `POST https://crmnotetool.zeabur.app/api/member/search { email, brandKey: "aischool" }`
+- Login: `POST https://crmnotetool.zeabur.app/api/course-login { email }` (public; brand fixed to aischool, allowed origins set in crm_note_tool)
 - Session: `localStorage` key `aischool_user` = `{ email, name }`
 - **NO Supabase anywhere** — lecture pages use localStorage only
 - Login redirects to `./` (portal) after success

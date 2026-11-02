@@ -325,17 +325,23 @@
       showLoading();
 
       try {
-        const res = await fetch('https://crmnotetool.zeabur.app/api/member/search', {
+        const res = await fetch('https://crmnotetool.zeabur.app/api/course-login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, brandKey: 'aischool' })
+          body: JSON.stringify({ email })
         });
+
+        if (!res.ok) {
+          showError(res.status === 429 ? '嘗試次數過多，請稍後再試' : '連線失敗，請稍後再試');
+          return;
+        }
+
         const data = await res.json();
 
         if (data.success) {
           localStorage.setItem('aischool_user', JSON.stringify({
-            email: data.data.email,
-            name: data.data.name
+            email: email,
+            name: email.split('@')[0]
           }));
           showSuccess('驗證成功，正在跳轉...');
           setTimeout(function() {
