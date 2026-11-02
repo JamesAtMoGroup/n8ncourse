@@ -12,7 +12,7 @@
 - Auth token: POST https://api.kolable.app/api/v1/auth/token
 - Course login: POST https://crmnotetool.zeabur.app/api/course-login
   - Body: { email }
-  - Success: { success: true, email, name }
+  - Success: { success: true }（不回姓名，localStorage 的 name 存 email 的 @ 前段）
   - Fail: { success: false }
   - 429: 嘗試次數過多
 - GraphQL Read: https://rhdb.kolable.com/v1/graphql

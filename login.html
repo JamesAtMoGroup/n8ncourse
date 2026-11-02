@@ -340,8 +340,8 @@
 
         if (data.success) {
           localStorage.setItem('aischool_user', JSON.stringify({
-            email: data.email,
-            name: data.name
+            email: email,
+            name: email.split('@')[0]
           }));
           showSuccess('驗證成功，正在跳轉...');
           setTimeout(function() {
