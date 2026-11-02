@@ -29,8 +29,8 @@ repo-root/
 
 ## 登入機制
 - 使用者輸入 Email
-- 呼叫 POST https://crmnotetool.zeabur.app/api/member/search
-- Body: { "email": "...", "brandKey": "aischool" }
+- 呼叫 POST https://crmnotetool.zeabur.app/api/course-login
+- Body: { "email": "..." }
 - 成功 → 存 localStorage key: `aischool_user` → redirect index.html
 - 失敗 → 顯示錯誤提示
 - Session: localStorage（不使用 Supabase）

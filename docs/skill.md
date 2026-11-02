@@ -10,10 +10,11 @@
 
 ## Kolable API
 - Auth token: POST https://api.kolable.app/api/v1/auth/token
-- Member search: POST https://crmnotetool.zeabur.app/api/member/search
-  - Body: { email, brandKey: "aischool" }
-  - Success: { success: true, data: { id, name, email } }
-  - Fail: { success: false, message: "..." }
+- Course login: POST https://crmnotetool.zeabur.app/api/course-login
+  - Body: { email }
+  - Success: { success: true, email, name }
+  - Fail: { success: false }
+  - 429: 嘗試次數過多
 - GraphQL Read: https://rhdb.kolable.com/v1/graphql
 - GraphQL Write: https://phdb.kolable.com/v1/graphql
 
