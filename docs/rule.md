@@ -5,7 +5,7 @@
 - n8ncourse/ 內的現有頁面設計不得更動
 - Session 一律使用 localStorage，key: `aischool_user`
 - 不使用 Supabase
-- 所有 API 呼叫走 crmnotetool.zeabur.app
+- 所有 API 呼叫走 crm-note-tool.deploy.ai-go.app
 
 ## 內容規則
 - Hero 區塊禁止：meta tag badges、上一堂/下一堂導航、頁尾 callout 導航
@@ -24,19 +24,19 @@
 - ❌ 強制移除 progress bar HTML 區塊（含 `<!-- Sticky Progress Bar -->` 註解）
 - ❌ 強制移除 `body` 的 `padding-top`
 - ❌ 強制移除 `<body>` 後的孤立 `</div>`
-- ✅ Sync commit 不加 `[skip ci]`，確保 Zeabur 自動部署
+- ✅ Sync commit 不加 `[skip ci]`（原本是為了讓 Zeabur 自動部署。現在推 main 不會部署到 AI GO，AI GO 版要另外跑 `aigo hosted deploy --slug n8ncourse`）
 
-## Asset 規則（防止 Zeabur Docker image 過大）
+## Asset 規則（防止部署包過大）
 - ✅ 圖片（png/jpg/webp/gif）：直接下載進 repo
 - ✅ 影片小於 20MB（mp4/mov）：直接下載進 repo
 - ❌ 影片大於 20MB：不下載，自動替換 HTML 中的 `<video><source>` 為 Drive iframe
-- 目標：vibecoding/ 資料夾總大小維持 100MB 以下，確保 Zeabur 部署穩定
+- 目標：vibecoding/ 資料夾總大小維持 100MB 以下，整包不超過 AI GO 單次上傳上限 200 MiB
 
 ## Repo 規則
 - 所有 lecture 頁面在對應課程子目錄（vibecoding/lectureN/、n8ncourse/lectureN/）
 - 根目錄 courses.json = 課程系列清單
 - 各課程 courses.json = lecture 清單
-- Deploy: Zeabur only
+- Deploy: AI GO Hosted App（slug `n8ncourse`，手動 `aigo hosted deploy`）；GitHub Pages 副本跟著 main 更新
 
 ## Agent 規則
 - Platform Director 唯一對外溝通

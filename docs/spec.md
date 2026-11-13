@@ -9,7 +9,7 @@
 - Frontend Agent：login.html + root index.html
 - Integration Agent：Kolable API 串接 + n8ncourse 接口
 - QA Agent：執行所有 checklist，全通過才放行
-- Deploy Agent：Zeabur 上線
+- Deploy Agent：AI GO 上線（`aigo hosted deploy --slug n8ncourse`）
 
 ## 頁面結構
 ```
@@ -29,7 +29,7 @@ repo-root/
 
 ## 登入機制
 - 使用者輸入 Email
-- 呼叫 POST https://crmnotetool.zeabur.app/api/course-login
+- 呼叫 POST https://crm-note-tool.deploy.ai-go.app/api/course-login
 - Body: { "email": "..." }
 - 成功 → 存 localStorage key: `aischool_user` → redirect index.html
 - 失敗 → 顯示錯誤提示
