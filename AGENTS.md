@@ -21,14 +21,54 @@ root/
 
 **When creating a new lecture page**, always place it at `n8ncourse/lectureN/index.html`.
 
-Live site: https://n8ncourse.zeabur.app/
-n8ncourse: https://n8ncourse.zeabur.app/n8ncourse/
+Live site (AI GO): https://n8ncourse.deploy.ai-go.app/
+n8ncourse: https://n8ncourse.deploy.ai-go.app/n8ncourse/
+GitHub Pages copy: https://jamesatmogroup.github.io/n8ncourse/ (built from `main`; updates on push)
+
+Old Zeabur site `n8ncourse.zeabur.app` was suspended on 2026-11-02 (moved to AI GO).
+
+---
+
+## Deploy（AI GO）
+
+2026-11-02 起，這個網站跑在 AI GO 的 Hosted App（workspace `mogroup`）。
+
+| 項目 | 內容 |
+|---|---|
+| App slug | `n8ncourse` |
+| 網址 | https://n8ncourse.deploy.ai-go.app |
+| 執行方式 | 靜態站，公開，非常駐 |
+| 持久資料 | 無（沒有 volume，環境變數 0 個） |
+| 建置方式 | 平台自動偵測為靜態站，沒有建置步驟 |
+| 大小 | 2026-10-29 部署時約 120 MB。AI GO 單次上傳上限 200 MiB |
+
+**推 main 不會部署到 AI GO。** 以前 Zeabur 是推 main 就自動部署；現在推 main 只會更新 GitHub 與 GitHub Pages 副本。每小時的 Google Drive 同步（`.github/workflows/sync-vibecoding.yml`）也只會推 main（2026-11-02 查到它最後一次執行是 9/5）。新增講次或改頁面後，要自己跑一次 `aigo hosted deploy`，AI GO 版才會更新。
+
+改完怎麼上線：
+
+1. 安裝 aigo CLI 並登入（瀏覽器授權，約 1 小時過期，過期再登入）：
+
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/AI-GO-APP/aigo-cli-releases/main/install.sh | bash
+   aigo login --workspace mogroup
+   ```
+
+2. 線上版可能和 GitHub main 不同（2026-11-10 是從分支 `aigo/crm-new-domain` 部署的）。改之前先用 `aigo hosted clone --app <App ID> <空目錄>` 下載線上版比對（App ID 用 `aigo hosted list` 查）。
+3. 先 commit，再把 commit 匯出到空資料夾部署（10/29、11/2 都是這樣部署，不帶 `.git`）：
+
+   ```bash
+   D=$(mktemp -d) && git archive HEAD | tar -x -C "$D" && cd "$D" && aigo hosted deploy --slug n8ncourse
+   ```
+
+4. 看這次部署的建置日誌：`aigo hosted logs --app n8ncourse`。
+5. 執行期記錄：登入 https://mogroup.ai-go.app →「App 建造器」→「我的 Apps」→ 點這個 App，看「記錄」分頁。
+6. 開 https://n8ncourse.deploy.ai-go.app/login.html 確認登入頁正常。
 
 ---
 
 ## Auth
 
-- Login: `POST https://crmnotetool.zeabur.app/api/member/search { email, brandKey: "aischool" }`
+- Login: `POST https://crm-note-tool.deploy.ai-go.app/api/course-login { email }` (public; brand fixed to aischool, allowed origins set in crm_note_tool)
 - Session: `localStorage` key `aischool_user` = `{ email, name }`
 - **NO Supabase anywhere** — lecture pages use localStorage only
 - Login redirects to `./` (portal) after success
