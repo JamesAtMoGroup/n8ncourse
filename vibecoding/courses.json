@@ -96,5 +96,12 @@
     "title": "技術方案｜爬蟲——看得到就爬得到，3 招實用技巧",
     "status": "open",
     "url": "./lecture14/"
+  },
+  {
+    "day": 15,
+    "chapter": "CH2-8",
+    "title": "技術方案｜部署——把作品放上網路的常見做法",
+    "status": "open",
+    "url": "./lecture15/"
   }
 ]

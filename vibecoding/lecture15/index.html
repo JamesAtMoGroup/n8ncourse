@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2-8 技術方案｜部署——把作品放上網路的常見做法</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #7cffb2;
+  --primary-light: rgba(124,255,178,0.07);
+  --accent: #7cffb2;
+  --green: #7cffb2;
+  --yellow: #ffd166;
+  --orange: #ff9f43;
+  --red: #ff6b6b;
+  --bg: #000000;
+  --surface: #0d0d0d;
+  --surface2: #111111;
+  --text: #ffffff;
+  --text-muted: #888888;
+  --border: rgba(124,255,178,0.14);
+  --radius: 16px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', sans-serif; font-size: 16px; line-height: 1.8; min-height: 100vh; }
+
+
+.container { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
+
+.hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); margin-bottom: 56px; animation: fadeUp 0.6s ease both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+.hero-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.chapter-badge { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--primary); border: 1px solid var(--primary); padding: 4px 14px; border-radius: 99px; letter-spacing: 0.05em; text-shadow: 0 0 10px rgba(124,255,178,0.4); }
+.tag { font-size: 12px; padding: 4px 12px; border-radius: 99px; font-weight: 500; }
+.tag-beginner { background: rgba(124,255,178,0.1); color: var(--green); }
+.tag-time { background: rgba(255,209,102,0.1); color: var(--yellow); }
+h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 16px; }
+h1 em { font-style: normal; color: var(--primary); }
+.hero-sub { font-size: 17px; color: var(--text-muted); max-width: 540px; line-height: 1.7; }
+
+.section { margin-bottom: 56px; animation: fadeUp 0.5s ease both; }
+.section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+.section-num { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--primary); background: rgba(124,255,178,0.08); border: 1px solid var(--border); padding: 5px 14px; border-radius: 99px; white-space: nowrap; letter-spacing: 0.05em; }
+h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.card p { color: var(--text-muted); } .card p + p { margin-top: 12px; } .card strong { color: var(--text); }
+
+.analogy { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 var(--radius) var(--radius) 0; padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.analogy .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.analogy p { color: #c8ffe0; font-size: 15px; line-height: 1.75; } .analogy strong { color: #fff; }
+
+.tip-box { background: rgba(124,255,178,0.04); border: 1px solid rgba(124,255,178,0.2); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.tip-box .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.tip-box p { color: var(--text-muted); font-size: 15px; line-height: 1.75; } .tip-box strong { color: var(--text); }
+.tip-box p + p { margin-top: 10px; }
+
+.warn-box { background: rgba(255,107,107,0.05); border: 1px solid rgba(255,107,107,0.3); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.warn-box .label { font-size: 12px; font-weight: 700; color: var(--red); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.warn-box p { color: var(--text-muted); font-size: 15px; line-height: 1.75; } .warn-box strong { color: #fff; }
+.warn-box p + p { margin-top: 10px; }
+
+.quiz-box { border: 2px dashed rgba(255,209,102,0.35); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; background: rgba(255,209,102,0.03); animation: fadeUp 0.5s ease both; }
+.quiz-box .label { font-size: 12px; font-weight: 700; color: var(--yellow); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+.quiz-box p { color: var(--text-muted); font-size: 15px; line-height: 1.7; }
+
+.shape-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.shape-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; animation: fadeUp 0.5s ease both; }
+.shape-icon { flex-shrink: 0; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; font-size: 22px; }
+.shape-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.shape-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+.mermaid-card { background: rgba(124,255,178,0.04); border: 1px solid rgba(124,255,178,0.2); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.mermaid-title { font-size: 16px; font-weight: 900; color: var(--green); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.mermaid-steps { display: flex; flex-direction: column; gap: 10px; }
+.mermaid-step { display: flex; align-items: flex-start; gap: 12px; }
+.mermaid-step-num { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: #000; background: var(--primary); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 3px; }
+.mermaid-step-text { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+.mermaid-step-text strong { color: var(--text); }
+
+.tips-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.tip-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; display: flex; gap: 14px; animation: fadeUp 0.5s ease both; }
+.tip-item-num { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: #000; background: var(--primary); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+.tip-item-text { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+.tip-item-text strong { color: var(--text); }
+
+/* 平台比較表 */
+.platform-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; }
+.platform-table th { background: rgba(124,255,178,0.08); color: var(--primary); font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+.platform-table td { padding: 12px 14px; border-bottom: 1px solid rgba(124,255,178,0.06); color: var(--text-muted); vertical-align: top; line-height: 1.6; }
+.platform-table td:first-child { color: var(--text); font-weight: 700; white-space: nowrap; }
+.platform-table tr:last-child td { border-bottom: none; }
+.platform-table .badge-ok { display: inline-block; background: rgba(124,255,178,0.12); color: var(--green); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+.platform-table .badge-warn { display: inline-block; background: rgba(255,107,107,0.1); color: var(--red); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+
+.domain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 20px; }
+.domain-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; text-align: center; }
+.domain-name { font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+.domain-price { font-size: 13px; color: var(--text-muted); }
+
+.takeaway { background: linear-gradient(135deg, rgba(124,255,178,0.08), rgba(0,0,0,0)); border: 1px solid rgba(124,255,178,0.25); border-radius: var(--radius); padding: 36px; margin-top: 48px; animation: fadeUp 0.5s ease both; }
+.takeaway-title { font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.takeaway-list { list-style: none; display: flex; flex-direction: column; gap: 12px; counter-reset: li; }
+.takeaway-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; color: var(--text); line-height: 1.6; counter-increment: li; }
+.takeaway-list li::before { content: counter(li); background: var(--primary); color: #000; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+
+code { font-family: 'Space Mono', monospace; font-size: 0.85em; background: rgba(124,255,178,0.1); color: var(--primary); padding: 2px 7px; border-radius: 5px; }
+.highlight { color: var(--primary); font-weight: 700; }
+.divider { height: 1px; background: var(--border); margin: 48px 0; }
+
+@media (max-width: 600px) {
+    .shape-grid { grid-template-columns: 1fr 1fr; }
+  .card, .quiz-box, .takeaway, .tip-box, .warn-box { padding: 20px; }
+  .container { padding-left: 16px; padding-right: 16px; }
+  .platform-table { font-size: 12px; }
+  .platform-table th, .platform-table td { padding: 8px 10px; }
+}
+</style>
+<style>
+.section-num.orange { color: var(--orange); background: rgba(255,159,67,0.08); border-color: rgba(255,159,67,0.3); }
+.asset-item { margin-bottom: 24px; }
+.asset-item .asset-label { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.asset-item .asset-label .num { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--orange); background: rgba(255,159,67,0.08); border: 1px solid rgba(255,159,67,0.3); padding: 2px 9px; border-radius: 99px; }
+.asset-item video { width: 100%; border-radius: 12px; border: 1px solid var(--border); display: block; background: #000; }
+.asset-download { display: inline-flex; align-items: center; gap: 8px; color: var(--primary); text-decoration: none; border: 1px solid var(--border); background: var(--surface2); border-radius: 12px; padding: 14px 22px; font-weight: 700; }
+.asset-download:hover { border-color: var(--primary); }
+</style>
+<style id='vc-nav-css'>#vc-nav{position:sticky;top:0;z-index:200;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border,rgba(255,255,255,0.1));}#vc-nav a{font-size:14px;font-weight:500;color:#888;text-decoration:none;transition:color .15s;}#vc-nav a:hover{color:#fff;}#vc-nav-right{display:flex;align-items:center;gap:10px;}#vc-nav-user{font-size:13px;color:#888;}#vc-logout{font-size:13px;font-weight:600;color:#666;background:rgba(255,255,255,0.04);border:1px solid var(--border,rgba(255,255,255,0.1));border-radius:8px;padding:4px 12px;cursor:pointer;font-family:inherit;}</style></head>
+<body>
+<nav id='vc-nav'><a href='../'>← 返回課程選單</a><div id='vc-nav-right'><span id='vc-nav-user'></span><button id='vc-logout' onclick="localStorage.removeItem('aischool_user');window.location.href='../../login.html';">登出</button></div></nav><script>(function(){var u=JSON.parse(localStorage.getItem('aischool_user')||'null');if(u&&u.name)document.getElementById('vc-nav-user').textContent=u.name;})();</script>
+<script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
+
+
+<div class="container">
+
+  <!-- ③ Hero -->
+  <div class="hero">
+    <div class="hero-meta">
+      <span class="chapter-badge">CH 2-8</span>
+      <span class="tag tag-beginner">✦ 部署上線</span>
+      <span class="tag tag-time">⏱ 約 11 分鐘</span>
+    </div>
+    <h1>技術方案｜部署——<br><em>把作品放上網路的常見做法</em></h1>
+    <p class="hero-sub">程式寫好了，下一步是讓別人也能用。了解部署流程、挑對平台，避開 AI 常推薦但對新手不友善的選項。</p>
+  </div>
+
+  <!-- Section 01 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>什麼是部署？</h2>
+    </div>
+    <div class="card">
+      <p><strong>部署</strong>就是把做好的網頁或應用程式發布到網路上，讓其他人也能透過連結打開使用。在你自己電腦上跑得好好的，並不代表別人能看到——部署這一步，才算是真正「上線」。</p>
+    </div>
+
+    <div class="shape-grid">
+      <div class="shape-item">
+        <div class="shape-icon">🖱️</div>
+        <div>
+          <div class="shape-name">平台一鍵部署</div>
+          <div class="shape-desc">應用程式生成平台通常有明顯的「Publish / 發布」按鈕，按下去就拿到連結</div>
+        </div>
+      </div>
+      <div class="shape-item">
+        <div class="shape-icon">🔧</div>
+        <div>
+          <div class="shape-name">手動部署</div>
+          <div class="shape-desc">用 AI 程式工具寫出來的程式，需要自己上傳程式碼、選平台、做設定，才能取得有效連結</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="label">💡 為什麼要提前決定部署方案？</div>
+      <p>不同平台的程式碼結構不太一樣。開發到一半才換平台，雖然 AI 可以幫你重寫，但過程不一定順。<strong>建議在動手寫程式之前，就先決定好要用哪個部署平台</strong>，或是先了解有哪些退路。</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 02 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>部署三步驟</h2>
+    </div>
+    <div class="card">
+      <p>不管用哪個平台，手動部署的流程基本上都一樣。搞懂這三步，後面再碰到任何平台都能觸類旁通。</p>
+    </div>
+
+    <div class="mermaid-card">
+      <div class="mermaid-title">🚀 部署流程</div>
+      <div class="mermaid-steps">
+        <div class="mermaid-step">
+          <div class="mermaid-step-num">1</div>
+          <div class="mermaid-step-text"><strong>上傳程式碼</strong>——在本機測試完成後，把程式碼上傳到線上的版本控管空間（最常見的是 GitHub）。如果只是簡單的展示頁面，有時候也可以把內容整理成一個單一的 <code>index.html</code>，在上傳和管理上會比較直覺；但實際開發中，多數情況還是會把 HTML、CSS、JavaScript 分開管理。</div>
+        </div>
+        <div class="mermaid-step">
+          <div class="mermaid-step-num">2</div>
+          <div class="mermaid-step-text"><strong>設定部署平台</strong>——打開你選的部署服務，把 GitHub 上的儲存庫網址給它，告訴平台「我的程式碼在這裡」，然後做幾個基本設定（例如指定資料夾位置）。</div>
+        </div>
+        <div class="mermaid-step">
+          <div class="mermaid-step-num">3</div>
+          <div class="mermaid-step-text"><strong>取得網址</strong>——設定完成後等 1–3 分鐘刷新頁面，平台會自動生成一個可公開訪問的 URL。免費方案通常是一串較長的預設網址；想要自訂網域則需要另外購買。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="label">💡 善用 AI 一步一步跟著做</div>
+      <p>每個部署平台在網路上都有充分的教學，你只需要對 AI 說：「我寫好了一個 <code>index.html</code>，我想用 GitHub Pages 部署，請你一步一步教我。」——AI 就會帶著你做完整個流程。</p>
+      <p>如果擔心 AI 教的是舊版操作，加一句「請參考最新版本的教學」，AI 就會優先依照最新資料來引導你，出錯的機率也會比較低。</p>
+    </div>
+
+    <div class="analogy">
+      <div class="label">💡 GitHub 是什麼？</div>
+      <p>可以把 GitHub 想成<strong>程式版的雲端硬碟</strong>，專門拿來放程式碼、追蹤修改記錄。上傳後會取得一個儲存庫網址（工程師常說 Repo），部署平台就是從這個網址去抓你的程式碼。</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 03 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>推薦的部署方案</h2>
+    </div>
+    <div class="card">
+      <p>以下四個方案對新手友善，都有免費額度可以起步。依照你的需求挑選就好，不需要全部都用。</p>
+    </div>
+
+    <table class="platform-table">
+      <thead>
+        <tr>
+          <th>平台</th>
+          <th>優點</th>
+          <th>限制</th>
+          <th>適合場景</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Google Apps Script</td>
+          <td>免費、一鍵部署、可有前後端</td>
+          <td>無法放圖、無法自訂域名、綁 Google 生態系</td>
+          <td>企業內部小工具、試算表串接應用</td>
+        </tr>
+        <tr>
+          <td>GitHub Pages</td>
+          <td>免費、可傳圖、可自訂域名、可搭配 GAS 做後端</td>
+          <td>免費版儲存庫必須公開</td>
+          <td>個人網站、部落格、純前端小工具</td>
+        </tr>
+        <tr>
+          <td>Cloudflare Pages</td>
+          <td>免費版支援私有儲存庫、額外支援輕後端</td>
+          <td>功能較多、初次設定稍複雜</td>
+          <td>不想公開程式碼、需要輕量後端功能</td>
+        </tr>
+        <tr>
+          <td>Zeabur</td>
+          <td>有真正的後端與資料庫、付費方案友善（$5/月起）</td>
+          <td>服務選項多，第一次可能眼花繚亂</td>
+          <td>需要完整後端、資料庫的進階專案</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tip-box">
+      <div class="label">💡 推薦的組合搭配</div>
+      <p><strong>起步首選</strong>：Google Apps Script（功能夠用就留在這）</p>
+      <p><strong>想要漂亮前端</strong>：GitHub Pages（前端）+ Google Apps Script（後端）</p>
+      <p><strong>程式碼不想公開</strong>：改用 Cloudflare Pages 放前端</p>
+      <p><strong>需要完整後端 / 資料庫</strong>：升級到 Zeabur</p>
+    </div>
+
+    <div class="quiz-box">
+      <div class="label">🤔 想一想</div>
+      <p>你目前在做或想做的專案，最後是要給自己用、給公司同事用，還是要公開給所有人？這個答案，可以幫你決定哪個平台最適合你。</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 04 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>AI 常推薦、但要小心的選項</h2>
+    </div>
+    <div class="card">
+      <p>當你在選部署平台的時候，建議你不要只看 AI 推薦什麼就去嘗試。因為 AI 通常會推薦在網路上討論度很高的工具，但這些工具不一定適合新手，而且它們可能有一些隱藏的門檻。</p>
+    </div>
+
+    <div class="tips-list">
+      <div class="tip-item">
+        <div class="tip-item-num">1</div>
+        <div class="tip-item-text">
+          <strong>Vercel</strong>——免費方案有<strong>商業用途限制</strong>，不能商業使用，這是很多新手容易忽略的地方。
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-item-num">2</div>
+        <div class="tip-item-text">
+          <strong>Render</strong>——如果服務在<strong>沒有人使用的時候就會進入休眠狀態</strong>，第一次打開就會比較慢。
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-item-num">3</div>
+        <div class="tip-item-text">
+          <strong>GCP / AWS</strong>（Google Cloud、Amazon Web Services）——這些雲端平台是採<strong>用量方式計費</strong>，如果沒有特別注意，可能會產生額外費用。
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p>但其實這些工具本身沒有不好，只是對於新手小白來說，可能會一個不注意就踩到一些不必要的雷。</p>
+    </div>
+
+    <div class="warn-box">
+      <div class="label">⚠️ 注意</div>
+      <p>在新手階段，還是會建議你優先選擇<strong>「簡單、免費、限制清楚」</strong>的平台，先把整個流程走順，再來考慮進階工具。</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 05 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>想要自訂網址怎麼做？</h2>
+    </div>
+    <div class="card">
+      <p>部署平台預設會給你一串很長的網址。如果想要像 <code>yourname.com</code> 這樣簡潔的自訂域名，就需要另外向域名服務商購買。</p>
+    </div>
+
+    <div class="domain-grid">
+      <div class="domain-item">
+        <div class="domain-name">.com</div>
+        <div class="domain-price">約 $11 美金 / 年</div>
+      </div>
+      <div class="domain-item">
+        <div class="domain-name">.tw</div>
+        <div class="domain-price">約 $23 美金 / 年</div>
+      </div>
+      <div class="domain-item">
+        <div class="domain-name">.ai</div>
+        <div class="domain-price">約 $70 美金 / 年</div>
+      </div>
+    </div>
+
+    <div class="tips-list">
+      <div class="tip-item">
+        <div class="tip-item-num">✓</div>
+        <div class="tip-item-text">
+          <strong>Cloudflare Registrar（推薦首選）</strong>——價格透明、沒有隱藏費用。唯一的限制是支援的頂級域名較少，例如不支援 <code>.tw</code>。
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-item-num">✓</div>
+        <div class="tip-item-text">
+          <strong>Gandi（次選）</strong>——支援的域名種類較多，包含 <code>.tw</code>。整體口碑不錯，定價合理。
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-item-num">✗</div>
+        <div class="tip-item-text">
+          <strong>GoDaddy（不推薦）</strong>——廣告預算充足，搜尋時很容易跳出來，但行銷方式不太誠實：首年超低價，續費可能貴很多，還有許多你其實不需要的加購項目。建議避開。
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="label">💡 買完域名之後</div>
+      <p>域名買好後，需要在域名服務商和部署平台兩邊各做一些設定。步驟看起來多，但<strong>全程都可以叫 AI 一步一步帶你做</strong>——有印象知道這個流程存在，需要時再回來查就好，不需要現在就全部記住。</p>
+    </div>
+  </div>
+
+  <!-- 相關素材 -->
+  <div class="section" id="section-assets">
+    <div class="section-header">
+      <span class="section-num orange">📎</span>
+      <h2>相關素材：3 段實機示範</h2>
+    </div>
+    <div class="card">
+      <p>影片裡的操作片段原始檔，想暫停細看每個步驟可以在這裡重播：</p>
+    </div>
+    <div class="asset-item">
+      <div class="asset-label"><span class="num">示範一</span>建立儲存庫</div>
+      <video controls preload="none" src="./assets/demo-2-4-1-create-repo.mp4"></video>
+    </div>
+    <div class="asset-item">
+      <div class="asset-label"><span class="num">示範二</span>上傳 index.html 並 Commit</div>
+      <video controls preload="none" src="./assets/demo-2-4-2-upload.mp4"></video>
+    </div>
+    <div class="asset-item">
+      <div class="asset-label"><span class="num">示範三</span>設定 Pages 並取得網址</div>
+      <video controls preload="none" src="./assets/demo-2-5-pages.mp4"></video>
+    </div>
+    <div class="asset-item">
+      <a class="asset-download" href="./assets/部署速查講義.pdf" download>下載講義：部署速查講義（PDF）</a>
+    </div>
+  </div>
+
+  <!-- 重點整理 -->
+  <div class="takeaway">
+    <div class="takeaway-title">✦ 本章重點整理</div>
+    <ul class="takeaway-list">
+      <li>部署 = 把程式從本機發布到網路，讓任何人都能透過連結使用</li>
+      <li>基本流程三步驟：上傳程式碼到 GitHub → 設定部署平台 → 取得網址</li>
+      <li>新手推薦從 Google Apps Script 或 GitHub Pages 起步，需要時可搭配 Cloudflare Pages 或 Zeabur</li>
+      <li>Vercel 免費版禁商用、Render 會休眠、GCP/AWS 有帳單地雷——先避開</li>
+      <li>自訂域名可用 Cloudflare Registrar 或 Gandi 購買，整個設定流程可請 AI 帶著做</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>
