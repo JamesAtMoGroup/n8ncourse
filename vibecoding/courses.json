@@ -103,5 +103,12 @@
     "title": "技術方案｜部署——把作品放上網路的常見做法",
     "status": "open",
     "url": "./lecture15/"
+  },
+  {
+    "day": 16,
+    "chapter": "CH2-9",
+    "title": "技術方案｜資料庫——簡易版、專業版，哪個適合我",
+    "status": "open",
+    "url": "./lecture16/"
   }
 ]

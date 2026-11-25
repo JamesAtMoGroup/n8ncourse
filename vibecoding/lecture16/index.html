@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2-9 技術方案｜資料庫——簡易版、專業版，哪個適合我</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #7cffb2;
+  --primary-light: rgba(124,255,178,0.07);
+  --green: #7cffb2;
+  --yellow: #ffd166;
+  --orange: #ff9f43;
+  --red: #ff6b6b;
+  --bg: #000000;
+  --surface: #0d0d0d;
+  --surface2: #111111;
+  --text: #ffffff;
+  --text-muted: #888888;
+  --border: rgba(124,255,178,0.14);
+  --radius: 16px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', sans-serif; font-size: 16px; line-height: 1.8; min-height: 100vh; }
+
+.container { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
+
+.hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); margin-bottom: 56px; animation: fadeUp 0.6s ease both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+.hero-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.chapter-badge { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--primary); border: 1px solid var(--primary); padding: 4px 14px; border-radius: 99px; letter-spacing: 0.05em; text-shadow: 0 0 10px rgba(124,255,178,0.4); }
+.tag { font-size: 12px; padding: 4px 12px; border-radius: 99px; font-weight: 500; }
+.tag-beginner { background: rgba(124,255,178,0.1); color: var(--green); }
+.tag-time { background: rgba(255,209,102,0.1); color: var(--yellow); }
+h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 16px; }
+h1 em { font-style: normal; color: var(--primary); }
+.hero-sub { font-size: 17px; color: var(--text-muted); max-width: 540px; line-height: 1.7; }
+
+.section { margin-bottom: 56px; animation: fadeUp 0.5s ease both; }
+.section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+.section-num { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--primary); background: rgba(124,255,178,0.08); border: 1px solid var(--border); padding: 5px 14px; border-radius: 99px; white-space: nowrap; letter-spacing: 0.05em; }
+h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.card p { color: var(--text-muted); font-size: 15px; } .card p + p { margin-top: 10px; } .card strong { color: var(--text); }
+
+.analogy { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 0 var(--radius) var(--radius) 0; padding: 20px 24px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.analogy .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.analogy p { color: #c8ffe0; font-size: 15px; line-height: 1.7; } .analogy strong { color: #fff; }
+.analogy p + p { margin-top: 8px; }
+
+.tip-box { background: rgba(124,255,178,0.04); border: 1px solid rgba(124,255,178,0.2); border-radius: var(--radius); padding: 20px 24px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.tip-box .label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.tip-box p { color: var(--text-muted); font-size: 15px; line-height: 1.7; } .tip-box strong { color: var(--text); }
+.tip-box p + p { margin-top: 8px; }
+
+/* ── 互動 Checkbox 區塊 ── */
+.check-box { border: 2px dashed rgba(255,209,102,0.35); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; background: rgba(255,209,102,0.03); animation: fadeUp 0.5s ease both; }
+.check-box-label { font-size: 12px; font-weight: 700; color: var(--yellow); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
+.check-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.check-item { display: flex; align-items: center; gap: 14px; cursor: pointer; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface2); transition: border-color 0.2s, background 0.2s; }
+.check-item:hover { border-color: rgba(255,209,102,0.4); }
+.check-item input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 20px; height: 20px; border: 2px solid rgba(255,209,102,0.5); border-radius: 5px; flex-shrink: 0; cursor: pointer; position: relative; transition: all 0.2s; background: transparent; }
+.check-item input[type="checkbox"]:checked { background: var(--yellow); border-color: var(--yellow); }
+.check-item input[type="checkbox"]:checked::after { content: '✓'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; font-weight: 900; color: #000; }
+.check-item.checked { border-color: rgba(255,209,102,0.5); background: rgba(255,209,102,0.06); }
+.check-item-text { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+.check-item-text strong { color: var(--text); }
+
+.check-result { border-radius: 12px; padding: 16px 20px; font-size: 14px; line-height: 1.6; display: none; }
+.check-result.show { display: block; animation: fadeUp 0.3s ease both; }
+.check-result.level-0 { background: rgba(124,255,178,0.08); border: 1px solid rgba(124,255,178,0.3); color: #c8ffe0; }
+.check-result.level-1 { background: rgba(255,209,102,0.08); border: 1px solid rgba(255,209,102,0.35); color: #ffe8a0; }
+.check-result.level-2 { background: rgba(255,159,67,0.08); border: 1px solid rgba(255,159,67,0.35); color: #ffd4a8; }
+.check-result.level-3 { background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.35); color: #ffc8c8; }
+.check-result-icon { font-size: 20px; margin-bottom: 6px; }
+.check-result strong { color: inherit; font-weight: 900; }
+
+/* ── 比較表格 ── */
+.compare-table { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: var(--radius); overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border); }
+.compare-table th { background: rgba(124,255,178,0.08); color: var(--primary); font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.06em; padding: 11px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+.compare-table td { background: var(--surface2); color: var(--text-muted); font-size: 13px; padding: 11px 16px; border-bottom: 1px solid rgba(124,255,178,0.06); line-height: 1.55; }
+.compare-table td strong { color: var(--text); }
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table td.highlight-col { color: var(--primary); font-weight: 700; }
+
+.shape-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.shape-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; display: flex; align-items: flex-start; gap: 14px; animation: fadeUp 0.5s ease both; }
+.shape-icon { flex-shrink: 0; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; font-size: 20px; }
+.shape-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.shape-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+.mermaid-card { background: rgba(124,255,178,0.04); border: 1px solid rgba(124,255,178,0.2); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; animation: fadeUp 0.5s ease both; }
+.mermaid-title { font-size: 15px; font-weight: 900; color: var(--green); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.mermaid-steps { display: flex; flex-direction: column; gap: 10px; }
+.mermaid-step { display: flex; align-items: flex-start; gap: 12px; }
+.mermaid-step-num { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: #000; background: var(--primary); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 3px; }
+.mermaid-step-text { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+.mermaid-step-text strong { color: var(--text); }
+
+.tips-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.tip-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; display: flex; gap: 14px; animation: fadeUp 0.5s ease both; }
+.tip-item-num { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: #000; background: var(--primary); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+.tip-item-text { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+.tip-item-text strong { color: var(--text); }
+
+.kiss-box { background: linear-gradient(135deg, rgba(124,255,178,0.06), rgba(0,0,0,0)); border: 1px solid rgba(124,255,178,0.3); border-radius: var(--radius); padding: 20px 24px; margin-bottom: 20px; }
+.kiss-box .kiss-label { font-family: 'Space Mono', monospace; font-size: 17px; font-weight: 700; color: var(--primary); letter-spacing: 0.06em; margin-bottom: 2px; }
+.kiss-box .kiss-full { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+.kiss-box p { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+.kiss-box p + p { margin-top: 8px; }
+.kiss-box strong { color: var(--text); }
+
+.takeaway { background: linear-gradient(135deg, rgba(124,255,178,0.08), rgba(0,0,0,0)); border: 1px solid rgba(124,255,178,0.25); border-radius: var(--radius); padding: 32px; margin-top: 48px; animation: fadeUp 0.5s ease both; }
+.takeaway-title { font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+.takeaway-list { list-style: none; display: flex; flex-direction: column; gap: 10px; counter-reset: li; }
+.takeaway-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: var(--text); line-height: 1.6; counter-increment: li; }
+.takeaway-list li::before { content: counter(li); background: var(--primary); color: #000; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+
+code { font-family: 'Space Mono', monospace; font-size: 0.85em; background: rgba(124,255,178,0.1); color: var(--primary); padding: 2px 7px; border-radius: 5px; }
+.highlight { color: var(--primary); font-weight: 700; }
+.divider { height: 1px; background: var(--border); margin: 44px 0; }
+
+@media (max-width: 600px) {
+  .shape-grid { grid-template-columns: 1fr; }
+  .card, .takeaway, .tip-box { padding: 18px; }
+  .container { padding-left: 16px; padding-right: 16px; }
+}
+</style>
+<style>
+.section-num.orange { color: var(--orange); background: rgba(255,159,67,0.08); border-color: rgba(255,159,67,0.3); }
+.asset-download { display: inline-flex; align-items: center; gap: 8px; color: var(--primary); text-decoration: none; border: 1px solid var(--border); background: var(--surface2); border-radius: 12px; padding: 14px 22px; font-weight: 700; }
+.asset-download:hover { border-color: var(--primary); }
+</style>
+<style id='vc-nav-css'>#vc-nav{position:sticky;top:0;z-index:200;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border,rgba(255,255,255,0.1));}#vc-nav a{font-size:14px;font-weight:500;color:#888;text-decoration:none;transition:color .15s;}#vc-nav a:hover{color:#fff;}#vc-nav-right{display:flex;align-items:center;gap:10px;}#vc-nav-user{font-size:13px;color:#888;}#vc-logout{font-size:13px;font-weight:600;color:#666;background:rgba(255,255,255,0.04);border:1px solid var(--border,rgba(255,255,255,0.1));border-radius:8px;padding:4px 12px;cursor:pointer;font-family:inherit;}</style></head>
+<body>
+<nav id='vc-nav'><a href='../'>← 返回課程選單</a><div id='vc-nav-right'><span id='vc-nav-user'></span><button id='vc-logout' onclick="localStorage.removeItem('aischool_user');window.location.href='../../login.html';">登出</button></div></nav><script>(function(){var u=JSON.parse(localStorage.getItem('aischool_user')||'null');if(u&&u.name)document.getElementById('vc-nav-user').textContent=u.name;})();</script>
+<script>(function(){if(!JSON.parse(localStorage.getItem('aischool_user')||'null')){window.location.href='../../login.html';}})();</script>
+
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-meta">
+      <span class="chapter-badge">CH 2-9</span>
+      <span class="tag tag-beginner">✦ 資料儲存</span>
+      <span class="tag tag-time">⏱ 約 10 分鐘</span>
+    </div>
+    <h1>技術方案｜資料庫——<br><em>簡易版、專業版，哪個適合我</em></h1>
+    <p class="hero-sub">搞懂在什麼情境要用什麼儲存工具，以及怎麼讓 AI 幫你寫出正確的資料操作程式碼。</p>
+  </div>
+
+  <!-- Section 01 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>程式關掉之後，資料去哪了？</h2>
+    </div>
+
+    <div class="card">
+      <p>在沒有特別保存的情況下，<strong>資料只會暫時存在記憶體裡</strong>，一旦關掉頁面就被清掉。但訂單、帳號、聊天紀錄之所以不會消失，是因為它們被存到了<strong>持久化層（Persistence Layer）</strong>——即使程式關掉、伺服器重啟，資料都還在。資料庫就是持久化層當中最核心的角色。</p>
+    </div>
+
+    <div class="analogy">
+      <div class="label">📚 圖書館比喻</div>
+      <p>找書時不會一本一本翻，而是先查書號再直接找到對應位置。資料庫也一樣——每筆資料有唯一的<strong>主鍵（Primary Key）</strong>，系統透過「索引」直接跳到對應位置，不需要從頭掃描所有資料。有了索引，就算資料量很大，查詢速度也不會慢。</p>
+    </div>
+
+    <div class="card">
+      <p>資料庫最基本的單位叫做「資料表（Table）」，可以把它想成 <strong>Excel 或 Google Sheets 的分頁</strong>：有欄（欄位類型）、有列（一筆資料）。</p>
+      <p>多張表之間可以透過<strong>外鍵（Foreign Key）</strong>連接——例如在電商網站裡，每一個商品都有一個專屬的 ID，而「訂單表」裡也會記錄這個商品的 ID，這樣系統就可以知道這筆訂單是買了哪一個商品。這就是<strong>關聯式資料庫</strong>的核心概念。</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 02 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>什麼時候才需要升級？</h2>
+    </div>
+
+    <div class="card">
+      <p><strong>能不用，先不用。</strong>很多工程師一開始就急著搭資料庫，花一個禮拜搞基礎設施，功能一行都還沒寫。驗證想法時，最重要的是快速看到結果——先從 <strong>Google Sheets、Notion 或 Airtable</strong> 開始就好。</p>
+    </div>
+
+    <div class="kiss-box">
+      <div class="kiss-label">KISS 原則</div>
+      <div class="kiss-full">Keep It Simple &amp; Stupid — 保持簡單，越笨越好</div>
+      <p>很多工程師嘴上說要遵守 KISS 原則，但做的時候卻搞出超複雜的架構。<strong>直接拿試算表當資料庫，才是真正有奉行 KISS 的人。</strong></p>
+    </div>
+
+    <div class="card">
+      <p>如果覺得讀取有點慢，先跟 AI 說「幫我加一個快取機制」，大多數延遲問題就解了。真的需要升級的時機：前面所有方式都不夠用，或是<strong>同時上線人數超過一百人</strong>。</p>
+    </div>
+
+    <!-- 互動 Checkbox -->
+    <div class="check-box">
+      <div class="check-box-label">🤔 我現在需要升級嗎？</div>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">勾選符合你情況的項目，看看目前適合哪個方案：</p>
+      <div class="check-list">
+        <label class="check-item" id="item1">
+          <input type="checkbox" id="q1" onchange="updateResult()">
+          <div class="check-item-text"><strong>資料量已超過幾萬筆</strong>，而且還在快速增長</div>
+        </label>
+        <label class="check-item" id="item2">
+          <input type="checkbox" id="q2" onchange="updateResult()">
+          <div class="check-item-text"><strong>同時有很多使用者</strong>在讀取或寫入資料</div>
+        </label>
+        <label class="check-item" id="item3">
+          <input type="checkbox" id="q3" onchange="updateResult()">
+          <div class="check-item-text"><strong>回應速度明顯變慢</strong>，已經讓使用者開始抱怨</div>
+        </label>
+      </div>
+
+      <div id="result-0" class="check-result level-0">
+        <div class="check-result-icon">✅</div>
+        <strong>試算表就夠用了！</strong><br>
+        目前完全不需要動到正式資料庫。Google Sheets、Airtable 都是很好的選擇，先把功能做出來最重要。
+      </div>
+      <div id="result-1" class="check-result level-1">
+        <div class="check-result-icon">🔧</div>
+        <strong>先加快取機制試試</strong><br>
+        先別換資料庫，跟 AI 說「幫我在 Google Sheets 前面加一個快取機制」，大多數延遲問題就能解決，不需要馬上升級。
+      </div>
+      <div id="result-2" class="check-result level-2">
+        <div class="check-result-icon">⚠️</div>
+        <strong>開始評估正式資料庫</strong><br>
+        快取機制可能不夠用了。建議先試試看 Supabase，它的設定比較簡單，不需要自己管伺服器，是升級的第一步好選擇。
+      </div>
+      <div id="result-3" class="check-result level-3">
+        <div class="check-result-icon">🚀</div>
+        <strong>是時候升級正式資料庫</strong><br>
+        三個問題都符合，確實需要正式資料庫了。建議從 Supabase（PostgreSQL）入手，或視團隊狀況選擇 MySQL / PostgreSQL。
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 03 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>正式資料庫：海豚 vs 大象</h2>
+    </div>
+
+    <div class="card">
+      <p>確定要升級時，要認識兩個業界公認的標準選項：<strong>MySQL（🐬 海豚）</strong> 跟 <strong>PostgreSQL（🐘 大象）</strong>。幾乎所有大型服務——社群媒體、電商平台、新聞網站，一半以上都跑在這兩個上面。工程師聊天時常直接問：「你們用哪一隻？」</p>
+    </div>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>比較項目</th>
+          <th>🐬 MySQL（海豚）</th>
+          <th>🐘 PostgreSQL（大象）</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>讀取效能</strong></td>
+          <td class="highlight-col">較快，吞吐量高</td>
+          <td>近年差距縮小</td>
+        </tr>
+        <tr>
+          <td><strong>市占</strong></td>
+          <td class="highlight-col">長年市占第一</td>
+          <td>近年快速成長</td>
+        </tr>
+        <tr>
+          <td><strong>功能完整性</strong></td>
+          <td>基本功能完整</td>
+          <td class="highlight-col">功能更豐富、彈性更高</td>
+        </tr>
+        <tr>
+          <td><strong>適合場景</strong></td>
+          <td>新聞平台、商品列表等讀取為主的服務</td>
+          <td>複雜查詢、資料結構不固定的應用</td>
+        </tr>
+        <tr>
+          <td><strong>新手入門</strong></td>
+          <td>需租伺服器自行安裝設定</td>
+          <td>可透過 Supabase 快速上手</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tip-box">
+      <div class="label">✨ 新手首選：Supabase</div>
+      <p>試算表不夠用、但還不想自己架伺服器時，推薦 <strong>Supabase</strong>。它把 PostgreSQL 包裝成<strong>很像試算表的介面</strong>，可以用滑鼠直接新增資料、修改欄位，也幫你把 API 都準備好了，直接寫程式就能讀寫資料。告訴 AI「我用的是 Supabase」，通常就能直接生成可以跑的程式碼。</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 04 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>資料不只有「表格」</h2>
+    </div>
+
+    <div class="card">
+      <p>存圖片、做語意搜尋、分析大量數據——這些情境，傳統資料表不夠用。以下是三種功能特化的儲存方案。</p>
+    </div>
+
+    <div class="tips-list">
+      <div class="tip-item">
+        <div class="tip-item-num">1</div>
+        <div class="tip-item-text">
+          <strong>物件儲存（Object Storage）</strong>——雲端硬碟，存圖片、PDF、影片、音訊等二進位檔案。路徑對應一個檔案，容量幾乎無限。推薦 <strong>Supabase Storage</strong>（整合度高）；純靜態圖片可直接放 <strong>GitHub</strong>。Amazon S3 / Google Cloud Storage 功能完整但計費複雜，新手小心帳單爆炸。
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-item-num">2</div>
+        <div class="tip-item-text">
+          <strong>向量儲存（Vector Store）</strong>——AI 客服、語意搜尋的核心。AI 把文字轉成一串數字（向量），讓你用「語意相似」搜尋，而不是完全符合才找到。例如：搜尋「訂單」也能找到「購買紀錄」「消費明細」。推薦 <strong>Supabase 內建</strong>；進階需求再考慮 <strong>Pinecone</strong>。
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-item-num">3</div>
+        <div class="tip-item-text">
+          <strong>分析型倉儲（Data Warehouse）</strong>——超大量統計分析用，像「過去三個月所有訂單的平均金額」。初學階段幾乎不會用到，一般資料庫就夠了，有需求時再來研究。
+        </div>
+      </div>
+    </div>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>方案</th>
+          <th>適用情境</th>
+          <th>推薦入門工具</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>試算表</strong></td>
+          <td>原型驗證、個人工具、內部系統</td>
+          <td>Google Sheets、Airtable</td>
+        </tr>
+        <tr>
+          <td><strong>關聯式資料庫</strong></td>
+          <td>用戶帳號、訂單、交易紀錄</td>
+          <td>Supabase（PostgreSQL）</td>
+        </tr>
+        <tr>
+          <td><strong>物件儲存</strong></td>
+          <td>圖片、影片、PDF 等檔案</td>
+          <td>Supabase Storage / GitHub</td>
+        </tr>
+        <tr>
+          <td><strong>向量儲存</strong></td>
+          <td>語意搜尋、AI 客服、RAG</td>
+          <td>Supabase Vector / Pinecone</td>
+        </tr>
+        <tr>
+          <td><strong>分析型倉儲</strong></td>
+          <td>大規模統計、BI 報表</td>
+          <td>BigQuery（初學者暫不需要）</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tip-box">
+      <div class="label">💡 Supabase 一站包三種</div>
+      <p>Supabase 同時提供<strong>關聯式資料庫</strong>、<strong>物件儲存</strong>、<strong>向量儲存</strong>——三種需求一個帳號搞定，API 也是同一套，不需要同時維護多個服務。</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 05 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>跟 AI 說清楚你的儲存後端</h2>
+    </div>
+
+    <div class="card">
+      <p>不管用哪種資料庫，操作都是「存資料」和「讀資料」，但<strong>每個平台的寫法完全不同</strong>。AI 不知道你用什麼，就沒辦法生成可以直接跑的程式碼。</p>
+    </div>
+
+    <div class="mermaid-card">
+      <div class="mermaid-title">💬 三個溝通技巧</div>
+      <div class="mermaid-steps">
+        <div class="mermaid-step">
+          <div class="mermaid-step-num">1</div>
+          <div class="mermaid-step-text"><strong>說清楚你用什麼系統</strong>——「我用的是 Supabase」「我的資料在 Google Sheets」「我用 MySQL」，讓 AI 選對應的 library。</div>
+        </div>
+        <div class="mermaid-step">
+          <div class="mermaid-step-num">2</div>
+          <div class="mermaid-step-text"><strong>附上官方 API 範例</strong>——把 Supabase 官網的 JavaScript Client 查詢範本貼給 AI，說「請依照這個範本幫我寫資料存取層」，AI 就能直接生成可執行的程式碼。</div>
+        </div>
+        <div class="mermaid-step">
+          <div class="mermaid-step-num">3</div>
+          <div class="mermaid-step-text"><strong>不確定時，直接問 AI</strong>——「我這個需求用 Google Sheets 可以做到嗎？」「我需要做語意搜尋，應該選哪種儲存後端？」先讓 AI 幫你評估再決定。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 相關素材 -->
+  <div class="section" id="section-assets">
+    <div class="section-header">
+      <span class="section-num orange">📎</span>
+      <h2>相關素材：講義</h2>
+    </div>
+    <div class="asset-item">
+      <a class="asset-download" href="./assets/資料庫速查講義.pdf" download>下載講義：資料庫速查講義（PDF）</a>
+    </div>
+  </div>
+
+  <!-- 重點整理 -->
+  <div class="takeaway">
+    <div class="takeaway-title">✦ 本章重點整理</div>
+    <ul class="takeaway-list">
+      <li>資料庫是持久化層的核心，靠主鍵與索引讓系統快速找到資料。</li>
+      <li>KISS 原則：先用試算表，等確認瓶頸後再升級，不要一開始就架資料庫。</li>
+      <li>MySQL 和 PostgreSQL 是業界黃金標準；新手從 Supabase 入手最順。</li>
+      <li>圖片用物件儲存、AI 搜尋用向量儲存、大量統計才需要分析型倉儲。</li>
+      <li>跟 AI 寫程式時，務必說清楚用的是哪種資料庫，必要時附上官方範例。</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+function updateResult() {
+  const q1 = document.getElementById('q1').checked;
+  const q2 = document.getElementById('q2').checked;
+  const q3 = document.getElementById('q3').checked;
+  const count = [q1, q2, q3].filter(Boolean).length;
+
+  // Update item styles
+  document.getElementById('item1').classList.toggle('checked', q1);
+  document.getElementById('item2').classList.toggle('checked', q2);
+  document.getElementById('item3').classList.toggle('checked', q3);
+
+  // Hide all results
+  ['result-0','result-1','result-2','result-3'].forEach(id => {
+    document.getElementById(id).classList.remove('show');
+  });
+
+  // Show the right result
+  if (count === 0) {
+    document.getElementById('result-0').classList.add('show');
+  } else if (count === 1) {
+    document.getElementById('result-1').classList.add('show');
+  } else if (count === 2) {
+    document.getElementById('result-2').classList.add('show');
+  } else {
+    document.getElementById('result-3').classList.add('show');
+  }
+}
+
+// Show default result on load (0 checked)
+window.addEventListener('load', function() {
+  document.getElementById('result-0').classList.add('show');
+});
+</script>
+
+</body>
+</html>
